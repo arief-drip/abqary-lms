@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>States &amp; Template · Al-Abqary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* States gallery: doc layout (mirrors the style guide's doc-* classes) */
+.doc-hero { background: var(--blue-deep); color: var(--on-blue); display: grid; overflow: hidden; }
+.doc-hero > * { grid-area: 1 / 1; }
+.doc-hero .hero__pattern { opacity: 0.18; }
+.doc-hero__inner { position: relative; width: var(--container); margin: 0 auto; padding: var(--space-12) 0; display: flex; flex-direction: column; gap: var(--space-4); }
+.doc-hero__inner h1 { color: var(--on-blue); }
+.doc-hero__inner h1 em { font-style: normal; color: var(--gold-bright); }
+.doc-hero__inner p { color: var(--blue-on-deep); max-width: 720px; }
+.doc-toc { width: var(--container); margin: 0 auto; display: flex; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-6) 0 0; }
+.doc-toc a { font-size: var(--fs-small); color: var(--muted); padding: var(--space-2) var(--space-4); border-radius: var(--radius-full); background: var(--surface); border: 1px solid var(--line); }
+.doc-toc a:hover { color: var(--blue); border-color: var(--blue-line); }
+.doc-main { width: var(--container); margin: 0 auto; padding: var(--space-8) 0 var(--space-20); display: flex; flex-direction: column; gap: var(--space-16); }
+.doc-section { display: flex; flex-direction: column; gap: var(--space-8); }
+.doc-section__head { display: flex; gap: var(--space-6); align-items: flex-start; padding-bottom: var(--space-6); border-bottom: 1px solid var(--line-strong); }
+.doc-section__num { font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: var(--fw-bold); color: var(--gold); min-width: 64px; }
+.doc-section__desc { margin-top: var(--space-2); color: var(--muted); max-width: 820px; font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); }
+.doc-block { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl); padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-6); }
+.doc-block__label { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-6); }
+.doc-block__label > span:first-child { font-size: var(--fs-h4); line-height: var(--lh-h4); font-weight: var(--fw-semibold); }
+.doc-block__note { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); text-align: right; }
+
+/* Browser-like frame */
+.frame { border: 1px solid var(--line-strong); border-radius: var(--radius-lg); overflow: hidden; background: var(--bg); display: flex; flex-direction: column; }
+.frame__bar { height: 40px; display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--space-4); background: var(--bg-subtle); border-bottom: 1px solid var(--line); }
+.frame__dots { display: flex; gap: 6px; }
+.frame__dots i { width: 10px; height: 10px; border-radius: var(--radius-full); background: var(--line-strong); }
+.frame__url { flex: 1; max-width: 420px; margin: 0 auto; height: 26px; border-radius: var(--radius-full); background: var(--surface); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; gap: var(--space-1); font-size: var(--fs-caption); color: var(--muted); }
+.frame__url .icon { width: 12px; height: 12px; }
+.frame__body { flex: 1; padding: var(--space-10); display: flex; flex-direction: column; }
+
+/* Error pages */
+.err { display: flex; align-items: center; gap: var(--space-12); justify-content: center; padding: var(--space-6) 0; }
+.err__art { position: relative; width: 280px; height: 280px; display: grid; place-items: center; flex: none; }
+.err__art > * { grid-area: 1 / 1; }
+.err__star { width: 280px; height: 280px; color: var(--gold); }
+.err__code { font-size: 88px; line-height: 1; font-weight: var(--fw-bold); letter-spacing: var(--ls-tight); color: var(--blue-deep); }
+.err__text { max-width: 520px; display: flex; flex-direction: column; gap: var(--space-4); }
+.err__ar { font-family: var(--font-ar); font-size: var(--fs-ar-body); line-height: 1.6; color: var(--gold-ink); align-self: flex-start; }
+.err-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-4); padding: var(--space-6) var(--space-4); }
+.err-card p { color: var(--muted); font-size: var(--fs-small); line-height: 22px; max-width: 420px; }
+.mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: var(--fs-caption); color: var(--subtle); }
+.sched { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--warn-soft); border: 1px solid var(--gold-line); font-size: var(--fs-small); color: var(--ink); text-align: left; width: 100%; }
+.sched .icon { width: 20px; height: 20px; color: var(--warn); }
+
+/* Skeleton compositions */
+.sk-row { display: flex; align-items: center; gap: var(--space-3); }
+.sk-col { flex: 1; display: flex; flex-direction: column; gap: var(--space-2); }
+.sk-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl); overflow: hidden; }
+.sk-card__body { padding: var(--space-5) var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
+.sk-cover { height: 168px; border-radius: 0; }
+.sk-pill { width: 72px; height: 28px; border-radius: var(--radius-full); }
+
+/* Connection banners */
+.conn { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-6); font-size: var(--fs-small); line-height: var(--lh-small); }
+.conn .icon { width: 20px; height: 20px; }
+.conn--off { background: var(--ink); color: var(--on-blue); }
+.conn--off .icon { color: var(--gold-bright); }
+.conn--off .btn { margin-left: auto; color: var(--on-blue); border-color: rgba(255, 255, 255, 0.32); background: transparent; }
+.conn--on { background: var(--good-soft); color: var(--good); border-bottom: 1px solid var(--good-line); }
+.conn--on .link { margin-left: auto; color: var(--good); }
+.fake-page { padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); opacity: 0.55; }
+.modal-scrim.frame-static { border-radius: var(--radius-lg); padding: var(--space-10); }
+
+/* Locked lesson */
+.locked { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: var(--space-6); padding: var(--space-6); }
+.locked__stage { position: relative; display: grid; border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--line); background: var(--surface); min-height: 600px; }
+.locked__stage > * { grid-area: 1 / 1; }
+.locked__preview { padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-4); filter: blur(4px); opacity: 0.6; }
+.locked__veil { background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), var(--surface) 70%); }
+.locked__card { align-self: center; justify-self: center; position: relative; width: 440px; padding: var(--space-8); display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-4); }
+.locked__card p { color: var(--muted); font-size: var(--fs-small); line-height: 22px; }
+
+/* Email */
+.mail { border: 1px solid var(--line-strong); border-radius: var(--radius-lg); overflow: hidden; background: var(--bg-subtle); display: flex; flex-direction: column; }
+.mail__meta { background: var(--surface); border-bottom: 1px solid var(--line); padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: 2px; font-size: var(--fs-caption); line-height: 18px; color: var(--muted); }
+.mail__meta b { color: var(--ink); font-weight: var(--fw-semibold); }
+.mail__subject { font-size: var(--fs-body); line-height: var(--lh-body); font-weight: var(--fw-semibold); color: var(--ink); margin-bottom: var(--space-1); }
+.mail__canvas { padding: var(--space-6); }
+.mail__doc { width: 100%; max-width: 480px; margin: 0 auto; background: var(--surface); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+.mail__head { background: var(--blue-deep); padding: var(--space-5) var(--space-6); display: grid; overflow: hidden; }
+.mail__head > * { grid-area: 1 / 1; }
+.mail__head .hero__pattern { opacity: 0.2; }
+.mail__head .brand { position: relative; }
+.mail__head .brand__mark { width: 32px; height: 32px; }
+.mail__body { padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-4); font-size: var(--fs-small); line-height: 22px; color: var(--ink); }
+.mail__code { align-self: flex-start; padding: var(--space-2) var(--space-4); border-radius: var(--radius-md); background: var(--blue-tint); border: 1px dashed var(--blue-line); font-size: var(--fs-h3); font-weight: var(--fw-bold); letter-spacing: 0.2em; color: var(--blue-deep); }
+.mail__lines { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); border-radius: var(--radius-md); background: var(--bg); }
+.mail__line { display: flex; justify-content: space-between; gap: var(--space-4); }
+.mail__line span:first-child { color: var(--muted); }
+.mail__line--total { padding-top: var(--space-2); border-top: 1px solid var(--line); font-weight: var(--fw-bold); }
+.mail__foot { padding: var(--space-4) var(--space-6); border-top: 1px solid var(--line); font-size: 11px; line-height: 16px; color: var(--subtle); }
+
+/* WhatsApp phone mockups */
+.phones { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-8); justify-items: center; }
+.phone { width: 340px; border-radius: 36px; padding: 10px; background: var(--ink); box-shadow: var(--shadow-lg); }
+.phone__screen { border-radius: 28px; overflow: hidden; background: var(--gold-soft); display: flex; flex-direction: column; height: 600px; }
+.phone__head { background: var(--good); color: var(--on-blue); padding: var(--space-6) var(--space-4) var(--space-3); display: flex; align-items: center; gap: var(--space-3); }
+.phone__head .icon { width: 20px; height: 20px; }
+.phone__avatar { width: 36px; height: 36px; border-radius: var(--radius-full); background: var(--surface); display: flex; align-items: center; justify-content: center; flex: none; }
+.phone__avatar svg { width: 26px; height: 26px; }
+.phone__name { display: flex; flex-direction: column; flex: 1; }
+.phone__name b { font-size: var(--fs-small); line-height: var(--lh-small); }
+.phone__name span { font-size: 11px; line-height: 14px; opacity: 0.85; }
+.phone__chat { flex: 1; padding: var(--space-4) var(--space-3); display: flex; flex-direction: column; gap: var(--space-2); }
+.phone__day { align-self: center; font-size: 11px; line-height: 14px; padding: 3px var(--space-3); border-radius: var(--radius-sm); background: var(--surface); color: var(--muted); box-shadow: var(--shadow-sm); margin-bottom: var(--space-2); }
+.bubble { max-width: 86%; align-self: flex-start; background: var(--surface); border-radius: var(--radius-md); border-top-left-radius: 2px; padding: var(--space-2) var(--space-3); font-size: 13px; line-height: 19px; color: var(--ink); box-shadow: var(--shadow-sm); }
+.bubble small { display: block; text-align: right; font-size: 10px; line-height: 12px; color: var(--subtle); margin-top: 2px; }
+.bubble--out { align-self: flex-end; background: var(--good-soft); border-top-left-radius: var(--radius-md); border-top-right-radius: 2px; }
+.bubble__title { font-weight: var(--fw-semibold); }
+.bubble__actions { max-width: 86%; align-self: flex-start; width: 86%; display: flex; flex-direction: column; gap: 2px; margin-top: -4px; }
+.bubble__actions span { background: var(--surface); text-align: center; padding: var(--space-2); font-size: 13px; font-weight: var(--fw-medium); color: var(--blue); border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: center; gap: var(--space-1); }
+.bubble__actions .icon { width: 14px; height: 14px; }
+.phone__input { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3) var(--space-4); }
+.phone__input span { flex: 1; height: 36px; border-radius: var(--radius-full); background: var(--surface); display: flex; align-items: center; padding: 0 var(--space-4); font-size: 13px; color: var(--subtle); }
+.phone__input i { width: 36px; height: 36px; border-radius: var(--radius-full); background: var(--good); color: var(--on-blue); display: flex; align-items: center; justify-content: center; }
+.phone__input .icon { width: 18px; height: 18px; }
+.phone-cap { text-align: center; margin-top: var(--space-3); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.phone-cap span { display: block; font-size: var(--fs-caption); color: var(--muted); font-weight: var(--fw-regular); }
+</style>
+</head>
+<body>
+
+<!-- SITE HEADER START (public pages) -->
+<header class="topnav site-header">
+  <div class="topnav__inner">
+    <a class="brand" href="01-landing.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+    <nav class="topnav__links">
+      <a class="topnav__link" href="index.html">Peta Mockup</a>
+      <a class="topnav__link" href="00-design-system.html">Design System</a>
+      <a class="topnav__link topnav__link--active" href="40-states.html">States &amp; Template</a>
+    </nav>
+    <div class="topnav__actions">
+      <a class="btn btn--ghost" href="06-auth.html">Masuk</a>
+      <a class="btn btn--primary" href="06-auth.html#tab-daftar">Daftar</a>
+    </div>
+  </div>
+</header>
+<!-- SITE HEADER END -->
+
+<div class="doc-hero">
+  <svg class="hero__pattern" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M1180.0 -60.0 L1256.2 16.2 L1363.8 16.2 L1363.8 123.8 L1440.0 200.0 L1363.8 276.2 L1363.8 383.8 L1256.2 383.8 L1180.0 460.0 L1103.8 383.8 L996.2 383.8 L996.2 276.2 L920.0 200.0 L996.2 123.8 L996.2 16.2 L1103.8 16.2Z"/><path d="M1260.4 6.0 L1293.7 86.3 L1374.0 119.6 L1340.7 200.0 L1374.0 280.4 L1293.7 313.7 L1260.4 394.0 L1180.0 360.7 L1099.6 394.0 L1066.3 313.7 L986.0 280.4 L1019.3 200.0 L986.0 119.6 L1066.3 86.3 L1099.6 6.0 L1180.0 39.3Z"/><path d="M1180.0 35.0 L1228.3 83.3 L1296.7 83.3 L1296.7 151.7 L1345.0 200.0 L1296.7 248.3 L1296.7 316.7 L1228.3 316.7 L1180.0 365.0 L1131.7 316.7 L1063.3 316.7 L1063.3 248.3 L1015.0 200.0 L1063.3 151.7 L1063.3 83.3 L1131.7 83.3Z"/><path d="M1226.7 87.3 L1246.0 134.0 L1292.7 153.3 L1273.4 200.0 L1292.7 246.7 L1246.0 266.0 L1226.7 312.7 L1180.0 293.4 L1133.3 312.7 L1114.0 266.0 L1067.3 246.7 L1086.6 200.0 L1067.3 153.3 L1114.0 134.0 L1133.3 87.3 L1180.0 106.6Z"/><path d="M1180.0 118.0 L1204.0 142.0 L1238.0 142.0 L1238.0 176.0 L1262.0 200.0 L1238.0 224.0 L1238.0 258.0 L1204.0 258.0 L1180.0 282.0 L1156.0 258.0 L1122.0 258.0 L1122.0 224.0 L1098.0 200.0 L1122.0 176.0 L1122.0 142.0 L1156.0 142.0Z"/><circle cx="1180" cy="200" r="45.1"/></svg>
+  <div class="doc-hero__inner">
+    <span class="text-overline" style="color:var(--gold-bright)">Mockup · 40 · Sistem</span>
+    <h1 class="text-display">States &amp; <em>Template</em></h1>
+    <p class="text-body-lg">Kumpulan keadaan sistem yang dipakai di seluruh platform: halaman error, empty state, skeleton loading, koneksi, sesi, akses terkunci, toast, serta template email dan WhatsApp. Isi pesan adalah contoh.</p>
+  </div>
+</div>
+
+<nav class="doc-toc">
+  <a href="#error">01 Error &amp; pemeliharaan</a>
+  <a href="#empty">02 Empty state</a>
+  <a href="#loading">03 Loading</a>
+  <a href="#koneksi">04 Koneksi &amp; sesi</a>
+  <a href="#terkunci">05 Akses terkunci</a>
+  <a href="#toast">06 Toast</a>
+  <a href="#email">07 Email</a>
+  <a href="#whatsapp">08 WhatsApp</a>
+</nav>
+
+<main class="doc-main">
+
+  <!-- 01 Errors -->
+  <section class="doc-section" id="error">
+    <header class="doc-section__head"><span class="doc-section__num">01</span><div><h2 class="text-h1">Error &amp; pemeliharaan</h2><p class="doc-section__desc">Selalu jelaskan apa yang terjadi, pastikan progres belajar aman, dan beri satu jalan keluar yang jelas.</p></div></header>
+
+    <div class="doc-block">
+      <div class="doc-block__label"><span>404 · Halaman tidak ditemukan</span><span class="doc-block__note">.frame .err</span></div>
+      <div class="frame">
+        <div class="frame__bar"><span class="frame__dots"><i></i><i></i><i></i></span><span class="frame__url"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> alabqary.sch.id/kelas/nahwu-lanjutan-lama</span></div>
+        <div class="frame__body">
+          <div class="err">
+            <div class="err__art">
+              <svg class="err__star" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--gold-soft);stroke:var(--gold);stroke-width:0.3"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold-line);stroke-width:0.3"/></svg>
+              <span class="err__code">404</span>
+            </div>
+            <div class="err__text">
+              <span class="err__ar" lang="ar" dir="rtl">الصَّفْحَةُ غَيْرُ مَوْجُودَةٍ</span>
+              <h3 class="text-h1">Halaman tidak ditemukan</h3>
+              <p class="text-body-lg text-muted">Tautan mungkin sudah berubah atau kelasnya dipindahkan. Cari materi yang Anda butuhkan, atau kembali ke beranda.</p>
+              <div class="input"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari kelas, bab, atau kaidah…</span></div>
+              <div class="cluster">
+                <a class="btn btn--primary" href="10-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9.5 9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> Ke Beranda</a>
+                <a class="btn btn--secondary" href="02-katalog.html">Lihat Katalog</a>
+              </div>
+              <div class="cluster cluster--sm text-small text-muted">Sering dicari:
+                <a class="chip" href="15-jadwal.html">Jadwal live</a><a class="chip" href="16-mushaf.html">Mushaf Nahwi</a><a class="chip" href="01-landing.html#faq">Bantuan</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="doc-block">
+        <div class="doc-block__label"><span>500 · Kesalahan server</span><span class="doc-block__note">.err-card</span></div>
+        <div class="frame">
+          <div class="frame__bar"><span class="frame__dots"><i></i><i></i><i></i></span><span class="frame__url"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> alabqary.sch.id/belajar</span></div>
+          <div class="frame__body">
+            <div class="err-card">
+              <span class="icon-tile icon-tile--lg icon-tile--bad"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="7" rx="2"/><rect x="3" y="14" width="18" height="7" rx="2"/><path d="M7 6.5h.01M7 17.5h.01"/></svg></span>
+              <h3 class="text-h3">Terjadi kesalahan di server kami</h3>
+              <p>Ini bukan kesalahan Anda. Tim teknis sudah menerima laporan otomatis. Progres belajar terakhir tetap tersimpan.</p>
+              <div class="cluster" style="justify-content:center">
+                <a class="btn btn--primary" href="40-states.html#error"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></svg> Coba lagi</a>
+                <a class="btn btn--ghost" href="10-dashboard.html">Ke Beranda</a>
+              </div>
+              <span class="mono">Kode 500 · Ref ABQ-7F3K-21 · 13/11/2026 10.12 WIB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="doc-block">
+        <div class="doc-block__label"><span>Pemeliharaan terjadwal</span><span class="doc-block__note">.err-card .sched</span></div>
+        <div class="frame">
+          <div class="frame__bar"><span class="frame__dots"><i></i><i></i><i></i></span><span class="frame__url"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> alabqary.sch.id</span></div>
+          <div class="frame__body">
+            <div class="err-card">
+              <span class="icon-tile icon-tile--lg icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+              <h3 class="text-h3">Sedang ada pemeliharaan</h3>
+              <p>Kami sedang memperbarui sistem agar Mushaf Nahwi lebih cepat dibuka. Selama itu kelas dan kuis belum bisa diakses.</p>
+              <div class="sched"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span><b>Sabtu, 14 November 2026</b> · 00.00–03.00 WIB</span></div>
+              <div class="w-full"><div class="progress-label"><span>Perkiraan progres</span><b>60%</b></div><div class="progress progress--gold"><span class="progress__bar" style="width:60%"></span></div></div>
+              <a class="btn btn--secondary" data-toast="live-info-wa" href="40-states.html#error"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21l1.6-4.7A8.5 8.5 0 1 1 7.8 19.6z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.6-2-1-1 1c-1.2-.5-2.4-1.7-2.9-2.9l1-1-1-2z"/></svg> Kabari saya lewat WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 Empty states -->
+  <section class="doc-section" id="empty">
+    <header class="doc-section__head"><span class="doc-section__num">02</span><div><h2 class="text-h1">Empty state</h2><p class="doc-section__desc">Area kosong menjelaskan kenapa kosong dan langkah berikutnya. Maksimal dua tombol.</p></div></header>
+    <div class="grid-2">
+      <div class="doc-block">
+        <div class="doc-block__label"><span>Belum ada kelas</span><span class="doc-block__note">Kelas Saya</span></div>
+        <div class="empty-state">
+          <span class="empty-state__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg></span>
+          <span class="empty-state__title">Belum ada kelas yang diikuti</span>
+          <p class="empty-state__text">Mulai dari jenjang Fondasi yang gratis, atau ikuti tes penempatan agar tahu titik mulai yang tepat.</p>
+          <div class="cluster" style="justify-content:center"><a class="btn btn--primary" href="02-katalog.html">Jelajah kelas</a><a class="btn btn--secondary" href="07-onboarding.html#tab-s4">Ikut tes penempatan</a></div>
+        </div>
+      </div>
+      <div class="doc-block">
+        <div class="doc-block__label"><span>Belum ada sertifikat</span><span class="doc-block__note">Sertifikat</span></div>
+        <div class="empty-state">
+          <span class="empty-state__icon" style="background:var(--gold-soft);color:var(--gold-ink)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg></span>
+          <span class="empty-state__title">Belum ada syahadah</span>
+          <p class="empty-state__text">Syahadah terbit setelah semua materi satu jenjang selesai dan ujian akhir lulus. Jenjang terdekat Anda:</p>
+          <div style="width:320px"><div class="progress-label"><span>Qaidaty Jilid 2</span><b>64%</b></div><div class="progress progress--gold"><span class="progress__bar" style="width:64%"></span></div></div>
+          <a class="btn btn--primary" href="11-kelas-saya.html">Lanjutkan belajar</a>
+        </div>
+      </div>
+      <div class="doc-block">
+        <div class="doc-block__label"><span>Tidak ada notifikasi</span><span class="doc-block__note">Notifikasi</span></div>
+        <div class="empty-state">
+          <span class="empty-state__icon" style="background:var(--good-soft);color:var(--good)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>
+          <span class="empty-state__title">Semua notifikasi sudah dibaca</span>
+          <p class="empty-state__text">Pengingat jadwal live, feedback setoran, dan pengumuman ustadz akan muncul di sini.</p>
+          <a class="btn btn--ghost" href="20-profil.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg> Atur notifikasi</a>
+        </div>
+      </div>
+      <div class="doc-block">
+        <div class="doc-block__label"><span>Hasil pencarian kosong</span><span class="doc-block__note">Pencarian</span></div>
+        <div class="stack">
+          <div class="input is-focus"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__text">tamyiz nisbah</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+          <div class="empty-state" style="padding-top:var(--space-8);padding-bottom:var(--space-8)">
+            <span class="empty-state__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+            <span class="empty-state__title">Tidak ada hasil untuk "tamyiz nisbah"</span>
+            <p class="empty-state__text">Periksa ejaan atau pakai kata yang lebih umum. Coba juga:</p>
+            <div class="cluster cluster--sm" style="justify-content:center"><span class="chip">Tamyiz</span><span class="chip">Hal</span><span class="chip">Isim manshub</span></div>
+            <a class="link text-small" href="17-diskusi.html">Tanyakan di Diskusi</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 Loading -->
+  <section class="doc-section" id="loading">
+    <header class="doc-section__head"><span class="doc-section__num">03</span><div><h2 class="text-h1">Loading skeleton</h2><p class="doc-section__desc">Skeleton meniru bentuk konten akhir. Jika lebih dari 10 detik, ganti dengan pesan error dan tombol coba lagi.</p></div></header>
+
+    <div class="doc-block">
+      <div class="doc-block__label"><span>Kartu dashboard</span><span class="doc-block__note">.skeleton --circle --title --text --block</span></div>
+      <div class="grid-2-1">
+        <div class="sk-card"><div class="sk-card__body">
+          <div class="sk-row"><span class="skeleton skeleton--circle"></span><div class="sk-col"><span class="skeleton skeleton--title" style="width:45%"></span><span class="skeleton skeleton--text" style="width:30%"></span></div></div>
+          <span class="skeleton skeleton--block" style="height:120px"></span>
+          <span class="skeleton skeleton--text"></span><span class="skeleton skeleton--text" style="width:80%"></span>
+          <div class="sk-row"><span class="skeleton sk-pill" style="width:140px;height:44px;border-radius:var(--radius-md)"></span><span class="skeleton sk-pill"></span></div>
+        </div></div>
+        <div class="stack">
+          <div class="sk-card"><div class="sk-card__body"><div class="sk-row"><span class="skeleton" style="width:44px;height:44px;border-radius:var(--radius-md)"></span><div class="sk-col"><span class="skeleton skeleton--text" style="width:50%"></span><span class="skeleton skeleton--title" style="width:35%"></span></div></div></div></div>
+          <div class="sk-card"><div class="sk-card__body"><div class="sk-row"><span class="skeleton" style="width:44px;height:44px;border-radius:var(--radius-md)"></span><div class="sk-col"><span class="skeleton skeleton--text" style="width:60%"></span><span class="skeleton skeleton--title" style="width:30%"></span></div></div></div></div>
+          <div class="sk-card"><div class="sk-card__body"><div class="sk-row"><span class="skeleton" style="width:44px;height:44px;border-radius:var(--radius-md)"></span><div class="sk-col"><span class="skeleton skeleton--text" style="width:40%"></span><span class="skeleton skeleton--title" style="width:45%"></span></div></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-block">
+      <div class="doc-block__label"><span>Grid kelas</span><span class="doc-block__note">Katalog, Kelas Saya</span></div>
+      <div class="grid-3">
+        <div class="sk-card"><span class="skeleton sk-cover"></span><div class="sk-card__body"><span class="skeleton skeleton--text" style="width:40%"></span><span class="skeleton skeleton--title" style="width:80%"></span><span class="skeleton skeleton--text"></span><span class="skeleton skeleton--text" style="width:70%"></span><div class="sk-row" style="justify-content:space-between;margin-top:var(--space-2)"><span class="skeleton skeleton--text" style="width:30%"></span><span class="skeleton sk-pill" style="width:96px;height:36px;border-radius:var(--radius-sm)"></span></div></div></div>
+        <div class="sk-card"><span class="skeleton sk-cover"></span><div class="sk-card__body"><span class="skeleton skeleton--text" style="width:35%"></span><span class="skeleton skeleton--title" style="width:70%"></span><span class="skeleton skeleton--text"></span><span class="skeleton skeleton--text" style="width:60%"></span><div class="sk-row" style="justify-content:space-between;margin-top:var(--space-2)"><span class="skeleton skeleton--text" style="width:30%"></span><span class="skeleton sk-pill" style="width:96px;height:36px;border-radius:var(--radius-sm)"></span></div></div></div>
+        <div class="sk-card"><span class="skeleton sk-cover"></span><div class="sk-card__body"><span class="skeleton skeleton--text" style="width:45%"></span><span class="skeleton skeleton--title" style="width:75%"></span><span class="skeleton skeleton--text"></span><span class="skeleton skeleton--text" style="width:65%"></span><div class="sk-row" style="justify-content:space-between;margin-top:var(--space-2)"><span class="skeleton skeleton--text" style="width:30%"></span><span class="skeleton sk-pill" style="width:96px;height:36px;border-radius:var(--radius-sm)"></span></div></div></div>
+      </div>
+    </div>
+
+    <div class="doc-block">
+      <div class="doc-block__label"><span>Daftar materi</span><span class="doc-block__note">.lesson-list + .skeleton</span></div>
+      <div class="lesson-list">
+        <div class="lesson-row"><span class="skeleton" style="width:36px;height:36px;border-radius:var(--radius-full)"></span><div class="sk-col"><span class="skeleton skeleton--title" style="width:42%;height:16px"></span><span class="skeleton skeleton--text" style="width:22%"></span></div><span class="skeleton" style="width:80px;height:22px"></span></div>
+        <div class="lesson-row"><span class="skeleton" style="width:36px;height:36px;border-radius:var(--radius-full)"></span><div class="sk-col"><span class="skeleton skeleton--title" style="width:55%;height:16px"></span><span class="skeleton skeleton--text" style="width:18%"></span></div><span class="skeleton" style="width:64px;height:22px"></span></div>
+        <div class="lesson-row"><span class="skeleton" style="width:36px;height:36px;border-radius:var(--radius-full)"></span><div class="sk-col"><span class="skeleton skeleton--title" style="width:38%;height:16px"></span><span class="skeleton skeleton--text" style="width:26%"></span></div><span class="skeleton" style="width:90px;height:22px"></span></div>
+        <div class="lesson-row"><span class="skeleton" style="width:36px;height:36px;border-radius:var(--radius-full)"></span><div class="sk-col"><span class="skeleton skeleton--title" style="width:48%;height:16px"></span><span class="skeleton skeleton--text" style="width:20%"></span></div><span class="skeleton" style="width:72px;height:22px"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 Connection & session -->
+  <section class="doc-section" id="koneksi">
+    <header class="doc-section__head"><span class="doc-section__num">04</span><div><h2 class="text-h1">Koneksi &amp; sesi</h2><p class="doc-section__desc">Banner koneksi menempel di bawah navigasi atas. Jawaban kuis disimpan di perangkat selama offline lalu dikirim otomatis.</p></div></header>
+    <div class="grid-2">
+      <div class="doc-block">
+        <div class="doc-block__label"><span>Offline &amp; kembali online</span><span class="doc-block__note">.conn--off .conn--on</span></div>
+        <div class="frame">
+          <div class="frame__bar"><span class="frame__dots"><i></i><i></i><i></i></span><span class="frame__url"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> alabqary.sch.id/kuis/isim-manshub</span></div>
+          <div class="conn conn--off"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 2l20 20M8.5 16.4a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 4.2-2.4M19 12.9a10 10 0 0 0-2.2-1.6M2 8.8a15 15 0 0 1 4.2-2.6M22 8.8A15 15 0 0 0 10.7 5M12 20h.01"/></svg><span><b>Koneksi terputus.</b> Jawaban disimpan di perangkat ini.</span><a class="btn btn--sm" data-toast="live-error" href="40-states.html#koneksi">Coba sambungkan</a></div>
+          <div class="fake-page"><span class="skeleton skeleton--title" style="animation:none"></span><span class="skeleton skeleton--text" style="animation:none"></span><span class="skeleton skeleton--text" style="width:70%;animation:none"></span></div>
+          <div class="conn conn--on" data-dismissable><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg><span><b>Kembali online.</b> 3 jawaban sudah terkirim.</span><a class="link" data-dismiss href="40-states.html#koneksi">Tutup</a></div>
+          <div class="fake-page"><span class="skeleton skeleton--title" style="animation:none"></span><span class="skeleton skeleton--text" style="animation:none"></span></div>
+        </div>
+      </div>
+      <div class="doc-block">
+        <div class="doc-block__label"><span>Sesi berakhir</span><a class="link text-small" data-open="modal-session" href="40-states.html#koneksi">Buka sebagai overlay</a></div>
+        <div class="modal-scrim frame-static">
+          <div class="modal" role="dialog" aria-modal="true" style="width:440px">
+            <div class="modal__header">
+              <span class="modal__icon" style="background:var(--blue-soft);color:var(--blue)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+              <div><h3 class="modal__title">Sesi Anda berakhir</h3><p class="modal__subtitle">Demi keamanan akun</p></div>
+            </div>
+            <div class="modal__body"><p>Anda keluar otomatis karena tidak aktif cukup lama atau masuk dari perangkat lain. Progres belajar tetap tersimpan; silakan masuk lagi untuk melanjutkan.</p></div>
+            <div class="modal__footer"><a class="btn btn--ghost" href="01-landing.html">Ke halaman depan</a><a class="btn btn--primary" href="06-auth.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg> Masuk lagi</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 Locked access -->
+  <section class="doc-section" id="terkunci">
+    <header class="doc-section__head"><span class="doc-section__num">05</span><div><h2 class="text-h1">Akses terkunci</h2><p class="doc-section__desc">Santri paket Gratis yang membuka materi premium tetap melihat cuplikan, alasan terkunci, dan harga yang jelas.</p></div></header>
+    <div class="doc-block">
+      <div class="doc-block__label"><span>Pelajaran premium terkunci</span><span class="doc-block__note">.locked · .lesson-row--locked</span></div>
+      <div class="frame">
+        <div class="frame__bar"><span class="frame__dots"><i></i><i></i><i></i></span><span class="frame__url"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> alabqary.sch.id/belajar/isim-murab/bab-4</span></div>
+        <div class="locked">
+          <div class="locked__stage">
+            <div class="locked__preview" aria-hidden="true">
+              <span class="text-overline">Bab 4 · Materi 1</span>
+              <h3 class="text-h2">Maf'ul bih dan tanda nashab</h3>
+              <p class="ar ar--lg" lang="ar" dir="rtl" style="text-align:center">قَرَأَ الطَّالِبُ الْكِتَابَ</p>
+              <span class="skeleton skeleton--text" style="animation:none"></span><span class="skeleton skeleton--text" style="width:80%;animation:none"></span><span class="skeleton skeleton--block" style="height:120px;animation:none"></span>
+            </div>
+            <div class="locked__veil"></div>
+            <div class="card locked__card">
+              <span class="icon-tile icon-tile--lg icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+              <span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Paket Santri</span>
+              <h3 class="text-h3">Materi ini bagian dari Paket Santri</h3>
+              <p>Anda sudah menyelesaikan 3 materi gratis di kelas ini. Buka 18 materi lanjutan, latihan, dan setoran dengan Paket Santri.</p>
+              <div class="price__amount-row" style="justify-content:center"><span class="price__currency">Rp</span><span class="price__amount" style="font-size:var(--fs-h2);line-height:var(--lh-h2)">99.000</span><span class="text-small text-muted">/bulan</span></div>
+              <a class="btn btn--gold btn--block" href="04-harga.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Lihat paket</a>
+              <a class="btn btn--ghost btn--block" href="12-ruang-belajar.html">Kembali ke materi gratis</a>
+            </div>
+          </div>
+          <div class="lesson-list" style="align-self:start">
+            <div class="lesson-row lesson-row--done"><span class="lesson-row__status"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><div class="lesson-row__main"><span class="lesson-row__title">Pengantar isim manshub</span><span class="lesson-row__meta">Gratis · 8 menit</span></div></div>
+            <div class="lesson-row lesson-row--done"><span class="lesson-row__status"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><div class="lesson-row__main"><span class="lesson-row__title">Tanda-tanda nashab</span><span class="lesson-row__meta">Gratis · 10 menit</span></div></div>
+            <div class="lesson-row lesson-row--done"><span class="lesson-row__status"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><div class="lesson-row__main"><span class="lesson-row__title">Latihan 3.1</span><span class="lesson-row__meta">Gratis · 5 soal</span></div></div>
+            <div class="lesson-row lesson-row--locked lesson-row--current"><span class="lesson-row__status"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><div class="lesson-row__main"><span class="lesson-row__title">Maf'ul bih dan tanda nashab</span><span class="lesson-row__meta">Premium · 12 menit</span></div></div>
+            <div class="lesson-row lesson-row--locked"><span class="lesson-row__status"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><div class="lesson-row__main"><span class="lesson-row__title">Maf'ul mutlaq</span><span class="lesson-row__meta">Premium · 11 menit</span></div></div>
+            <div class="lesson-row lesson-row--locked"><span class="lesson-row__status"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><div class="lesson-row__main"><span class="lesson-row__title">Setoran bacaan Bab 4</span><span class="lesson-row__meta">Premium · dinilai ustadz</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 Toasts -->
+  <section class="doc-section" id="toast">
+    <header class="doc-section__head"><span class="doc-section__num">06</span><div><h2 class="text-h1">Toast</h2><p class="doc-section__desc">Muncul di kanan atas di bawah navigasi, hilang otomatis setelah 4 detik. Tombol "Coba" menampilkan versi hidupnya.</p></div></header>
+    <div class="doc-block">
+      <div class="doc-block__label"><span>Empat varian</span><span class="doc-block__note">.toast--success | --error | --info | --achievement</span></div>
+      <div class="grid-2">
+        <div class="stack stack--sm"><div class="toast toast--success"><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span><div class="toast__main"><p class="toast__title">Setoran terkirim</p><p class="toast__text">Ust. Ahmad Hanafi akan memberi feedback dalam 2×24 jam.</p></div><span class="toast__close"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div><a class="link text-small" data-toast="live-success" href="40-states.html#toast">Coba toast sukses</a></div>
+        <div class="stack stack--sm"><div class="toast toast--error"><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg></span><div class="toast__main"><p class="toast__title">Gagal mengunggah rekaman</p><p class="toast__text">Ukuran maksimal 10 MB. Coba rekam ulang dengan durasi lebih pendek.</p></div><span class="toast__close"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div><a class="link text-small" data-toast="live-error" href="40-states.html#toast">Coba toast error</a></div>
+        <div class="stack stack--sm"><div class="toast toast--info"><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg></span><div class="toast__main"><p class="toast__title">Live halaqah mulai 15 menit lagi</p><p class="toast__text">Murajaah Fi'il mudhari' · Ust. Muhammad Ridwan · 20.00 WIB</p></div><span class="toast__close"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div><a class="link text-small" data-toast="live-info" href="40-states.html#toast">Coba toast info</a></div>
+        <div class="stack stack--sm"><div class="toast toast--achievement"><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg></span><div class="toast__main"><p class="toast__title">Lencana baru: Pengurai I'rab</p><p class="toast__text">100 soal i'rab dijawab benar · +50 XP</p></div><span class="toast__close"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div><a class="link text-small" data-toast="live-achievement" href="40-states.html#toast">Coba toast pencapaian</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 Email -->
+  <section class="doc-section" id="email">
+    <header class="doc-section__head"><span class="doc-section__num">07</span><div><h2 class="text-h1">Template email</h2><p class="doc-section__desc">Lebar 480px, satu tombol utama, teks polos sebagai cadangan. Dikirim dari no-reply@alabqary.sch.id (alamat contoh).</p></div></header>
+    <div class="grid-2">
+      <div class="mail">
+        <div class="mail__meta"><span class="mail__subject">Verifikasi email akun Al-Abqary Anda</span><span><b>Al-Abqary</b> &lt;no-reply@alabqary.sch.id&gt;</span><span>kepada fauzan@contoh.id · Jumat, 13 Nov 2026 09.02</span></div>
+        <div class="mail__canvas">
+          <div class="mail__doc">
+            <div class="mail__head"><svg class="hero__pattern" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M1180.0 -60.0 L1256.2 16.2 L1363.8 16.2 L1363.8 123.8 L1440.0 200.0 L1363.8 276.2 L1363.8 383.8 L1256.2 383.8 L1180.0 460.0 L1103.8 383.8 L996.2 383.8 L996.2 276.2 L920.0 200.0 L996.2 123.8 L996.2 16.2 L1103.8 16.2Z"/><path d="M1260.4 6.0 L1293.7 86.3 L1374.0 119.6 L1340.7 200.0 L1374.0 280.4 L1293.7 313.7 L1260.4 394.0 L1180.0 360.7 L1099.6 394.0 L1066.3 313.7 L986.0 280.4 L1019.3 200.0 L986.0 119.6 L1066.3 86.3 L1099.6 6.0 L1180.0 39.3Z"/><path d="M1180.0 35.0 L1228.3 83.3 L1296.7 83.3 L1296.7 151.7 L1345.0 200.0 L1296.7 248.3 L1296.7 316.7 L1228.3 316.7 L1180.0 365.0 L1131.7 316.7 L1063.3 316.7 L1063.3 248.3 L1015.0 200.0 L1063.3 151.7 L1063.3 83.3 L1131.7 83.3Z"/><path d="M1226.7 87.3 L1246.0 134.0 L1292.7 153.3 L1273.4 200.0 L1292.7 246.7 L1246.0 266.0 L1226.7 312.7 L1180.0 293.4 L1133.3 312.7 L1114.0 266.0 L1067.3 246.7 L1086.6 200.0 L1067.3 153.3 L1114.0 134.0 L1133.3 87.3 L1180.0 106.6Z"/><path d="M1180.0 118.0 L1204.0 142.0 L1238.0 142.0 L1238.0 176.0 L1262.0 200.0 L1238.0 224.0 L1238.0 258.0 L1204.0 258.0 L1180.0 282.0 L1156.0 258.0 L1122.0 258.0 L1122.0 224.0 L1098.0 200.0 L1122.0 176.0 L1122.0 142.0 L1156.0 142.0Z"/><circle cx="1180" cy="200" r="45.1"/></svg><a class="brand brand--on-dark" href="01-landing.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--gold)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--blue-deep);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--blue-deep)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a></div>
+            <div class="mail__body">
+              <p><b>Assalamu'alaikum, Fauzan.</b></p>
+              <p>Terima kasih sudah mendaftar di Al-Abqary. Tekan tombol di bawah untuk memverifikasi email dan mulai belajar.</p>
+              <a class="btn btn--primary" style="align-self:flex-start" href="07-onboarding.html">Verifikasi email</a>
+              <p class="text-muted">Atau masukkan kode ini di aplikasi:</p>
+              <span class="mail__code">482 913</span>
+              <p class="text-muted">Tautan dan kode berlaku 24 jam. Jika Anda tidak merasa mendaftar, abaikan email ini.</p>
+            </div>
+            <div class="mail__foot">Ma'had Al-Abqary · Kota Serang, Banten<br>Email ini dikirim karena ada pendaftaran akun dengan alamat Anda.</div>
+          </div>
+        </div>
+      </div>
+      <div class="mail">
+        <div class="mail__meta"><span class="mail__subject">Pembayaran diterima · INV/2026/11/00482</span><span><b>Al-Abqary</b> &lt;no-reply@alabqary.sch.id&gt;</span><span>kepada fauzan@contoh.id · Jumat, 13 Nov 2026 10.47</span></div>
+        <div class="mail__canvas">
+          <div class="mail__doc">
+            <div class="mail__head"><svg class="hero__pattern" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M1180.0 -60.0 L1256.2 16.2 L1363.8 16.2 L1363.8 123.8 L1440.0 200.0 L1363.8 276.2 L1363.8 383.8 L1256.2 383.8 L1180.0 460.0 L1103.8 383.8 L996.2 383.8 L996.2 276.2 L920.0 200.0 L996.2 123.8 L996.2 16.2 L1103.8 16.2Z"/><path d="M1260.4 6.0 L1293.7 86.3 L1374.0 119.6 L1340.7 200.0 L1374.0 280.4 L1293.7 313.7 L1260.4 394.0 L1180.0 360.7 L1099.6 394.0 L1066.3 313.7 L986.0 280.4 L1019.3 200.0 L986.0 119.6 L1066.3 86.3 L1099.6 6.0 L1180.0 39.3Z"/><path d="M1180.0 35.0 L1228.3 83.3 L1296.7 83.3 L1296.7 151.7 L1345.0 200.0 L1296.7 248.3 L1296.7 316.7 L1228.3 316.7 L1180.0 365.0 L1131.7 316.7 L1063.3 316.7 L1063.3 248.3 L1015.0 200.0 L1063.3 151.7 L1063.3 83.3 L1131.7 83.3Z"/><path d="M1226.7 87.3 L1246.0 134.0 L1292.7 153.3 L1273.4 200.0 L1292.7 246.7 L1246.0 266.0 L1226.7 312.7 L1180.0 293.4 L1133.3 312.7 L1114.0 266.0 L1067.3 246.7 L1086.6 200.0 L1067.3 153.3 L1114.0 134.0 L1133.3 87.3 L1180.0 106.6Z"/><path d="M1180.0 118.0 L1204.0 142.0 L1238.0 142.0 L1238.0 176.0 L1262.0 200.0 L1238.0 224.0 L1238.0 258.0 L1204.0 258.0 L1180.0 282.0 L1156.0 258.0 L1122.0 258.0 L1122.0 224.0 L1098.0 200.0 L1122.0 176.0 L1122.0 142.0 L1156.0 142.0Z"/><circle cx="1180" cy="200" r="45.1"/></svg><a class="brand brand--on-dark" href="01-landing.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--gold)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--blue-deep);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--blue-deep)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a></div>
+            <div class="mail__body">
+              <p><b>Pembayaran Anda sudah kami terima.</b></p>
+              <p>Paket Santri Tahunan aktif sampai 13 November 2027. Berikut ringkasannya:</p>
+              <div class="mail__lines">
+                <div class="mail__line"><span>Paket Santri · Tahunan</span><span>Rp990.000</span></div>
+                <div class="mail__line"><span>Diskon AWALBELAJAR</span><span>−Rp99.000</span></div>
+                <div class="mail__line"><span>Metode</span><span>BCA Virtual Account</span></div>
+                <div class="mail__line mail__line--total"><span>Total dibayar</span><span>Rp891.000</span></div>
+              </div>
+              <div class="cluster"><a class="btn btn--primary" href="05-checkout.html#tab-berhasil">Lihat invoice</a><a class="btn btn--ghost" href="10-dashboard.html">Mulai belajar</a></div>
+            </div>
+            <div class="mail__foot">Invoice PDF terlampir. Pertanyaan soal pembayaran: balas email ini atau hubungi admin via WhatsApp.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 WhatsApp -->
+  <section class="doc-section" id="whatsapp">
+    <header class="doc-section__head"><span class="doc-section__num">08</span><div><h2 class="text-h1">Pesan WhatsApp</h2><p class="doc-section__desc">Pesan template dari nomor resmi ma'had. Singkat, satu ajakan, dan selalu bisa dihentikan dengan membalas BERHENTI.</p></div></header>
+    <div class="phones">
+      <div>
+        <div class="phone"><div class="phone__screen">
+          <div class="phone__head"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span class="phone__avatar"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg></span><span class="phone__name"><b>Al-Abqary</b><span>Akun bisnis</span></span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+          <div class="phone__chat">
+            <span class="phone__day">Hari ini</span>
+            <div class="bubble"><span class="bubble__title">Jaga streak 12 hari Anda</span><br>Assalamu'alaikum, Fauzan. Hari ini belum ada materi yang selesai. 15 menit cukup untuk menjaga streak.<br><br>Lanjutkan: <b>Bab 3 · Isim manshub</b> (materi 4 dari 9).<br><br>Balas BERHENTI untuk mematikan pengingat.<small>20.00</small></div>
+            <div class="bubble__actions"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg> Buka materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Ingatkan 1 jam lagi</span></div>
+            <div class="bubble bubble--out">Siap, setelah Isya<small>20.03 ✓✓</small></div>
+          </div>
+          <div class="phone__input"><span>Ketik pesan</span><i><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/></svg></i></div>
+        </div></div>
+        <p class="phone-cap">Pengingat streak<span>Dikirim pada jam pengingat pilihan santri</span></p>
+      </div>
+      <div>
+        <div class="phone"><div class="phone__screen">
+          <div class="phone__head"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span class="phone__avatar"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg></span><span class="phone__name"><b>Al-Abqary</b><span>Akun bisnis</span></span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+          <div class="phone__chat">
+            <span class="phone__day">Hari ini</span>
+            <div class="bubble"><span class="bubble__title">Pengingat live halaqah</span><br><b>Murajaah pekanan: Fi'il mudhari'</b><br>Jumat, 13 November 2026<br>20.00–21.00 WIB · Ust. Muhammad Ridwan<br><br>Siapkan Qaidaty Jilid 3 halaman 41. Rekaman tersedia 1×24 jam setelah selesai.<small>19.00</small></div>
+            <div class="bubble__actions"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg> Gabung live</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Lihat jadwal</span></div>
+            <div class="bubble bubble--out">Insya Allah hadir<small>19.05 ✓✓</small></div>
+          </div>
+          <div class="phone__input"><span>Ketik pesan</span><i><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/></svg></i></div>
+        </div></div>
+        <p class="phone-cap">Jadwal halaqah<span>1 jam sebelum live dimulai</span></p>
+      </div>
+      <div>
+        <div class="phone"><div class="phone__screen">
+          <div class="phone__head"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span class="phone__avatar"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg></span><span class="phone__name"><b>Al-Abqary</b><span>Akun bisnis</span></span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+          <div class="phone__chat">
+            <span class="phone__day">Hari ini</span>
+            <div class="bubble"><b>482913</b> adalah kode verifikasi Al-Abqary Anda. Berlaku 5 menit.<br><br>Jangan bagikan kode ini kepada siapa pun, termasuk yang mengaku admin.<small>09.01</small></div>
+            <div class="bubble__actions"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Salin kode</span></div>
+            <div class="bubble"><span class="bubble__title">Feedback setoran masuk</span><br>Ust. Muhammad Ridwan sudah menilai setoran <b>Bab 2 · Fi'il madhi</b>: 88/100. Ada 2 catatan bacaan.<small>16.20</small></div>
+            <div class="bubble__actions"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Baca feedback</span></div>
+          </div>
+          <div class="phone__input"><span>Ketik pesan</span><i><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/></svg></i></div>
+        </div></div>
+        <p class="phone-cap">Kode OTP &amp; feedback<span>Transaksional, tidak bisa dimatikan</span></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Session expired as a real overlay -->
+<div class="modal-scrim overlay" id="modal-session">
+  <div class="modal" role="dialog" aria-modal="true" style="width:440px">
+    <div class="modal__header">
+      <span class="modal__icon" style="background:var(--blue-soft);color:var(--blue)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+      <div><h3 class="modal__title">Sesi Anda berakhir</h3><p class="modal__subtitle">Demi keamanan akun</p></div>
+      <a class="modal__close" data-close href="40-states.html#koneksi" aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+    </div>
+    <div class="modal__body"><p>Anda keluar otomatis karena tidak aktif cukup lama atau masuk dari perangkat lain. Progres belajar tetap tersimpan; silakan masuk lagi untuk melanjutkan.</p></div>
+    <div class="modal__footer"><a class="btn btn--ghost" data-close href="40-states.html#koneksi">Tutup</a><a class="btn btn--primary" href="06-auth.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg> Masuk lagi</a></div>
+  </div>
+</div>
+
+<!-- Live toasts -->
+<div class="toast-stack">
+  <div class="toast toast--success" id="live-success" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span><div class="toast__main"><p class="toast__title">Setoran terkirim</p><p class="toast__text">Ust. Ahmad Hanafi akan memberi feedback dalam 2×24 jam.</p></div><span class="toast__close" data-dismiss><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+  <div class="toast toast--error" id="live-error" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg></span><div class="toast__main"><p class="toast__title">Masih offline</p><p class="toast__text">Periksa sambungan internet. Jawaban tetap aman di perangkat ini.</p></div><span class="toast__close" data-dismiss><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+  <div class="toast toast--info" id="live-info" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg></span><div class="toast__main"><p class="toast__title">Live halaqah mulai 15 menit lagi</p><p class="toast__text">Murajaah Fi'il mudhari' · Ust. Muhammad Ridwan · 20.00 WIB</p></div><span class="toast__close" data-dismiss><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+  <div class="toast toast--info" id="live-info-wa" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21l1.6-4.7A8.5 8.5 0 1 1 7.8 19.6z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.6-2-1-1 1c-1.2-.5-2.4-1.7-2.9-2.9l1-1-1-2z"/></svg></span><div class="toast__main"><p class="toast__title">Kami akan mengabari Anda</p><p class="toast__text">Pesan WhatsApp dikirim saat layanan kembali normal.</p></div><span class="toast__close" data-dismiss><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+  <div class="toast toast--achievement" id="live-achievement" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg></span><div class="toast__main"><p class="toast__title">Lencana baru: Pengurai I'rab</p><p class="toast__text">100 soal i'rab dijawab benar · +50 XP</p></div><span class="toast__close" data-dismiss><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+</div>
+
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

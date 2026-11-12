@@ -1,0 +1,173 @@
+/* =====================================================================
+   Al-Abqary LMS — Design Tokens (light theme)
+   Source of brand values: artefak/qaidaty-al-abqary-v2.html
+   Content palettes: artefak/mushaf-nahwi-yasin.html (i'rab, --k0..--k27)
+                     artefak/mushaf-sharfi-as-sajdah.html (sharf, --c0..--c16)
+   ===================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Amiri+Quran&family=Poppins:wght@400;500;600;700&display=swap");
+
+:root {
+  /* ---------- Brand ---------- */
+  --blue: #2C39A1;
+  --blue-deep: #1C2470;
+  --blue-soft: #E7EAF8;
+  --gold: #C5B581;
+  --gold-ink: #86702F;
+  --gold-soft: #F6F1E2;
+  --bg: #F4F5FA;
+  --surface: #FFFFFF;
+  --ink: #171B38;
+  --muted: #5D6285;
+  --line: #E0E3EF;
+  --good: #23845A;
+  --good-soft: #E3F3EA;
+  --bad: #C0443B;
+  --bad-soft: #FBE9E7;
+  --on-blue: #FFFFFF;
+
+  /* ---------- Extended (derived from brand) ---------- */
+  --blue-hover: #24308C;
+  --blue-line: #C9CFEE;
+  --blue-tint: #F3F4FC;
+  --blue-on-deep: #D5DAF6;      /* body text on --blue-deep */
+  --gold-hover: #B8A76F;
+  --gold-line: #E6DCBA;
+  --gold-bright: #E2D3A0;       /* gold accents on dark surfaces */
+  --good-line: #BFE2CF;
+  --bad-line: #F2C7C2;
+  --warn: #A8650F;
+  --warn-soft: #FDF2DD;
+  --streak: #D3602A;
+  --streak-soft: #FDEDE4;
+  --line-strong: #CBD0E3;
+  --bg-subtle: #ECEEF6;
+  --subtle: #8E93B2;            /* placeholder, disabled text */
+  --disabled-bg: #EEF0F6;
+  --scrim: rgba(23, 27, 56, 0.48);
+
+  /* ---------- Semantic aliases ---------- */
+  --color-primary: var(--blue);
+  --color-primary-hover: var(--blue-hover);
+  --color-accent: var(--gold);
+  --color-text: var(--ink);
+  --color-text-muted: var(--muted);
+  --color-border: var(--line);
+  --color-success: var(--good);
+  --color-danger: var(--bad);
+  --color-warning: var(--warn);
+  --color-premium: var(--gold-ink);
+  --color-free: var(--good);
+
+  /* ---------- Content palette: I'rab (nahwu) — source --k0..--k27 ---------- */
+  --irab-mubtada: #CC2288;        /* k0  Mubtada' — المبتدأ */
+  --irab-inna-isim: #775599;      /* k1  Inna & saudaranya + isimnya — إنّ وأخواتها مع اسمها */
+  --irab-khabar: #552200;         /* k2  Khabar — الخبر */
+  --irab-khabar-inna: #AA5555;    /* k3  Khabar inna & saudaranya — خبر إنّ وأخواتها */
+  --irab-khabar-kana: #554400;    /* k4  Khabar kana & saudaranya — خبر كان وأخواتها */
+  --irab-fail: #AA5500;           /* k5  Fa'il / Na'ib al-fa'il — الفاعل / نائب الفاعل */
+  --irab-kana-isim: #442255;      /* k6  Kana & saudaranya + isimnya — كان وأخواتها مع اسمها */
+  --irab-maful-bih: #006699;      /* k7  Maf'ul bih — المفعول به */
+  --irab-maful-fih: #2244EE;      /* k8  Maf'ul fih (zharaf) — المفعول فيه / الظرف */
+  --irab-maful-mutlaq: #5500CC;   /* k9  Maf'ul mutlaq — المفعول المطلق */
+  --irab-maful-liajlih: #882200;  /* k10 Maf'ul li-ajlih — المفعول لأجله */
+  --irab-maful-maah: #883377;     /* k11 Maf'ul ma'ah — المفعول معه */
+  --irab-hal: #CC1155;            /* k12 Hal — الحال */
+  --irab-tamyiz: #994466;         /* k13 Tamyiz — التمييز */
+  --irab-munada: #774400;         /* k14 Munada — المنادى */
+  --irab-mustatsna: #AA22AA;      /* k15 Mustatsna — المستثنى */
+  --irab-mudhaf-ilaih: #CC0000;   /* k16 Mudhaf ilaih — المضاف إليه */
+  --irab-fiil-fail: #AA00FF;      /* k17 Fi'il + fa'il / na'ib fa'il — الفعل مع فاعله */
+  --irab-jar-majrur: #007722;     /* k18 Jar-majrur — الجار والمجرور */
+  --irab-mathuf: #222288;         /* k19 Ma'thuf / 'athaf — المعطوف */
+  --irab-naat: #881122;           /* k20 Na'at — النعت */
+  --irab-badal: #004488;          /* k21 Badal — البدل */
+  --irab-taukid: #DD0033;         /* k22 Taukid — التوكيد */
+  --irab-nafi: #111111;           /* k23 Tanpa warna (la & ma nafi) — لا وما النافيتان */
+  --irab-nashib: #5566AA;         /* k24 Amil nashab mudhari' — نواصب المضارع */
+  --irab-jazim: #770088;          /* k25 Amil jazim — جوازم المضارع */
+  --irab-harf-athaf: #771144;     /* k26 Harf 'athaf — حروف العطف */
+  --irab-harf-lain: #886600;      /* k27 Harf lainnya — حروف المعاني الأخرى */
+
+  /* ---------- Content palette: Sharf (wazan/category) — source --c0..--c16 ---------- */
+  --sharf-jamid: #C92A2A;         /* c0  Jamid — جامد */
+  --sharf-musytaq: #B121C4;       /* c1  Musytaq lainnya — مشتق */
+  --sharf-madhi: #1F43E0;         /* c2  Madhi — ماضٍ */
+  --sharf-mudhari: #16902F;       /* c3  Mudhari' — مضارع */
+  --sharf-amr: #D97400;           /* c4  Amr — أمر */
+  --sharf-nahyi: #7D1A1A;         /* c5  Nahyi — نهي */
+  --sharf-mabni: #1A1F1C;         /* c6  Mabni — مبني */
+  --sharf-harf: #0A8AA6;          /* c7  Harf — حرف */
+  --sharf-mashdar: #8E24D8;       /* c8  Mashdar — مصدر */
+  --sharf-isim-fail: #E0309F;     /* c9  Isim Fa'il — اسم فاعل */
+  --sharf-isim-maful: #7EA800;    /* c10 Isim Maf'ul — اسم مفعول */
+  --sharf-zaman-makan: #C25B8A;   /* c11 Isim Zaman/Makan — ظرف زمان ومكان */
+  --sharf-alat: #6C8AA8;          /* c12 Isim Alat — اسم آلة */
+  --sharf-tafdhil: #9B7D6A;       /* c13 Isim Tafdhil — اسم تفضيل */
+  --sharf-mubalaghah: #A88B00;    /* c14 Shighah Mubalaghah — صيغة مبالغة */
+  --sharf-taajjub: #758D14;       /* c15 Fi'il Ta'ajjub — فعل التعجب */
+  --sharf-musyabbahah: #B5480B;   /* c16 Sifat Musyabbahah — صفة مشبهة */
+
+  /* ---------- Typography ---------- */
+  --font-ui: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-ar: "Amiri", "Noto Naskh Arabic", "Traditional Arabic", serif;
+  --font-quran: "Amiri Quran", "Amiri", "Noto Naskh Arabic", serif;
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  --fs-display: 48px;  --lh-display: 56px;
+  --fs-h1: 36px;       --lh-h1: 44px;
+  --fs-h2: 28px;       --lh-h2: 36px;
+  --fs-h3: 22px;       --lh-h3: 30px;
+  --fs-h4: 18px;       --lh-h4: 26px;
+  --fs-body-lg: 18px;  --lh-body-lg: 28px;
+  --fs-body: 16px;     --lh-body: 24px;
+  --fs-small: 14px;    --lh-small: 20px;
+  --fs-caption: 12px;  --lh-caption: 16px;
+
+  --fs-ar-body: 26px;
+  --fs-ar-lg: 34px;
+  --fs-ar-quran: 36px;
+  --lh-ar: 1.9;
+
+  --ls-tight: -0.02em;
+  --ls-normal: 0;
+  --ls-wide: 0.08em;
+
+  /* ---------- Spacing ---------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ---------- Radii ---------- */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 999px;
+
+  /* ---------- Shadows ---------- */
+  --shadow-sm: 0 1px 2px rgba(23, 27, 56, 0.06);
+  --shadow: 0 1px 2px rgba(23, 27, 56, 0.05), 0 10px 30px rgba(23, 27, 56, 0.07);
+  --shadow-lg: 0 2px 6px rgba(23, 27, 56, 0.06), 0 24px 60px rgba(23, 27, 56, 0.14);
+  --shadow-focus: 0 0 0 3px rgba(44, 57, 161, 0.22);
+
+  /* ---------- Layout ---------- */
+  --page-width: 1440px;
+  --container: 1200px;
+  --nav-height: 72px;
+  --sidebar-width: 280px;
+  --icon-size: 24px;
+  --icon-stroke: 1.8;
+}

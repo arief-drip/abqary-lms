@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Fa'il dan Tanda Rafa'nya · Ruang Belajar · Al-Abqary LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Ruang Belajar (lesson player) page styles */
+.focus__main--wide { width: calc(var(--page-width) - 2 * var(--space-10)); padding-top: var(--space-8); }
+.lp { display: grid; grid-template-columns: minmax(0, 1fr) 368px; gap: var(--space-8); align-items: start; }
+.lp__main { min-width: 0; display: flex; flex-direction: column; gap: var(--space-6); }
+
+/* Video player placeholder */
+.player { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius-xl); overflow: hidden; background: var(--ink); display: grid; box-shadow: var(--shadow); }
+.player > * { grid-area: 1 / 1; }
+.player .hero__pattern { opacity: 0.1; }
+.player__slide { align-self: center; justify-self: center; width: 60%; margin-top: -130px; background: var(--surface); border-radius: var(--radius-lg); padding: var(--space-5) var(--space-8); display: flex; flex-direction: column; align-items: center; gap: var(--space-3); box-shadow: var(--shadow-lg); position: relative; }
+.player__slide-ar { font-family: var(--font-ar); font-size: 36px; line-height: 1.4; color: var(--blue-deep); }
+.player__scrim { background: rgba(23, 27, 56, 0.28); }
+.player__play { align-self: center; justify-self: center; width: 72px; height: 72px; margin-top: 90px; border-radius: var(--radius-full); background: var(--gold); color: var(--blue-deep); display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-lg); position: relative; }
+.player__play .icon { width: 30px; height: 30px; fill: currentColor; margin-left: 4px; }
+.player__sub { align-self: end; justify-self: center; margin-bottom: 112px; padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm); background: rgba(23, 27, 56, 0.82); color: var(--on-blue); font-size: var(--fs-body); line-height: var(--lh-body); position: relative; }
+.player__bar { align-self: end; position: relative; padding: var(--space-8) var(--space-5) var(--space-4); background: linear-gradient(180deg, rgba(23, 27, 56, 0) 0%, rgba(23, 27, 56, 0.9) 60%); color: var(--on-blue); display: flex; flex-direction: column; gap: var(--space-3); }
+.scrub { position: relative; height: 6px; border-radius: var(--radius-full); background: rgba(255, 255, 255, 0.22); }
+.scrub__buf { position: absolute; inset: 0 auto 0 0; width: 62%; border-radius: inherit; background: rgba(255, 255, 255, 0.34); }
+.scrub__played { position: absolute; inset: 0 auto 0 0; width: 36%; border-radius: inherit; background: var(--gold); }
+.scrub__thumb { position: absolute; top: 50%; left: 36%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: var(--radius-full); background: var(--gold-bright); box-shadow: 0 0 0 4px rgba(226, 211, 160, 0.3); }
+.scrub__mark { position: absolute; top: -1px; bottom: -1px; width: 3px; background: var(--ink); }
+.scrub__tip { position: absolute; bottom: 16px; transform: translateX(-50%); white-space: nowrap; padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); background: var(--surface); color: var(--ink); font-size: var(--fs-caption); line-height: var(--lh-caption); font-weight: var(--fw-medium); box-shadow: var(--shadow); }
+.pctl { display: flex; align-items: center; gap: var(--space-1); }
+.pbtn { position: relative; height: 36px; min-width: 36px; padding: 0 var(--space-2); border-radius: var(--radius-md); display: inline-flex; align-items: center; justify-content: center; gap: var(--space-1); color: var(--on-blue); font-size: var(--fs-small); font-weight: var(--fw-semibold); cursor: pointer; }
+.pbtn:hover, .is-on > .pbtn { background: rgba(255, 255, 255, 0.12); }
+.pbtn .icon { width: 20px; height: 20px; }
+.pbtn--on { color: var(--gold-bright); }
+.pbtn--boxed { border: 1px solid rgba(255, 255, 255, 0.28); }
+.ptime { font-size: var(--fs-small); color: var(--blue-on-deep); font-variant-numeric: tabular-nums; margin: 0 var(--space-2); }
+.ptime b { color: var(--on-blue); font-weight: var(--fw-semibold); }
+.pchap { font-size: var(--fs-small); color: var(--blue-on-deep); }
+.pmenu-wrap { position: relative; }
+.pmenu { display: none; position: absolute; right: 0; bottom: 44px; width: 168px; padding: var(--space-2); border-radius: var(--radius-md); background: var(--surface); color: var(--ink); box-shadow: var(--shadow-lg); }
+.pmenu-wrap.is-on .pmenu { display: block; }
+.pmenu b { display: block; padding: var(--space-1) var(--space-2) var(--space-2); font-size: var(--fs-caption); color: var(--muted); font-weight: var(--fw-semibold); }
+.pmenu span { display: flex; justify-content: space-between; align-items: center; padding: var(--space-2); border-radius: var(--radius-sm); font-size: var(--fs-small); font-weight: var(--fw-medium); }
+.pmenu span:hover { background: var(--bg-subtle); }
+.pmenu .is-cur { color: var(--blue); background: var(--blue-soft); }
+.pmenu .icon { width: 16px; height: 16px; }
+
+.chapters { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-2); }
+.chapter { display: flex; flex-direction: column; gap: 2px; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); cursor: pointer; }
+.chapter small { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); font-variant-numeric: tabular-nums; }
+.chapter span { font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-medium); }
+.chapter.chip--active { border-color: var(--blue); background: var(--blue-tint); }
+.chapter.chip--active small { color: var(--blue); }
+.chapter--done small::after { content: " · ditonton"; }
+
+.lesson-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-6); }
+.tangga-l { display: flex; gap: var(--space-2); margin-top: var(--space-4); max-width: 560px; }
+.tangga-l span { flex: 1; display: flex; flex-direction: column; gap: var(--space-1); font-size: 11px; line-height: 14px; color: var(--subtle); }
+.tangga-l i { height: 6px; border-radius: var(--radius-full); background: var(--bg-subtle); }
+.tangga-l .is-done { color: var(--good); }
+.tangga-l .is-done i { background: var(--good); }
+.tangga-l .is-now { color: var(--blue); font-weight: var(--fw-semibold); }
+.tangga-l .is-now i { background: linear-gradient(90deg, var(--blue) 36%, var(--blue-soft) 36%); }
+
+/* Lesson content */
+.prose { display: flex; flex-direction: column; gap: var(--space-5); padding-top: var(--space-6); max-width: 860px; }
+.prose h3 { font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: var(--fw-semibold); }
+.prose p { color: var(--ink); }
+.prose .lead { font-size: var(--fs-body-lg); line-height: var(--lh-body-lg); color: var(--muted); }
+.word-row { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: flex-start; }
+.box { border-radius: var(--radius-lg); padding: var(--space-5) var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
+.box__head { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-caption); line-height: var(--lh-caption); font-weight: var(--fw-semibold); letter-spacing: var(--ls-wide); text-transform: uppercase; }
+.box__head .icon { width: 18px; height: 18px; }
+.box--rumus { background: var(--gold-soft); border: 1px solid var(--gold-line); }
+.box--rumus .box__head { color: var(--gold-ink); }
+.box--rumus .box__main { font-size: var(--fs-h4); line-height: var(--lh-h4); font-weight: var(--fw-semibold); color: var(--blue-deep); }
+.box--kitab { background: var(--surface); border: 1px solid var(--line); box-shadow: inset 4px 0 0 var(--blue-deep); }
+.box--kitab .box__head { color: var(--blue); }
+.box--quran { background: var(--blue-tint); border: 1px solid var(--blue-line); }
+.box--quran .box__head { color: var(--blue); }
+.steps-ol { counter-reset: s; display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--fs-small); line-height: var(--lh-small); }
+.steps-ol li { counter-increment: s; position: relative; padding-left: 34px; }
+.steps-ol li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 22px; height: 22px; border-radius: var(--radius-full); background: var(--gold); color: var(--blue-deep); font-size: var(--fs-caption); font-weight: var(--fw-bold); display: inline-flex; align-items: center; justify-content: center; }
+.kitab-text { font-family: var(--font-ar); font-size: 30px; line-height: 2; color: var(--ink); text-align: right; }
+.kitab-text mark { background: var(--gold-soft); color: var(--blue-deep); border-radius: var(--radius-sm); padding: 0 var(--space-1); box-shadow: inset 0 -2px 0 var(--gold); }
+.tr { font-size: var(--fs-small); line-height: 22px; color: var(--muted); font-style: italic; }
+.src { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.table td .word-inline { font-family: var(--font-ar); font-size: 24px; line-height: 1.5; }
+.ex-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+.ex-pair > div { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-md); background: var(--surface); border: 1px solid var(--line); }
+.ex-pair .word-row { justify-content: flex-end; gap: var(--space-2); }
+.ex-pair .word { min-width: 72px; }
+.ex-pair .word__ar { font-size: 24px; }
+
+/* Notes and Q&A */
+.ts { display: inline-flex; align-items: center; gap: var(--space-1); height: 24px; padding: 0 var(--space-2); border-radius: var(--radius-sm); background: var(--blue-soft); color: var(--blue); font-size: var(--fs-caption); font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; flex: none; }
+.ts .icon { width: 12px; height: 12px; fill: currentColor; }
+.note { display: flex; gap: var(--space-4); align-items: flex-start; padding: var(--space-4) var(--space-5); }
+.note__text { flex: 1; font-size: var(--fs-small); line-height: 22px; }
+.note__meta { font-size: var(--fs-caption); color: var(--muted); margin-top: var(--space-1); }
+.composer { border: 1px solid var(--line-strong); border-radius: var(--radius-lg); background: var(--surface); overflow: hidden; }
+.composer.is-focus { border-color: var(--blue); box-shadow: var(--shadow-focus); }
+.composer__area { min-height: 84px; padding: var(--space-4); font-size: var(--fs-small); line-height: 22px; color: var(--ink); }
+.composer__area .input__placeholder { color: var(--subtle); }
+.composer__bar { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-top: 1px solid var(--line); background: var(--blue-tint); }
+.thread { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-5) var(--space-6); }
+.thread__q { display: flex; gap: var(--space-3); }
+.thread__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--fs-small); line-height: 22px; }
+.thread__who { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-caption); color: var(--muted); }
+.thread__who b { color: var(--ink); font-size: var(--fs-small); }
+.thread__answer { margin-left: 52px; padding: var(--space-4); border-radius: var(--radius-md); background: var(--good-soft); border: 1px solid var(--good-line); display: flex; gap: var(--space-3); }
+.thread__foot { display: flex; align-items: center; gap: var(--space-4); font-size: var(--fs-caption); color: var(--muted); }
+.thread__foot span { display: inline-flex; align-items: center; gap: var(--space-1); }
+.thread__foot .icon { width: 14px; height: 14px; }
+.file-row { display: flex; align-items: center; gap: var(--space-4); }
+
+/* Curriculum sidebar */
+.curr { position: sticky; top: calc(64px + var(--space-6)); max-height: calc(100vh - 64px - 76px - var(--space-12)); overflow-y: auto; }
+.curr .panel__body { gap: var(--space-3); padding: var(--space-4); }
+.bab { border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+.bab[open] { border-color: var(--blue-line); }
+.bab__sum { list-style: none; cursor: pointer; display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3) var(--space-4); }
+.bab__sum::-webkit-details-marker { display: none; }
+.bab__row { display: flex; align-items: center; gap: var(--space-2); }
+.bab__title { flex: 1; font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-semibold); }
+.bab__title small { display: block; font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); font-weight: var(--fw-regular); }
+.bab__sum .icon { width: 18px; height: 18px; color: var(--muted); transition: transform .2s; }
+.bab[open] .bab__sum > .bab__row .icon--chev { transform: rotate(180deg); }
+.bab--locked .bab__title { color: var(--muted); }
+.cl-list { border-top: 1px solid var(--line); padding: var(--space-2); display: flex; flex-direction: column; gap: 2px; }
+.cl { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2); border-radius: var(--radius-md); }
+a.cl:hover { background: var(--bg-subtle); }
+.cl__st { width: 28px; height: 28px; flex: none; border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; background: var(--bg-subtle); color: var(--muted); font-size: var(--fs-caption); font-weight: var(--fw-semibold); }
+.cl__st .icon { width: 14px; height: 14px; stroke-width: 2.2; }
+.cl__main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.cl__title { font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-medium); }
+.cl__meta { font-size: 11px; line-height: 14px; color: var(--muted); }
+.cl--done .cl__st { background: var(--good); color: var(--on-blue); }
+.cl--current { background: var(--blue-soft); box-shadow: inset 3px 0 0 var(--blue); }
+.cl--current .cl__st { background: var(--blue); color: var(--on-blue); }
+.cl--current .cl__st .icon { fill: currentColor; }
+.cl--current .cl__title { color: var(--blue); font-weight: var(--fw-semibold); }
+.cl--next .cl__st { background: var(--gold-soft); color: var(--gold-ink); border: 1.5px solid var(--gold); }
+.cl--locked .cl__st { background: var(--disabled-bg); color: var(--subtle); }
+.cl--locked .cl__title { color: var(--muted); }
+
+/* Footer */
+.foot-nav { display: flex; align-items: center; gap: var(--space-3); }
+.foot-nav__txt { display: flex; flex-direction: column; font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.foot-nav__txt b { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--ink); font-weight: var(--fw-semibold); }
+.focus__footer-inner { width: calc(var(--page-width) - 2 * var(--space-10)); }
+/* Lift the mockup pill above the sticky lesson footer */
+.mock-nav { bottom: calc(76px + var(--space-4)); }
+
+/* Completion modal */
+.done-modal { width: 520px; }
+.done-hero { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); padding: var(--space-8) var(--space-6) var(--space-2); text-align: center; }
+.done-hero__icon { width: 72px; height: 72px; border-radius: var(--radius-full); background: var(--good); color: var(--on-blue); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 10px var(--good-soft); }
+.done-hero__icon .icon { width: 36px; height: 36px; stroke-width: 2.4; }
+.done-stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.done-stat { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-lg); border: 1px solid var(--line); }
+.done-stat b { display: block; font-size: var(--fs-h3); line-height: var(--lh-h3); color: var(--ink); }
+.done-stat span { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.done-stat--xp { background: var(--gold-soft); border-color: var(--gold-line); }
+.done-stat--streak { background: var(--streak-soft); border-color: var(--streak-soft); }
+/* Keep Latin word labels LTR inside RTL word rows */
+.word__label { direction: ltr; unicode-bidi: isolate; }
+</style>
+</head>
+<body class="focus">
+
+<header class="focus__bar">
+  <div class="focus__bar-inner">
+    <a class="btn btn--ghost btn--sm focus__back" href="11-kelas-saya.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Kelas Saya</a>
+    <span class="topnav__divider"></span>
+    <div class="focus__title"><b>Membaca Akhir: Isim Mu'rab</b><span>Bab 2 · Isim ba'da Fi'il</span></div>
+    <div class="focus__progress"><span>Materi 4 dari 21</span><div class="progress progress--sm" style="flex:1"><div class="progress__bar" style="width:14%"></div></div><span>14%</span></div>
+    <div class="focus__actions">
+      <span class="pill pill--streak"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>12 <span class="pill__label">hari</span></span>
+      <span class="pill pill--xp"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>1.120 <span class="pill__label">XP</span></span>
+      <a class="btn btn--ghost btn--icon btn--sm" href="16-mushaf.html" title="Buka Mushaf &amp; Kamus" aria-label="Buka Mushaf dan Kamus"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg></a>
+      <a class="btn btn--ghost btn--icon btn--sm" href="#tab-catatan" data-tab-link title="Catatan" aria-label="Catatan"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<main class="focus__main focus__main--wide">
+  <div class="lp">
+
+    <div class="lp__main">
+
+      <!-- Video player (placeholder) -->
+      <div class="player" role="region" aria-label="Pemutar video materi">
+        <svg class="hero__pattern" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M1180.0 -60.0 L1256.2 16.2 L1363.8 16.2 L1363.8 123.8 L1440.0 200.0 L1363.8 276.2 L1363.8 383.8 L1256.2 383.8 L1180.0 460.0 L1103.8 383.8 L996.2 383.8 L996.2 276.2 L920.0 200.0 L996.2 123.8 L996.2 16.2 L1103.8 16.2Z"/><path d="M1260.4 6.0 L1293.7 86.3 L1374.0 119.6 L1340.7 200.0 L1374.0 280.4 L1293.7 313.7 L1260.4 394.0 L1180.0 360.7 L1099.6 394.0 L1066.3 313.7 L986.0 280.4 L1019.3 200.0 L986.0 119.6 L1066.3 86.3 L1099.6 6.0 L1180.0 39.3Z"/><path d="M1180.0 35.0 L1228.3 83.3 L1296.7 83.3 L1296.7 151.7 L1345.0 200.0 L1296.7 248.3 L1296.7 316.7 L1228.3 316.7 L1180.0 365.0 L1131.7 316.7 L1063.3 316.7 L1063.3 248.3 L1015.0 200.0 L1063.3 151.7 L1063.3 83.3 L1131.7 83.3Z"/><path d="M1226.7 87.3 L1246.0 134.0 L1292.7 153.3 L1273.4 200.0 L1292.7 246.7 L1246.0 266.0 L1226.7 312.7 L1180.0 293.4 L1133.3 312.7 L1114.0 266.0 L1067.3 246.7 L1086.6 200.0 L1067.3 153.3 L1114.0 134.0 L1133.3 87.3 L1180.0 106.6Z"/><path d="M1180.0 118.0 L1204.0 142.0 L1238.0 142.0 L1238.0 176.0 L1262.0 200.0 L1238.0 224.0 L1238.0 258.0 L1204.0 258.0 L1180.0 282.0 L1156.0 258.0 L1122.0 258.0 L1122.0 224.0 L1098.0 200.0 L1122.0 176.0 L1122.0 142.0 L1156.0 142.0Z"/><circle cx="1180" cy="200" r="45.1"/></svg>
+        <div class="player__slide">
+          <span class="text-overline">Bab 2 · Isim ba'da Fi'il</span>
+          <span class="player__slide-ar" lang="ar" dir="rtl">اَلْفَاعِلُ</span>
+          <div class="word-row" dir="rtl">
+            <span class="word irab--fiil-fail"><span class="word__ar" lang="ar" dir="rtl">قَامَ</span><span class="word__label"><i class="word__dot"></i>Fi'il</span></span>
+            <span class="word irab--fail is-selected"><span class="word__ar" lang="ar" dir="rtl">زَيْدٌ</span><span class="word__label"><i class="word__dot"></i>Fa'il · rafa'</span></span>
+          </div>
+        </div>
+        <div class="player__scrim"></div>
+        <a class="player__play" href="#" aria-label="Putar video"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></a>
+        <p class="player__sub">Fa'il adalah isim yang disebut setelah fi'il ma'lum, dan selalu dibaca rafa'.</p>
+        <div class="player__bar">
+          <div class="scrub" aria-label="Posisi video 04:12 dari 11:40">
+            <span class="scrub__buf"></span><span class="scrub__played"></span>
+            <span class="scrub__mark" style="left:18.6%"></span><span class="scrub__mark" style="left:47.1%"></span><span class="scrub__mark" style="left:75%"></span>
+            <span class="scrub__tip" style="left:47.1%">05:30 · Tanda rafa' fa'il</span>
+            <span class="scrub__thumb"></span>
+          </div>
+          <div class="pctl">
+            <span class="pbtn" aria-label="Putar"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></span>
+            <span class="pbtn" aria-label="Mundur 10 detik"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/><path d="M10 9.5v5M13 9.5h2.5v5H13z"/></svg></span>
+            <span class="pbtn" aria-label="Maju 10 detik"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/><path d="M9 9.5v5M12 9.5h2.5v5H12z"/></svg></span>
+            <span class="pbtn" aria-label="Volume"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></span>
+            <span class="ptime"><b>04:12</b> / 11:40</span>
+            <span class="pchap">· Pengertian fa'il</span>
+            <span class="flex-1"></span>
+            <span class="pmenu-wrap" data-toggle="is-on">
+              <span class="pbtn pbtn--boxed">1,25×</span>
+              <span class="pmenu"><b>Kecepatan</b><span>0,75×</span><span>1×</span><span class="is-cur">1,25× <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>1,5×</span><span>2×</span></span>
+            </span>
+            <span class="pmenu-wrap" data-toggle="is-on">
+              <span class="pbtn pbtn--on" aria-label="Subtitle"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M10 10.5a2 2 0 1 0 0 3M17 10.5a2 2 0 1 0 0 3"/></svg></span>
+              <span class="pmenu"><b>Subtitle</b><span class="is-cur">Indonesia <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Arab (teks contoh)</span><span>Mati</span></span>
+            </span>
+            <span class="pmenu-wrap" data-toggle="is-on">
+              <span class="pbtn pbtn--boxed">720p</span>
+              <span class="pmenu"><b>Kualitas</b><span>Otomatis</span><span>1080p</span><span class="is-cur">720p <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>480p · hemat kuota</span><span>Hanya audio</span></span>
+            </span>
+            <span class="pbtn" aria-label="Pengaturan"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+            <span class="pbtn" aria-label="Layar penuh"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chapters" data-chips>
+        <span class="chapter chapter--done"><small>00:00</small><span>Pengantar Pintu 3</span></span>
+        <span class="chapter chip--active"><small>02:10 · sedang diputar</small><span>Pengertian fa'il</span></span>
+        <span class="chapter"><small>05:30</small><span>Tanda rafa' fa'il</span></span>
+        <span class="chapter"><small>08:45</small><span>Contoh dari Al-Qur'an</span></span>
+      </div>
+
+      <div class="lesson-head">
+        <div>
+          <span class="text-overline">Membaca Akhir: Isim Mu'rab · Materi 4</span>
+          <h1 class="text-h2" style="margin-top:var(--space-1)">Bab 2 · Fa'il dan Tanda Rafa'nya</h1>
+          <div class="cluster" style="margin-top:var(--space-3)">
+            <span class="avatar-with-meta"><span class="avatar avatar--sm avatar--deep">AH</span><span class="avatar-with-meta__name">Ust. Ahmad Hanafi</span></span>
+            <span class="text-small text-muted">11 menit 40 detik · +20 XP · Rujukan: Qaidaty Jilid 2, hlm. 50–67</span>
+          </div>
+          <div class="tangga-l" aria-label="Enam Tangga: tangga 2 dari 6">
+            <span class="is-done"><i></i>Su'al</span>
+            <span class="is-now"><i></i>Istima'</span>
+            <span><i></i>Fahm</span>
+            <span><i></i>Hifzh</span>
+            <span><i></i>Ta'lim</span>
+            <span><i></i>'Amal</span>
+          </div>
+        </div>
+        <div class="cluster cluster--sm cluster--nowrap">
+          <a class="btn btn--secondary btn--sm" href="#" data-toast="toast-saved"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Simpan</a>
+          <a class="btn btn--secondary btn--sm" href="17-diskusi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Diskusi kelas</a>
+        </div>
+      </div>
+
+      <!-- Lesson tabs -->
+      <section data-tabs>
+        <div class="tabs">
+          <a class="tab tab--active" data-tab="materi" href="#"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Materi</a>
+          <a class="tab" data-tab="catatan" href="#"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg> Catatan <span class="tab__count">3</span></a>
+          <a class="tab" data-tab="tanya" href="#"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg> Tanya Ustadz <span class="tab__count">2</span></a>
+          <a class="tab" data-tab="unduhan" href="#"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Unduhan <span class="tab__count">4</span></a>
+        </div>
+
+        <!-- MATERI -->
+        <article class="prose" data-panel="materi">
+          <p class="lead">Bila sebelum isim ada fi'il, lihat jenis fi'il-nya, lalu tentukan jabatan isim itu. Materi ini membahas jabatan pertama setelah fi'il ma'lum: <b>fa'il</b>.</p>
+
+          <div class="cluster cluster--sm">
+            <span class="text-caption text-muted">Warna i'rab di materi ini:</span>
+            <span class="legend-chip irab--fiil-fail"><i></i>Fi'il</span>
+            <span class="legend-chip irab--fail"><i></i>Fa'il</span>
+            <span class="legend-chip irab--maful-bih"><i></i>Maf'ul bih</span>
+            <span class="legend-chip irab--mudhaf-ilaih"><i></i>Mudhaf ilaih</span>
+            <span class="legend-chip irab--maful-fih"><i></i>Zharaf</span>
+            <span class="legend-chip irab--harf-lain"><i></i>Harf lainnya</span>
+          </div>
+
+          <h3>Apa itu fa'il?</h3>
+          <p><b>Fa'il</b> adalah isim yang disebut setelah fi'il ma'lum dan menunjukkan pelaku pekerjaan atau pemilik sifat. Setiap fi'il ma'lum pasti punya fa'il. Fa'il bisa berupa <b>isim zhahir</b> (bukan dhamir) atau <b>isim dhamir</b> yang ada di dalam fi'il.</p>
+          <div class="word-row" dir="rtl">
+            <span class="word irab--fiil-fail"><span class="word__ar" lang="ar" dir="rtl">أَنْزَلَ</span><span class="word__label"><i class="word__dot"></i>Fi'il ma'lum</span></span>
+            <span class="word irab--fail is-selected"><span class="word__ar" lang="ar" dir="rtl">اللّٰهُ</span><span class="word__label"><i class="word__dot"></i>Fa'il · rafa'</span></span>
+            <span class="word irab--maful-bih"><span class="word__ar" lang="ar" dir="rtl">الْقُرْآنَ</span><span class="word__label"><i class="word__dot"></i>Maf'ul bih · nashab</span></span>
+          </div>
+          <p class="text-small text-muted">Allah (pelaku) menurunkan Al-Qur'an. Kata <span class="ar-inline" lang="ar" dir="rtl">اللّٰهُ</span> dibaca rafa' karena ia fa'il; <span class="ar-inline" lang="ar" dir="rtl">الْقُرْآنَ</span> dibaca nashab karena dikenai pekerjaan.</p>
+
+          <div class="box box--rumus">
+            <span class="box__head"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> Rumus</span>
+            <p class="box__main">Setiap fi'il ma'lum pasti punya fa'il, dan fa'il selalu rafa'.</p>
+            <ol class="steps-ol">
+              <li>Untuk fi'il no. 1 (<span class="ar-inline" lang="ar" dir="rtl">هُوَ</span>) dan no. 4 (<span class="ar-inline" lang="ar" dir="rtl">هِيَ</span>), cari dulu isim zhahir sesudahnya. Bila tidak ada, fa'il-nya dhamir mustatir.</li>
+              <li>Sesudah fi'il no. 1 fa'il-nya mudzakkar; sesudah fi'il no. 4 fa'il-nya muannats.</li>
+              <li>Isim sesudah fi'il yang berakhiran <span class="ar-inline" lang="ar" dir="rtl">ـَانِ</span> atau <span class="ar-inline" lang="ar" dir="rtl">ـُوْنَ</span> pasti fa'il-nya.</li>
+              <li>Fi'il tetap mufrad walaupun fa'il-nya mutsanna atau jamak: <span class="ar-inline" lang="ar" dir="rtl">قَامَ الرِّجَالُ</span>.</li>
+            </ol>
+          </div>
+
+          <h3>Tanda rafa' fa'il</h3>
+          <p>Rafa' tidak selalu berarti dhammah. Tandanya mengikuti jenis isim yang menjadi fa'il.</p>
+          <div class="table-wrap">
+            <table class="table">
+              <thead><tr><th>Jenis isim</th><th>Tanda rafa'</th><th class="text-right">Contoh</th></tr></thead>
+              <tbody>
+                <tr><td>Mufrad</td><td><span class="badge badge--info">Dhammah</span></td><td class="text-right" dir="rtl"><span class="word-inline irab--fiil-fail" lang="ar">قَامَ</span> <span class="word-inline irab--fail" lang="ar">زَيْدٌ</span></td></tr>
+                <tr><td>Jamak taksir</td><td><span class="badge badge--info">Dhammah</span></td><td class="text-right" dir="rtl"><span class="word-inline irab--fiil-fail" lang="ar">قَامَ</span> <span class="word-inline irab--fail" lang="ar">الرِّجَالُ</span></td></tr>
+                <tr><td>Jamak muannats salim</td><td><span class="badge badge--info">Dhammah</span></td><td class="text-right" dir="rtl"><span class="word-inline irab--fiil-fail" lang="ar">قَامَتِ</span> <span class="word-inline irab--fail" lang="ar">الْهِنْدَاتُ</span></td></tr>
+                <tr><td>Mutsanna</td><td><span class="badge badge--premium">Alif</span></td><td class="text-right" dir="rtl"><span class="word-inline irab--fiil-fail" lang="ar">قَامَ</span> <span class="word-inline irab--fail" lang="ar">الزَّيْدَانِ</span></td></tr>
+                <tr><td>Jamak mudzakkar salim</td><td><span class="badge badge--free">Wawu</span></td><td class="text-right" dir="rtl"><span class="word-inline irab--fiil-fail" lang="ar">قَامَ</span> <span class="word-inline irab--fail" lang="ar">الزَّيْدُوْنَ</span></td></tr>
+                <tr><td>Isim lima</td><td><span class="badge badge--free">Wawu</span></td><td class="text-right" dir="rtl"><span class="word-inline irab--fiil-fail" lang="ar">قَامَ</span> <span class="word-inline irab--fail" lang="ar">أَبُوْ</span><span class="word-inline irab--mudhaf-ilaih" lang="ar">كَ</span></td></tr>
+                <tr><td>Isim maqshur dan manqush</td><td><span class="badge badge--locked">Dhammah muqaddarah</span></td><td class="text-right" dir="rtl"><span class="word-inline irab--fiil-fail" lang="ar">قَامَ</span> <span class="word-inline irab--fail" lang="ar">الْفَتَى</span> · <span class="word-inline irab--fiil-fail" lang="ar">قَامَ</span> <span class="word-inline irab--fail" lang="ar">الْقَاضِي</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="box box--quran">
+            <span class="box__head"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg> Contoh dari Al-Qur'an</span>
+            <div class="ex-pair">
+              <div>
+                <div class="word-row" dir="rtl">
+                  <span class="word irab--harf-lain"><span class="word__ar" lang="ar" dir="rtl">قَدْ</span><span class="word__label"><i class="word__dot"></i>Harf</span></span>
+                  <span class="word irab--fiil-fail"><span class="word__ar" lang="ar" dir="rtl">أَفْلَحَ</span><span class="word__label"><i class="word__dot"></i>Fi'il no. 1</span></span>
+                  <span class="word irab--fail"><span class="word__ar" lang="ar" dir="rtl">الْمُؤْمِنُوْنَ</span><span class="word__label"><i class="word__dot"></i>Fa'il</span></span>
+                </div>
+                <p class="text-small">Fa'il berakhiran <span class="ar-inline" lang="ar" dir="rtl">ـُوْنَ</span>: jamak mudzakkar salim, rafa' dengan <b>wawu</b>.</p>
+                <span class="src">Al-Mu'minun: 1</span>
+              </div>
+              <div>
+                <div class="word-row" dir="rtl">
+                  <span class="word irab--maful-fih"><span class="word__ar" lang="ar" dir="rtl">إِذَا</span><span class="word__label"><i class="word__dot"></i>Zharaf</span></span>
+                  <span class="word irab--fiil-fail"><span class="word__ar" lang="ar" dir="rtl">جَاءَ</span><span class="word__label"><i class="word__dot"></i>Fi'il</span></span>
+                  <span class="word irab--fail"><span class="word__ar" lang="ar" dir="rtl">نَصْرُ</span><span class="word__label"><i class="word__dot"></i>Fa'il</span></span>
+                  <span class="word irab--mudhaf-ilaih"><span class="word__ar" lang="ar" dir="rtl">اللّٰهِ</span><span class="word__label"><i class="word__dot"></i>Mudhaf ilaih</span></span>
+                </div>
+                <p class="text-small">Fa'il <span class="ar-inline" lang="ar" dir="rtl">نَصْرُ</span> mufrad, rafa' dengan <b>dhammah</b>; ia mudhaf, maka <span class="ar-inline" lang="ar" dir="rtl">اللّٰهِ</span> jar.</p>
+                <span class="src">An-Nashr: 1</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="box box--kitab">
+            <span class="box__head"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Contoh dari kitab</span>
+            <p class="kitab-text" lang="ar" dir="rtl">اَلْفَاعِلُ هُوَ <mark>الْاِسْمُ الْمَرْفُوْعُ</mark> <mark>الْمَذْكُوْرُ قَبْلَهُ فِعْلُهُ</mark>، وَهُوَ عَلَى قِسْمَيْنِ: ظَاهِرٍ وَمُضْمَرٍ.</p>
+            <p class="tr">"Fa'il adalah isim yang dibaca rafa' dan fi'il-nya disebut sebelumnya. Fa'il ada dua macam: zhahir dan mudhmar (dhamir)."</p>
+            <div class="cluster cluster--between">
+              <span class="src">Matan Al-Ajurrumiyyah, Bab al-Fa'il</span>
+              <a class="link text-small" href="16-mushaf.html#tab-pustaka">Buka di Pustaka Kitab <svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+            </div>
+          </div>
+
+          <div class="card card--flat cluster cluster--between" style="padding:var(--space-5) var(--space-6)">
+            <div class="media"><span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span><span class="media__body"><span class="media__title">Cek pemahaman: 10 soal, ± 8 menit</span><span class="media__sub">Lulus 70% untuk membuka materi 2.2 Fa'il isim dhamir.</span></span></div>
+            <a class="btn btn--primary" href="13-kuis.html">Kerjakan Kuis <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          </div>
+        </article>
+
+        <!-- CATATAN -->
+        <div class="prose" data-panel="catatan" hidden>
+          <div class="composer is-focus">
+            <div class="composer__area"><span class="input__placeholder">Tulis catatan untuk menit ini… (catatan hanya terlihat oleh Anda)</span></div>
+            <div class="composer__bar">
+              <span class="ts"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg> 04:12</span>
+              <span class="text-caption text-muted">Waktu video ikut tersimpan</span>
+              <span class="flex-1"></span>
+              <a class="btn btn--ghost btn--sm" href="#">Batal</a>
+              <a class="btn btn--primary btn--sm" href="#" data-toast="toast-note">Simpan catatan</a>
+            </div>
+          </div>
+          <div class="cluster cluster--between"><span class="text-small text-muted">3 catatan di materi ini</span><a class="link text-small" href="#"><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Ekspor ke PDF</a></div>
+          <div class="panel"><div class="panel__body panel__body--flush list-divided">
+            <div class="note"><span class="ts"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg> 01:05</span><div class="note__text">Pintu 3 = isim sesudah fi'il. Ada 5 kemungkinan jabatan: fa'il, naibul fa'il, maf'ul bih, isim/khabar kana, maf'ul zhanna.<p class="note__meta">Kemarin, 20.14</p></div><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Ubah"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></a></div>
+            <div class="note"><span class="ts"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg> 03:20</span><div class="note__text">Fi'il no. 1 dan no. 4 (<span class="ar-inline" lang="ar" dir="rtl">هُوَ ، هِيَ</span>) → cari isim zhahir dulu. Contoh: <span class="ar-inline" lang="ar" dir="rtl">حَضَرَ الْأُسْتَاذُ</span>.<p class="note__meta">Hari ini, 06.42</p></div><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Ubah"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></a></div>
+            <div class="note"><span class="ts"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg> 04:02</span><div class="note__text">Ingat: <span class="ar-inline" lang="ar" dir="rtl">قَامَ الرِّجَالُ</span>, fi'il tetap mufrad walaupun fa'il jamak.<p class="note__meta">Hari ini, 06.47</p></div><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Ubah"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></a></div>
+          </div></div>
+        </div>
+
+        <!-- TANYA USTADZ -->
+        <div class="prose" data-panel="tanya" hidden>
+          <div class="composer">
+            <div class="composer__area"><span class="input__placeholder">Tulis pertanyaan tentang materi ini. Sertakan kalimat Arab yang membuat Anda ragu.</span></div>
+            <div class="composer__bar">
+              <span class="ts"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg> 04:12</span>
+              <span class="text-caption text-muted">Dijawab Ust. Ahmad Hanafi, biasanya kurang dari 24 jam</span>
+              <span class="flex-1"></span>
+              <a class="btn btn--primary btn--sm" href="#" data-toast="toast-ask"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg> Kirim</a>
+            </div>
+          </div>
+          <div class="cluster cluster--between">
+            <div class="tabs tabs--segmented" data-chips data-active-class="tab--active"><span class="tab tab--active" data-chip>Semua (2)</span><span class="tab" data-chip>Pertanyaan saya (1)</span></div>
+            <span class="text-small text-muted">Urut: terbaru</span>
+          </div>
+          <div class="panel"><div class="panel__body panel__body--flush list-divided">
+            <div class="thread">
+              <div class="thread__q">
+                <span class="avatar avatar--ring">MF</span>
+                <div class="thread__body">
+                  <div class="thread__who"><b>Anda</b> · 2 jam lalu <span class="ts"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg> 08:50</span><span class="badge badge--locked">Menunggu jawaban</span></div>
+                  <p>Pada <span class="ar-inline" lang="ar" dir="rtl">إِذَا السَّمَاءُ انْفَطَرَتْ</span>, kenapa fa'il-nya disebut dhamir mustatir? Bukankah <span class="ar-inline" lang="ar" dir="rtl">السَّمَاءُ</span> juga dibaca rafa'?</p>
+                  <div class="thread__foot"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> 4 santri punya pertanyaan sama</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="thread">
+              <div class="thread__q">
+                <span class="avatar avatar--gold">AH</span>
+                <div class="thread__body">
+                  <div class="thread__who"><b>Ahmad Hanif</b> · kemarin <span class="ts"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg> 05:48</span><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Dijawab</span></div>
+                  <p>Fa'il <span class="ar-inline" lang="ar" dir="rtl">الرِّجَالُ</span> itu jamak taksir dari laki-laki. Boleh tidak fi'il-nya diberi ta' muannats: <span class="ar-inline" lang="ar" dir="rtl">قَامَتِ الرِّجَالُ</span>?</p>
+                </div>
+              </div>
+              <div class="thread__answer">
+                <span class="avatar avatar--sm avatar--deep">AH</span>
+                <div class="thread__body">
+                  <div class="thread__who"><b>Ust. Ahmad Hanafi</b><span class="badge badge--level">Ustadz</span> · kemarin, 21.30</div>
+                  <p>Boleh. Fa'il jamak taksir boleh diperlakukan mudzakkar atau muannats, jadi <span class="ar-inline" lang="ar" dir="rtl">قَامَ الرِّجَالُ</span> dan <span class="ar-inline" lang="ar" dir="rtl">قَامَتِ الرِّجَالُ</span> sama-sama benar. Yang wajib memakai ta' adalah fa'il muannats hakiki yang langsung setelah fi'il, seperti <span class="ar-inline" lang="ar" dir="rtl">قَامَتْ هِنْدٌ</span>.</p>
+                  <div class="thread__foot"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/></svg> 12 terbantu</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 2 balasan</span></div>
+                </div>
+              </div>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- UNDUHAN -->
+        <div class="prose" data-panel="unduhan" hidden>
+          <div class="cluster cluster--between"><span class="text-small text-muted">Berkas bisa dibuka tanpa internet setelah diunduh.</span><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-dl"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Unduh semua · ZIP 6,2 MB</a></div>
+          <div class="panel"><div class="panel__body panel__body--flush list-divided">
+            <div class="file-row"><span class="icon-tile icon-tile--bad"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span><span class="media__body"><span class="media__title">Ringkasan materi: Fa'il dan tanda rafa'nya</span><span class="media__sub">PDF · 2 halaman · 340 KB · rumus, tabel tanda rafa', contoh</span></span><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-dl"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Unduh</a></div>
+            <div class="file-row"><span class="icon-tile icon-tile--bad"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span><span class="media__body"><span class="media__title">Lembar latihan Bab 2: mencari fa'il</span><span class="media__sub">PDF · 4 halaman · 510 KB · 20 kalimat gundul + kunci di halaman terakhir</span></span><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-dl"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Unduh</a></div>
+            <div class="file-row"><span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></span><span class="media__body"><span class="media__title">Audio contoh bacaan ustadz</span><span class="media__sub">MP3 · 3 menit 20 detik · 3,1 MB · semua contoh di materi ini</span></span><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-dl"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Unduh</a></div>
+            <div class="file-row"><span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg></span><span class="media__body"><span class="media__title">Slide video</span><span class="media__sub">PDF · 18 slide · 2,2 MB</span></span><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-dl"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Unduh</a></div>
+          </div></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Curriculum -->
+    <aside class="panel curr" aria-label="Kurikulum kelas">
+      <div class="panel__head" style="flex-direction:column;align-items:stretch;gap:var(--space-3)">
+        <div class="cluster cluster--between"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> Kurikulum</span><span class="text-small text-muted">3 / 21 selesai</span></div>
+        <div class="progress progress--sm"><div class="progress__bar" style="width:14%"></div></div>
+      </div>
+      <div class="panel__body">
+        <details class="bab">
+          <summary class="bab__sum">
+            <span class="bab__row"><span class="icon-tile icon-tile--sm icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="bab__title">Bab 1 · Bunyi Akhir Isim Mu'rab<small>3 materi + kuis · nilai kuis 90</small></span><svg class="icon icon--chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+            <span class="progress progress--sm progress--good"><span class="progress__bar" style="width:100%"></span></span>
+          </summary>
+          <div class="cl-list">
+            <a class="cl cl--done" href="12-ruang-belajar.html"><span class="cl__st"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="cl__main"><span class="cl__title">1.1 Rafa', nashab, jar pada isim</span><span class="cl__meta">12 mnt · +20 XP</span></span></a>
+            <a class="cl cl--done" href="12-ruang-belajar.html"><span class="cl__st"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="cl__main"><span class="cl__title">1.2 Isim lima</span><span class="cl__meta">10 mnt · +20 XP</span></span></a>
+            <a class="cl cl--done" href="12-ruang-belajar.html"><span class="cl__st"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="cl__main"><span class="cl__title">1.3 Isim maqshur dan manqush</span><span class="cl__meta">9 mnt · +20 XP</span></span></a>
+            <a class="cl cl--done" href="13-kuis.html"><span class="cl__st"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="cl__main"><span class="cl__title">Kuis Bab 1</span><span class="cl__meta">10 soal · nilai 90</span></span></a>
+          </div>
+        </details>
+
+        <details class="bab" open>
+          <summary class="bab__sum">
+            <span class="bab__row"><span class="icon-tile icon-tile--sm"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg></span><span class="bab__title">Bab 2 · Isim ba'da Fi'il<small>5 materi + kuis · 0 dari 6 selesai</small></span><svg class="icon icon--chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+            <span class="progress progress--sm"><span class="progress__bar" style="width:6%"></span></span>
+          </summary>
+          <div class="cl-list">
+            <a class="cl cl--current" href="12-ruang-belajar.html"><span class="cl__st"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></span><span class="cl__main"><span class="cl__title">2.1 Fa'il dan tanda rafa'nya</span><span class="cl__meta">Sedang diputar · 04:12 / 11:40</span></span></a>
+            <a class="cl cl--next" href="13-kuis.html"><span class="cl__st"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span><span class="cl__main"><span class="cl__title">Uji Pemahaman: Fa'il</span><span class="cl__meta">10 soal · +50 XP</span></span></a>
+            <div class="cl cl--locked"><span class="cl__st"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="cl__main"><span class="cl__title">2.2 Fa'il isim dhamir</span><span class="cl__meta">14 mnt · terbuka setelah kuis</span></span></div>
+            <div class="cl cl--locked"><span class="cl__st"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="cl__main"><span class="cl__title">2.3 Maf'ul bih</span><span class="cl__meta">13 mnt</span></span></div>
+            <div class="cl cl--locked"><span class="cl__st"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="cl__main"><span class="cl__title">2.4 Naibul fa'il</span><span class="cl__meta">11 mnt</span></span></div>
+            <div class="cl cl--locked"><span class="cl__st"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="cl__main"><span class="cl__title">2.5 Kana dan saudaranya</span><span class="cl__meta">15 mnt</span></span></div>
+            <div class="cl cl--locked"><span class="cl__st"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="cl__main"><span class="cl__title">Kuis Bab 2</span><span class="cl__meta">15 soal</span></span></div>
+          </div>
+        </details>
+
+        <details class="bab bab--locked">
+          <summary class="bab__sum">
+            <span class="bab__row"><span class="icon-tile icon-tile--sm" style="background:var(--disabled-bg);color:var(--subtle)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="bab__title">Bab 3 · Isim ba'da Harf<small>6 materi · terbuka setelah Bab 2</small></span><svg class="icon icon--chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+          </summary>
+          <div class="cl-list">
+            <div class="cl cl--locked"><span class="cl__st"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="cl__main"><span class="cl__title">3.1 Isim ba'da harf jar</span><span class="cl__meta">12 mnt</span></span></div>
+            <div class="cl cl--locked"><span class="cl__st"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="cl__main"><span class="cl__title">3.2 Isim ba'da inna dan saudaranya</span><span class="cl__meta">14 mnt</span></span></div>
+          </div>
+        </details>
+
+        <details class="bab bab--locked">
+          <summary class="bab__sum">
+            <span class="bab__row"><span class="icon-tile icon-tile--sm" style="background:var(--disabled-bg);color:var(--subtle)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="bab__title">Bab 4 · Isim ba'da Isim<small>7 materi · idhafah, mubtada'-khabar, tawabi'</small></span><svg class="icon icon--chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+          </summary>
+          <div class="cl-list">
+            <div class="cl cl--locked"><span class="cl__st"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="cl__main"><span class="cl__title">4.1 Idhafah: dasar dan rumus 1</span><span class="cl__meta">13 mnt</span></span></div>
+          </div>
+        </details>
+
+        <div class="media media--top" style="padding:var(--space-3);border-radius:var(--radius-md);background:var(--blue-tint)">
+          <span class="icon-tile icon-tile--sm"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+          <span class="media__body"><span class="media__title">Live: Tanya jawab Bab 2</span><span class="media__sub">Senin, 16 Nov · 19.30 WIB</span><a class="link text-caption" href="15-jadwal.html">Lihat jadwal</a></span>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</main>
+
+<footer class="focus__footer">
+  <div class="focus__footer-inner">
+    <a class="foot-nav" href="12-ruang-belajar.html">
+      <span class="btn btn--secondary btn--icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></span>
+      <span class="foot-nav__txt">Sebelumnya<b>1.3 Isim maqshur dan manqush</b></span>
+    </a>
+    <a class="btn btn--primary btn--lg" href="#" data-open="modal-done"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg> Tandai Selesai</a>
+    <a class="foot-nav" href="13-kuis.html">
+      <span class="foot-nav__txt text-right">Berikutnya<b>Kerjakan Kuis: Uji Pemahaman Fa'il</b></span>
+      <span class="btn btn--gold btn--icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
+    </a>
+  </div>
+</footer>
+
+<!-- Completion modal -->
+<div class="modal-scrim overlay" id="modal-done">
+  <div class="modal done-modal" role="dialog" aria-modal="true" aria-labelledby="done-title">
+    <div class="done-hero">
+      <span class="done-hero__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+      <span class="text-overline" style="margin-top:var(--space-3)">Materi 4 dari 21</span>
+      <h2 class="modal__title" id="done-title">Materi selesai, barakallahu fiik</h2>
+      <p class="text-small text-muted">Fa'il dan Tanda Rafa'nya sudah ditandai selesai. Kerjakan kuis singkat untuk membuka materi 2.2.</p>
+    </div>
+    <div class="modal__body">
+      <div class="done-stats">
+        <div class="done-stat done-stat--xp"><span class="pill__icon" style="width:40px;height:40px;background:var(--gold);color:var(--blue-deep)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span><div><b>+20 XP</b><span>Total 1.140 XP · 160 lagi ke Mahir</span></div></div>
+        <div class="done-stat done-stat--streak"><span class="pill__icon" style="width:40px;height:40px;background:var(--streak);color:var(--on-blue)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span><div><b>13 hari</b><span>Hari beruntun berlanjut</span></div></div>
+      </div>
+      <div><div class="progress-label"><span>Target hari ini</span><b>60 / 50 XP</b></div><div class="progress progress--good"><div class="progress__bar" style="width:100%"></div></div></div>
+    </div>
+    <div class="modal__footer">
+      <a class="btn btn--ghost" href="#" data-close>Tetap di sini</a>
+      <a class="btn btn--primary" href="13-kuis.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg> Kerjakan Kuis</a>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div class="toast-stack" style="top:calc(64px + var(--space-4))">
+  <div class="toast toast--info" id="toast-saved" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span><div class="toast__main"><p class="toast__title">Materi disimpan</p><p class="toast__text">Lihat di Kelas Saya, tab Disimpan.</p></div><a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a></div>
+  <div class="toast toast--success" id="toast-note" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span><div class="toast__main"><p class="toast__title">Catatan tersimpan di 04:12</p><p class="toast__text">Klik waktu pada catatan untuk melompat ke menit itu.</p></div><a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a></div>
+  <div class="toast toast--success" id="toast-ask" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg></span><div class="toast__main"><p class="toast__title">Pertanyaan terkirim</p><p class="toast__text">Anda akan menerima notifikasi saat ustadz menjawab.</p></div><a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a></div>
+  <div class="toast toast--info" id="toast-dl" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></span><div class="toast__main"><p class="toast__title">Unduhan dimulai</p><p class="toast__text">Berkas tersimpan di folder Unduhan perangkat Anda.</p></div><a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a></div>
+</div>
+
+<script>
+  // Topbar "Catatan" shortcut: switch the lesson tabs to Catatan without reloading.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest("[data-tab-link]");
+    if (!a) return;
+    e.preventDefault();
+    var tab = document.querySelector('[data-tab="catatan"]');
+    if (tab) { tab.click(); tab.scrollIntoView({ behavior: "smooth", block: "center" }); }
+  });
+</script>
+
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Diskusi · Al-Abqary LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Diskusi-only styles */
+.forum { display: grid; grid-template-columns: 236px minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+.cats { display: flex; flex-direction: column; gap: 2px; padding: var(--space-3); }
+.cat { display: flex; align-items: center; gap: var(--space-3); height: 40px; padding: 0 var(--space-3); border-radius: var(--radius-md); font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-medium); color: var(--ink); cursor: pointer; }
+.cat:hover { background: var(--bg-subtle); }
+.cat .icon { width: 18px; height: 18px; color: var(--muted); }
+.cat__count { margin-left: auto; font-size: var(--fs-caption); color: var(--muted); font-weight: var(--fw-regular); }
+.cat.is-active { background: var(--blue-soft); color: var(--blue); font-weight: var(--fw-semibold); }
+.cat.is-active .icon, .cat.is-active .cat__count { color: var(--blue); }
+.cats__title { font-size: var(--fs-caption); line-height: var(--lh-caption); font-weight: var(--fw-semibold); letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--subtle); padding: var(--space-3) var(--space-3) var(--space-1); }
+.course-dot { width: 10px; height: 10px; border-radius: 3px; flex: none; background: var(--gold); }
+.course-dot--blue { background: var(--blue); }
+.course-dot--deep { background: var(--blue-deep); }
+.guide { background: var(--gold-soft); border: 1px solid var(--gold-line); border-radius: var(--radius-xl); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-3); font-size: var(--fs-small); line-height: var(--lh-small); }
+.guide__title { display: flex; align-items: center; gap: var(--space-2); font-weight: var(--fw-semibold); }
+.guide__title .icon { width: 18px; height: 18px; color: var(--gold-ink); }
+.guide ul { display: flex; flex-direction: column; gap: var(--space-2); color: var(--muted); font-size: var(--fs-caption); line-height: 18px; }
+.guide li { display: flex; gap: var(--space-2); }
+.guide li::before { content: ""; width: 5px; height: 5px; margin-top: 7px; border-radius: var(--radius-full); background: var(--gold); flex: none; }
+
+/* Thread list */
+.list-toolbar { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--line); }
+.list-toolbar .input { height: 40px; width: 280px; font-size: var(--fs-small); }
+.thread { display: flex; gap: var(--space-4); padding: var(--space-5); border-bottom: 1px solid var(--line); cursor: pointer; }
+.thread:last-child { border-bottom: 0; }
+.thread:hover { background: var(--blue-tint); }
+.thread--pinned { background: var(--gold-soft); }
+.thread--pinned:hover { background: var(--gold-soft); }
+.vote { align-self: flex-start; width: 48px; flex: none; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: var(--space-2) 0; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); color: var(--muted); font-size: var(--fs-small); font-weight: var(--fw-semibold); cursor: pointer; }
+.vote .icon { width: 16px; height: 16px; }
+.vote.is-on { border-color: var(--blue); color: var(--blue); background: var(--blue-soft); }
+.thread__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.thread__title { font-size: var(--fs-body); line-height: var(--lh-body); font-weight: var(--fw-semibold); color: var(--ink); }
+.thread__title .ar-inline { color: var(--blue-deep); }
+.thread__excerpt { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--muted); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+.thread__meta { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.thread__meta .avatar { width: 24px; height: 24px; font-size: 10px; border: 0; }
+.thread__side { flex: none; width: 136px; display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-2); font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.thread__side span { display: inline-flex; align-items: center; gap: var(--space-1); }
+.thread__side .icon { width: 14px; height: 14px; }
+.tag { display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 var(--space-2); border-radius: var(--radius-sm); background: var(--bg-subtle); color: var(--ink); font-size: 11px; font-weight: var(--fw-medium); white-space: nowrap; }
+.badge--answered { background: var(--good-soft); color: var(--good); border-color: var(--good-line); }
+.badge--open { background: var(--warn-soft); color: var(--warn); }
+
+/* Thread view */
+.post { display: flex; gap: var(--space-4); padding: var(--space-6); }
+.post + .post { border-top: 1px solid var(--line); }
+.post__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-4); }
+.post__head { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.post__name { font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-semibold); }
+.post__time { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.post__text { font-size: var(--fs-body); line-height: 26px; color: var(--ink); display: flex; flex-direction: column; gap: var(--space-3); }
+.post__actions { display: flex; align-items: center; gap: var(--space-1); }
+.post__actions .btn { color: var(--muted); font-weight: var(--fw-medium); }
+.ayah { border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--blue-tint); padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
+.ayah__text { text-align: center; color: var(--ink); }
+.ayah__ref { font-size: var(--fs-caption); color: var(--muted); text-align: center; }
+.ayah__words { display: flex; justify-content: center; gap: var(--space-3); direction: rtl; }
+.answer { margin: 0 var(--space-6) var(--space-2); border: 2px solid var(--good); border-radius: var(--radius-xl); background: var(--surface); box-shadow: var(--shadow-sm); }
+.answer__flag { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-5); background: var(--good-soft); color: var(--good); font-size: var(--fs-small); font-weight: var(--fw-semibold); border-radius: 18px 18px 0 0; }
+.answer__flag .icon { width: 18px; height: 18px; }
+.answer .post { padding: var(--space-5); }
+.irab-list { border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
+.irab-list__row { display: grid; grid-template-columns: minmax(0, 1fr) 140px; gap: var(--space-4); align-items: center; padding: var(--space-2) var(--space-4); border-bottom: 1px solid var(--line); }
+.irab-list__row:last-child { border-bottom: 0; }
+.irab-list__row .ar { font-size: 20px; line-height: 1.8; text-align: right; color: var(--muted); }
+.irab-list__word { font-family: var(--font-ar); font-size: 26px; line-height: 1.6; text-align: right; color: var(--word-color); border-right: 3px solid var(--word-color); padding-right: var(--space-3); }
+.badge--ustadz { background: var(--blue-deep); color: var(--gold-bright); }
+.nested { margin-left: 56px; padding: var(--space-4) var(--space-5); border-left: 2px solid var(--blue-line); background: var(--blue-tint); border-radius: 0 var(--radius-md) var(--radius-md) 0; display: flex; gap: var(--space-3); }
+.replies-head { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) var(--space-6); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--blue-tint); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+
+/* Composer with Arabic keyboard toggle */
+.composer { margin: var(--space-6); border: 1px solid var(--line-strong); border-radius: var(--radius-lg); background: var(--surface); overflow: hidden; }
+.composer:focus-within, .composer.is-focus { border-color: var(--blue); box-shadow: var(--shadow-focus); }
+.composer__bar { display: flex; align-items: center; gap: var(--space-1); padding: var(--space-2); border-bottom: 1px solid var(--line); background: var(--blue-tint); }
+.tool { height: 32px; min-width: 32px; padding: 0 var(--space-2); border-radius: var(--radius-sm); display: inline-flex; align-items: center; justify-content: center; gap: var(--space-1); font-size: var(--fs-small); font-weight: var(--fw-semibold); color: var(--muted); cursor: pointer; }
+.tool:hover { background: var(--bg-subtle); color: var(--ink); }
+.tool .icon { width: 18px; height: 18px; }
+.tool--ar { font-family: var(--font-ar); font-size: 18px; font-weight: var(--fw-regular); border: 1px solid var(--line-strong); padding: 0 var(--space-3); }
+.tool--ar.is-on { background: var(--blue); border-color: var(--blue); color: var(--on-blue); }
+.tool-sep { width: 1px; height: 20px; background: var(--line-strong); margin: 0 var(--space-1); }
+.composer__area { min-height: 96px; padding: var(--space-4); font-size: var(--fs-body); line-height: 28px; }
+.caret { display: inline-block; width: 2px; height: 22px; background: var(--blue); vertical-align: middle; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.ar-kb { display: none; padding: var(--space-3) var(--space-4); border-top: 1px solid var(--line); background: var(--bg); gap: 6px; direction: rtl; }
+.composer:has(.tool--ar.is-on) .ar-kb { display: grid; }
+.ar-kb__row { display: flex; gap: 6px; justify-content: center; }
+.ar-kb__key { min-width: 36px; height: 38px; padding: 0 var(--space-2); border-radius: var(--radius-sm); border: 1px solid var(--line-strong); border-bottom-width: 2px; background: var(--surface); font-family: var(--font-ar); font-size: 20px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.ar-kb__key:hover { background: var(--blue-tint); border-color: var(--blue-line); }
+.ar-kb__key--hk { color: var(--blue); font-size: 24px; background: var(--blue-tint); }
+.ar-kb__key--wide { min-width: 120px; font-family: var(--font-ui); font-size: var(--fs-caption); color: var(--muted); }
+.composer__foot { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-top: 1px solid var(--line); }
+.attach { display: inline-flex; align-items: center; gap: var(--space-2); height: 32px; padding: 0 var(--space-3); border-radius: var(--radius-sm); background: var(--bg-subtle); font-size: var(--fs-caption); color: var(--ink); }
+.attach .icon { width: 16px; height: 16px; color: var(--muted); }
+
+/* Modal (wide) + fake textarea */
+.modal--wide { width: 640px; }
+.textarea { min-height: 140px; padding: var(--space-3) var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--radius-md); background: var(--surface); font-size: var(--fs-small); line-height: 24px; color: var(--ink); }
+.textarea--placeholder { color: var(--subtle); }
+</style>
+</head>
+<body class="app">
+
+<!-- APP TOPNAV START (santri) — copy as-is to every santri page -->
+<header class="topnav app__topnav">
+  <div class="topnav__inner">
+    <a class="brand" href="10-dashboard.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+    <div class="input topnav__search"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari kelas, materi, atau kata…</span><span class="kbd">/</span></div>
+    <div class="topnav__actions">
+      <a class="pill pill--streak" href="18-pencapaian.html" title="Hari beruntun"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>12 <span class="pill__label">hari</span></a>
+      <a class="pill pill--xp" href="18-pencapaian.html" title="Total XP"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>1.120 <span class="pill__label">XP</span></a>
+      <span class="topnav__divider"></span>
+      <a class="btn btn--ghost btn--icon topnav__icon-btn" href="21-notifikasi.html" aria-label="Notifikasi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="notif-dot"></span></a>
+      <a class="avatar-with-meta" href="20-profil.html"><span class="avatar avatar--ring">MF</span><span><span class="avatar-with-meta__name" style="display:block">Muhammad Fauzan</span><span class="avatar-with-meta__sub">Level 4 · Mutqin</span></span></a>
+    </div>
+  </div>
+</header>
+<!-- APP TOPNAV END -->
+
+<div class="app__body">
+
+<!-- SANTRI SIDEBAR START — copy as-is; move .sidebar__item--active to the current page's item -->
+<aside class="sidebar app__sidebar">
+  <div class="sidebar__section">
+    <span class="sidebar__title">Belajar</span>
+    <a class="sidebar__item" href="10-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9.5 9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> Beranda</a>
+    <a class="sidebar__item" href="11-kelas-saya.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Kelas Saya<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="02-katalog.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6z"/></svg> Jelajah Kelas</a>
+    <a class="sidebar__item" href="15-jadwal.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg> Jadwal Live<span class="sidebar__count">2</span></a>
+    <a class="sidebar__item" href="14-tugas.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9zM9 12h6M9 16h4"/></svg> Tugas &amp; Setoran<span class="sidebar__count">2</span></a>
+    <a class="sidebar__item" href="16-mushaf.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg> Mushaf &amp; Pustaka</a>
+    <a class="sidebar__item sidebar__item--active" href="17-diskusi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Diskusi</a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Prestasi</span>
+    <a class="sidebar__item" href="18-pencapaian.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0z"/></svg> Pencapaian</a>
+    <a class="sidebar__item" href="19-sertifikat.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg> Sertifikat<span class="sidebar__count">1</span></a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Akun</span>
+    <a class="sidebar__item" href="21-notifikasi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Notifikasi<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="20-profil.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profil &amp; Pengaturan</a>
+  </div>
+  <div class="sidebar__promo">
+    <span class="badge badge--on-dark" style="align-self:flex-start"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Paket Santri aktif</span>
+    <span class="sidebar__promo-title">Naik ke Halaqah Plus</span>
+    <span class="sidebar__promo-text">Halaqah kelompok kecil maksimal 10 santri, setoran tanpa batas, dan laporan perkembangan bulanan.</span>
+    <a class="btn btn--gold btn--sm btn--block" href="04-harga.html">Lihat paket</a>
+  </div>
+</aside>
+<!-- SANTRI SIDEBAR END -->
+
+<main class="app__main">
+
+  <!-- Page head -->
+  <div class="page-head">
+    <nav class="breadcrumb"><a class="breadcrumb__item" href="10-dashboard.html">Beranda</a><span class="breadcrumb__sep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span><span class="breadcrumb__current">Diskusi</span></nav>
+    <div class="page-head__row">
+      <div>
+        <h1 class="page-head__title">Forum Diskusi</h1>
+        <p class="page-head__sub">Tanyakan i'rab, wazan, atau bacaan yang belum jelas. Ustadz pengampu ikut menjawab.</p>
+      </div>
+      <div class="page-head__actions">
+        <a class="btn btn--primary" href="#" data-open="modal-buat"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Buat Diskusi</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="forum">
+    <!-- Left: categories -->
+    <aside class="stack">
+      <section class="panel">
+        <div class="cats" data-chips data-active-class="is-active">
+          <span class="cat is-active" data-chip><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> Semua diskusi<span class="cat__count">980</span></span>
+          <span class="cat" data-chip><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Umum<span class="cat__count">128</span></span>
+          <span class="cat" data-chip><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></svg> Nahwu<span class="cat__count">342</span></span>
+          <span class="cat" data-chip><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Sharf<span class="cat__count">215</span></span>
+          <span class="cat" data-chip><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> I'rab Ayat<span class="cat__count">187</span></span>
+          <span class="cat" data-chip><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg> Tanya Ustadz<span class="cat__count">96</span></span>
+          <span class="cat" data-chip><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg> Pengumuman<span class="cat__count">12</span></span>
+          <span class="cats__title">Kelas saya</span>
+          <span class="cat" data-chip><i class="course-dot"></i> Harf dan Fi'il<span class="cat__count">64</span></span>
+          <span class="cat" data-chip><i class="course-dot course-dot--blue"></i> Isim Mu'rab<span class="cat__count">41</span></span>
+          <span class="cat" data-chip><i class="course-dot course-dot--deep"></i> Surah Yasin<span class="cat__count">57</span></span>
+          <span class="cats__title">Saya</span>
+          <span class="cat" data-chip><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Diskusi saya<span class="cat__count">4</span></span>
+          <span class="cat" data-chip><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Disimpan<span class="cat__count">9</span></span>
+        </div>
+      </section>
+      <section class="guide">
+        <span class="guide__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Adab berdiskusi</span>
+        <ul>
+          <li>Cari dulu, mungkin pertanyaan serupa sudah dijawab.</li>
+          <li>Tulis teks Arab lengkap dengan harakat dan sebutkan surah/ayat atau halaman kitab.</li>
+          <li>Santun kepada sesama santri dan ustadz. Tidak ada promosi atau tautan luar.</li>
+          <li>Pertanyaan pribadi ke ustadz lewat menu Pesan.</li>
+        </ul>
+        <a class="link text-caption" href="#">Baca pedoman lengkap</a>
+      </section>
+    </aside>
+
+    <!-- Right: list / thread (tabs) -->
+    <div data-tabs data-tab-default="list">
+
+      <!-- THREAD LIST -->
+      <section class="panel" data-panel="list">
+        <div class="list-toolbar">
+          <div class="tabs tabs--segmented" data-chips data-active-class="tab--active">
+            <span class="tab tab--active" data-chip>Terbaru</span>
+            <span class="tab" data-chip>Populer</span>
+            <span class="tab" data-chip>Belum Terjawab <span class="tab__count">23</span></span>
+          </div>
+          <div class="input ml-auto"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari di diskusi…</span></div>
+        </div>
+
+        <!-- Pinned announcement -->
+        <article class="thread thread--pinned">
+          <span class="icon-tile icon-tile--gold" style="width:48px"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span>
+          <div class="thread__main">
+            <a class="thread__title" href="#">Ujian akhir Membaca Bangunan dibuka 20 November</a>
+            <p class="thread__excerpt">Ujian 30 soal bisa dikerjakan sampai 30 November. Silakan bertanya di sini jika ada kendala teknis.</p>
+            <div class="thread__meta"><span class="avatar avatar--deep">AA</span> Admin Al-Abqary <span class="tag">Pengumuman</span> <span>2 jam lalu</span></div>
+          </div>
+          <div class="thread__side"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Disematkan</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 14 balasan</span></div>
+        </article>
+
+        <article class="thread">
+          <span class="vote is-on" data-toggle="is-on"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>34</span>
+          <div class="thread__main">
+            <a class="thread__title" href="#tab-thread" data-tab="thread">Lam apa pada <span class="ar-inline" lang="ar" dir="rtl">لَمِنَ الْمُرْسَلِيْنَ</span> (Yasin: 3), dan mana khabar inna-nya?</a>
+            <p class="thread__excerpt">Di Mushaf Nahwi, kata ini diberi warna khabar inna. Saya bingung huruf lam di depannya itu lam apa…</p>
+            <div class="thread__meta"><span class="avatar avatar--good">SN</span> Siti Nurhaliza <span class="tag"><i class="course-dot course-dot--deep"></i> Mushaf Nahwi: Surah Yasin</span> <span class="tag">I'rab Ayat</span> <span>2 hari lalu</span></div>
+          </div>
+          <div class="thread__side"><span class="badge badge--answered"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg> Dijawab Ustadz</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 12 balasan</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> 318 dilihat</span></div>
+        </article>
+
+        <article class="thread">
+          <span class="vote" data-toggle="is-on"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>21</span>
+          <div class="thread__main">
+            <a class="thread__title" href="#tab-thread" data-tab="thread">Apakah wazan <span class="ar-inline" lang="ar" dir="rtl">اِسْتَفْعَلَ</span> selalu bermakna meminta?</a>
+            <p class="thread__excerpt">Contohnya <span class="ar-inline" lang="ar" dir="rtl">اِسْتَغْفَرَ</span> memang meminta ampun, tapi <span class="ar-inline" lang="ar" dir="rtl">اِسْتَخْرَجَ</span> artinya mengeluarkan. Apa ada makna lain?</p>
+            <div class="thread__meta"><span class="avatar avatar--good">RZ</span> Rizqi Zulfikar <span class="tag"><i class="course-dot"></i> Membaca Bangunan: Harf dan Fi'il</span> <span class="tag">Sharf</span> <span>3 hari lalu</span></div>
+          </div>
+          <div class="thread__side"><span class="badge badge--answered"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg> Dijawab Ustadz</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 8 balasan</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> 204 dilihat</span></div>
+        </article>
+
+        <article class="thread">
+          <span class="vote" data-toggle="is-on"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>17</span>
+          <div class="thread__main">
+            <a class="thread__title" href="#tab-thread" data-tab="thread">Kapan jama' mudzakkar salim memakai <span class="ar-inline" lang="ar" dir="rtl">ـُوْنَ</span> dan kapan <span class="ar-inline" lang="ar" dir="rtl">ـِيْنَ</span>?</a>
+            <p class="thread__excerpt">Saya masih sering tertukar saat membaca teks gundul, terutama setelah huruf jar dan inna.</p>
+            <div class="thread__meta"><span class="avatar avatar--gold">AH</span> Ahmad Hanif <span class="tag"><i class="course-dot course-dot--blue"></i> Membaca Akhir: Isim Mu'rab</span> <span class="tag">Nahwu</span> <span>4 hari lalu</span></div>
+          </div>
+          <div class="thread__side"><span class="badge badge--answered"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg> Dijawab Ustadz</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 5 balasan</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> 156 dilihat</span></div>
+        </article>
+
+        <article class="thread">
+          <span class="vote" data-toggle="is-on"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>3</span>
+          <div class="thread__main">
+            <a class="thread__title" href="#tab-thread" data-tab="thread">Cara membedakan fi'il madhi dan mashdar yang hurufnya sama, misalnya <span class="ar-inline" lang="ar" dir="rtl">ضرب</span></a>
+            <p class="thread__excerpt">Dalam teks gundul, <span class="ar-inline" lang="ar" dir="rtl">ضرب</span> bisa dibaca <span class="ar-inline" lang="ar" dir="rtl">ضَرَبَ</span> atau <span class="ar-inline" lang="ar" dir="rtl">ضَرْبٌ</span>. Apa petunjuk dari posisi katanya?</p>
+            <div class="thread__meta"><span class="avatar">MF</span> Anda <span class="tag"><i class="course-dot"></i> Membaca Bangunan: Harf dan Fi'il</span> <span class="tag">Tanya Ustadz</span> <span>5 jam lalu</span></div>
+          </div>
+          <div class="thread__side"><span class="badge badge--open"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Belum terjawab</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 0 balasan</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> 12 dilihat</span></div>
+        </article>
+
+        <article class="thread">
+          <span class="vote" data-toggle="is-on"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>9</span>
+          <div class="thread__main">
+            <a class="thread__title" href="#tab-thread" data-tab="thread">Muta'allaq <span class="ar-inline" lang="ar" dir="rtl">بِسْمِ اللّٰهِ</span> itu apa, dan wajibkah disebutkan saat meng-i'rab?</a>
+            <p class="thread__excerpt">Ada yang menulis <span class="ar-inline" lang="ar" dir="rtl">أَبْتَدِئُ</span>, ada juga yang menulis <span class="ar-inline" lang="ar" dir="rtl">ابْتِدَائِيْ</span>. Mana yang dipakai di kelas?</p>
+            <div class="thread__meta"><span class="avatar avatar--gold">NA</span> Nur Aini <span class="tag"><i class="course-dot course-dot--blue"></i> Membaca Akhir: Isim Mu'rab</span> <span class="tag">Nahwu</span> <span>6 hari lalu</span></div>
+          </div>
+          <div class="thread__side"><span class="badge badge--open"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Menunggu ustadz</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 3 balasan</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> 97 dilihat</span></div>
+        </article>
+
+        <article class="thread">
+          <span class="vote" data-toggle="is-on"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>40</span>
+          <div class="thread__main">
+            <a class="thread__title" href="#tab-thread" data-tab="thread">Berbagi: tabel tashrif istilahi untuk murajaah harian</a>
+            <p class="thread__excerpt">Saya rangkum 6 bab fi'il tsulatsi dalam satu halaman. Semoga bermanfaat, koreksi kalau ada yang keliru.</p>
+            <div class="thread__meta"><span class="avatar avatar--good">FZ</span> Fatimah Az-Zahra <span class="tag">Umum</span> <span>1 pekan lalu</span> <span class="tag"><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> 1 lampiran</span></div>
+          </div>
+          <div class="thread__side"><span class="badge badge--answered"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg> Dijawab Ustadz</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> 22 balasan</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> 611 dilihat</span></div>
+        </article>
+
+        <div class="panel__foot cluster cluster--between"><span class="text-caption text-muted">Menampilkan 7 dari 980 diskusi</span><a class="btn btn--secondary btn--sm" href="#">Muat lebih banyak</a></div>
+      </section>
+
+      <!-- OPENED THREAD -->
+      <section class="panel" data-panel="thread" hidden>
+        <div class="panel__head">
+          <a class="btn btn--ghost btn--sm" href="#tab-list" data-tab="list"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg> Kembali ke daftar</a>
+          <div class="cluster cluster--sm">
+            <a class="btn btn--secondary btn--sm" href="#" data-toggle="is-on"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Ikuti</a>
+            <a class="btn btn--ghost btn--sm btn--icon" href="#" aria-label="Simpan"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></a>
+            <a class="btn btn--ghost btn--sm btn--icon" href="#" aria-label="Lainnya"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a>
+          </div>
+        </div>
+
+        <!-- Question -->
+        <article class="post">
+          <span class="vote is-on" data-toggle="is-on"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>34</span>
+          <div class="post__body">
+            <div class="cluster cluster--sm"><span class="tag">I'rab Ayat</span><span class="tag"><i class="course-dot course-dot--deep"></i> Mushaf Nahwi: Surah Yasin · Ayat 1–12</span><span class="badge badge--answered"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg> Dijawab Ustadz</span></div>
+            <h2 class="text-h3">Lam apa pada <span class="ar-inline" lang="ar" dir="rtl">لَمِنَ الْمُرْسَلِيْنَ</span> (Yasin: 3), dan mana khabar inna-nya?</h2>
+            <div class="post__head"><span class="avatar avatar--sm avatar--good">SN</span><span class="post__name">Siti Nurhaliza</span><span class="badge badge--level">Level 3</span><span class="post__time">Rabu, 11 Nov · 21.14</span></div>
+            <div class="post__text">
+              <p>Assalamu'alaikum. Di Mushaf Nahwi, seluruh <span class="ar-inline" lang="ar" dir="rtl">لَمِنَ الْمُرْسَلِيْنَ</span> pada ayat ini diberi warna khabar inna. Saya bingung, huruf <span class="ar-inline" lang="ar" dir="rtl">لَ</span> di depannya itu lam apa? Apakah khabarnya hanya <span class="ar-inline" lang="ar" dir="rtl">مِنَ الْمُرْسَلِيْنَ</span>?</p>
+              <div class="ayah">
+                <p class="quran ayah__text" lang="ar" dir="rtl">إِنَّكَ لَمِنَ الْمُرْسَلِيْنَ</p>
+                <div class="ayah__words">
+                  <span class="word irab--inna-isim"><span class="word__ar" lang="ar" dir="rtl">إِنَّكَ</span><span class="word__label"><i class="word__dot"></i>Inna + isimnya</span></span>
+                  <span class="word irab--khabar-inna"><span class="word__ar" lang="ar" dir="rtl">لَمِنَ الْمُرْسَلِيْنَ</span><span class="word__label"><i class="word__dot"></i>Khabar inna</span></span>
+                </div>
+                <span class="ayah__ref">QS. Yasin [36]: 3 · tangkapan dari Mushaf Nahwi</span>
+              </div>
+            </div>
+            <div class="post__actions">
+              <a class="btn btn--ghost btn--sm" href="#composer"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Balas</a>
+              <a class="btn btn--ghost btn--sm" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg> Salin tautan</a>
+              <a class="btn btn--ghost btn--sm" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 22V4a1 1 0 0 1 1-1h12l-2 5 2 5H5"/></svg> Laporkan</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Best answer (ustadz) -->
+        <div class="answer">
+          <div class="answer__flag"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg> Jawaban terbaik · dipilih penanya</div>
+          <article class="post">
+            <span class="vote is-on" data-toggle="is-on"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>52</span>
+            <div class="post__body">
+              <div class="post__head"><span class="avatar avatar--sm avatar--deep">AH</span><span class="post__name">Ust. Abdurrahman Hakim</span><span class="badge badge--ustadz"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Ustadz pengampu</span><span class="post__time">Kamis, 12 Nov · 07.40</span></div>
+              <div class="post__text">
+                <p>Wa'alaikumussalam warahmatullah. Huruf <span class="ar-inline" lang="ar" dir="rtl">لَ</span> di sini disebut <b>lam muzahlaqah</b> (<span class="ar-inline" lang="ar" dir="rtl">اللَّامُ الْمُزَحْلَقَةُ</span>). Asalnya lam ibtida' yang berada di awal kalimat. Karena <span class="ar-inline" lang="ar" dir="rtl">إِنَّ</span> dan lam sama-sama berfungsi menguatkan (taukid), lam ini digeser ke khabar agar dua penguat tidak berdempetan.</p>
+                <div class="irab-list">
+                  <div class="irab-list__row irab--inna-isim"><p class="ar" lang="ar" dir="rtl">حَرْفُ تَوْكِيْدٍ وَنَصْبٍ</p><span class="irab-list__word" lang="ar" dir="rtl">إِنَّ</span></div>
+                  <div class="irab-list__row irab--inna-isim"><p class="ar" lang="ar" dir="rtl">ضَمِيْرٌ مُتَّصِلٌ مَبْنِيٌّ عَلَى الْفَتْحِ فِيْ مَحَلِّ نَصْبٍ، اسْمُ إِنَّ</p><span class="irab-list__word" lang="ar" dir="rtl">ـكَ</span></div>
+                  <div class="irab-list__row irab--harf-lain"><p class="ar" lang="ar" dir="rtl">اللَّامُ الْمُزَحْلَقَةُ، حَرْفٌ مَبْنِيٌّ عَلَى الْفَتْحِ لَا مَحَلَّ لَهُ مِنَ الْإِعْرَابِ</p><span class="irab-list__word" lang="ar" dir="rtl">لَ</span></div>
+                  <div class="irab-list__row irab--khabar-inna"><p class="ar" lang="ar" dir="rtl">جَارٌّ وَمَجْرُوْرٌ، وَعَلَامَةُ جَرِّهِ الْيَاءُ لِأَنَّهُ جَمْعُ مُذَكَّرٍ سَالِمٌ، مُتَعَلِّقَانِ بِمَحْذُوْفٍ خَبَرِ إِنَّ</p><span class="irab-list__word" lang="ar" dir="rtl">مِنَ الْمُرْسَلِيْنَ</span></div>
+                </div>
+                <p>Jadi khabar inna adalah syibhul jumlah <span class="ar-inline" lang="ar" dir="rtl">مِنَ الْمُرْسَلِيْنَ</span>, sedangkan lam hanya penguat yang menempel padanya. Karena itu Mushaf Nahwi mewarnai <span class="ar-inline" lang="ar" dir="rtl">لَمِنَ الْمُرْسَلِيْنَ</span> sebagai satu kesatuan khabar. Pembahasan lengkapnya ada di <a class="link" href="12-ruang-belajar.html">Materi 14: Inna dan saudaranya</a>.</p>
+              </div>
+              <div class="post__actions">
+                <a class="btn btn--ghost btn--sm" href="#composer"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Balas</a>
+                <a class="btn btn--ghost btn--sm" href="16-mushaf.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Buka di Mushaf Nahwi</a>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="replies-head" style="margin-top:var(--space-4)"><span>11 balasan lain</span><span class="tabs tabs--segmented" data-chips data-active-class="tab--active"><span class="tab tab--active" data-chip>Terlama</span><span class="tab" data-chip>Terbaru</span><span class="tab" data-chip>Teratas</span></span></div>
+
+        <article class="post">
+          <span class="vote" data-toggle="is-on"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>8</span>
+          <div class="post__body">
+            <div class="post__head"><span class="avatar avatar--sm avatar--good">RZ</span><span class="post__name">Rizqi Zulfikar</span><span class="badge badge--level">Level 5</span><span class="post__time">Kamis, 12 Nov · 09.02</span></div>
+            <div class="post__text"><p>Jazakallahu khairan, ustadz. Berarti sama dengan <span class="ar-inline" lang="ar" dir="rtl">إِنَّ رَبِّيْ لَسَمِيْعُ الدُّعَاءِ</span> (Ibrahim: 39) ya?</p></div>
+            <div class="nested">
+              <span class="avatar avatar--sm avatar--deep">AH</span>
+              <div class="stack stack--xs">
+                <div class="post__head"><span class="post__name">Ust. Abdurrahman Hakim</span><span class="badge badge--ustadz">Ustadz</span><span class="post__time">09.20</span></div>
+                <p class="text-small">Betul. <span class="ar-inline" lang="ar" dir="rtl">لَسَمِيْعُ</span> di sana juga lam muzahlaqah, dan <span class="ar-inline" lang="ar" dir="rtl">سَمِيْعُ</span> adalah khabar inna yang marfu'.</p>
+              </div>
+            </div>
+            <div class="post__actions"><a class="btn btn--ghost btn--sm" href="#composer"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Balas</a></div>
+          </div>
+        </article>
+
+        <article class="post">
+          <span class="vote" data-toggle="is-on"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>5</span>
+          <div class="post__body">
+            <div class="post__head"><span class="avatar avatar--sm avatar--good">FZ</span><span class="post__name">Fatimah Az-Zahra</span><span class="badge badge--level">Level 4</span><span class="post__time">Kamis, 12 Nov · 13.45</span></div>
+            <div class="post__text"><p>Tambahan dari catatan saya: lam muzahlaqah hanya masuk pada khabar <span class="ar-inline" lang="ar" dir="rtl">إِنَّ</span> yang hamzahnya dikasrah, tidak pada khabar <span class="ar-inline" lang="ar" dir="rtl">أَنَّ</span>.</p></div>
+            <div class="cluster cluster--sm"><span class="attach"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg> catatan-inna.jpg · 240 KB</span></div>
+            <div class="post__actions"><a class="btn btn--ghost btn--sm" href="#composer"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Balas</a></div>
+          </div>
+        </article>
+
+        <div class="panel__body" style="padding-top:0;padding-bottom:0"><a class="btn btn--secondary btn--sm" href="#" style="align-self:center">Tampilkan 9 balasan lainnya</a></div>
+
+        <!-- Reply composer -->
+        <div class="composer is-focus" id="composer">
+          <div class="composer__bar">
+            <span class="tool" title="Tebal"><b>B</b></span>
+            <span class="tool" title="Miring"><i>I</i></span>
+            <span class="tool" title="Tautan"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
+            <span class="tool-sep"></span>
+            <span class="tool tool--ar is-on" data-toggle="is-on" title="Papan ketik Arab" lang="ar"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M10 13h.01M14 13h.01M18 13h.01M7 16h10"/></svg> عربي</span>
+            <span class="tool" title="Sisipkan ayat"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Ayat</span>
+            <span class="tool-sep"></span>
+            <span class="tool" title="Lampirkan file"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></span>
+            <span class="tool" title="Gambar"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></span>
+            <span class="tool" title="Rekam suara"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></span>
+            <span class="text-caption text-muted ml-auto">Balas sebagai Muhammad Fauzan</span>
+          </div>
+          <div class="composer__area">Jazakallahu khairan, ustadz. Jadi pada <span class="ar-inline" lang="ar" dir="rtl">إِنَّهُ لَقَوْلُ رَسُوْلٍ كَرِيْمٍ</span> lam-nya juga muzahlaqah?<span class="caret"></span></div>
+          <div class="ar-kb" lang="ar" dir="rtl" aria-label="Papan ketik Arab">
+            <div class="ar-kb__row"><span class="ar-kb__key">ض</span><span class="ar-kb__key">ص</span><span class="ar-kb__key">ث</span><span class="ar-kb__key">ق</span><span class="ar-kb__key">ف</span><span class="ar-kb__key">غ</span><span class="ar-kb__key">ع</span><span class="ar-kb__key">ه</span><span class="ar-kb__key">خ</span><span class="ar-kb__key">ح</span><span class="ar-kb__key">ج</span><span class="ar-kb__key">د</span></div>
+            <div class="ar-kb__row"><span class="ar-kb__key">ش</span><span class="ar-kb__key">س</span><span class="ar-kb__key">ي</span><span class="ar-kb__key">ب</span><span class="ar-kb__key">ل</span><span class="ar-kb__key">ا</span><span class="ar-kb__key">ت</span><span class="ar-kb__key">ن</span><span class="ar-kb__key">م</span><span class="ar-kb__key">ك</span><span class="ar-kb__key">ط</span></div>
+            <div class="ar-kb__row"><span class="ar-kb__key">ئ</span><span class="ar-kb__key">ء</span><span class="ar-kb__key">ؤ</span><span class="ar-kb__key">ر</span><span class="ar-kb__key">ى</span><span class="ar-kb__key">ة</span><span class="ar-kb__key">و</span><span class="ar-kb__key">ز</span><span class="ar-kb__key">ظ</span><span class="ar-kb__key">ذ</span><span class="ar-kb__key">أ</span><span class="ar-kb__key">إ</span></div>
+            <div class="ar-kb__row"><span class="ar-kb__key ar-kb__key--hk" title="Fathah">&#x0640;&#x064E;</span><span class="ar-kb__key ar-kb__key--hk" title="Dhammah">&#x0640;&#x064F;</span><span class="ar-kb__key ar-kb__key--hk" title="Kasrah">&#x0640;&#x0650;</span><span class="ar-kb__key ar-kb__key--hk" title="Sukun">&#x0640;&#x0652;</span><span class="ar-kb__key ar-kb__key--hk" title="Syaddah">&#x0640;&#x0651;</span><span class="ar-kb__key ar-kb__key--hk" title="Tanwin fathah">&#x0640;&#x064B;</span><span class="ar-kb__key ar-kb__key--hk" title="Tanwin dhammah">&#x0640;&#x064C;</span><span class="ar-kb__key ar-kb__key--hk" title="Tanwin kasrah">&#x0640;&#x064D;</span><span class="ar-kb__key ar-kb__key--wide">spasi</span></div>
+          </div>
+          <div class="composer__foot">
+            <span class="attach"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> PDF/gambar, maks. 5 MB</span>
+            <span class="checkbox is-checked text-small" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Beri tahu jika dibalas</span>
+            <a class="btn btn--primary btn--sm ml-auto" href="#" data-toast="toast-reply"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg> Kirim balasan</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- Modal: Buat Diskusi -->
+<div class="modal-scrim overlay" id="modal-buat">
+  <div class="modal modal--wide" role="dialog" aria-modal="true" aria-labelledby="buat-title">
+    <div class="modal__header">
+      <span class="modal__icon" style="background:var(--blue-soft);color:var(--blue)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+      <div><h3 class="modal__title" id="buat-title">Buat Diskusi</h3><p class="modal__subtitle">Pertanyaan yang jelas lebih cepat dijawab. Sertakan teks Arab dan rujukannya.</p></div>
+      <a class="modal__close" href="#" data-close aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+    </div>
+    <div class="modal__body">
+      <div class="field"><label class="field__label">Judul</label><div class="input is-focus"><span class="input__text">Kenapa <span class="ar-inline" lang="ar" dir="rtl">الْقُرْآنِ</span> pada Yasin: 2 majrur?</span></div><span class="field__hint">48 / 120 karakter</span></div>
+      <div class="grid-2 grid--tight">
+        <div class="field"><label class="field__label">Kategori</label><div class="input select"><span class="input__text">I'rab Ayat</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div></div>
+        <div class="field"><label class="field__label">Kelas</label><div class="input select"><span class="input__text">Mushaf Nahwi: Surah Yasin</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div></div>
+      </div>
+      <div class="field">
+        <label class="field__label">Isi pertanyaan</label>
+        <div class="composer" style="margin:0">
+          <div class="composer__bar">
+            <span class="tool"><b>B</b></span><span class="tool"><i>I</i></span><span class="tool-sep"></span>
+            <span class="tool tool--ar" data-toggle="is-on" lang="ar"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M6 13h.01M10 13h.01M14 13h.01M18 13h.01M7 16h10"/></svg> عربي</span>
+            <span class="tool"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Ayat</span><span class="tool-sep"></span>
+            <span class="tool"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></span><span class="tool"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg></span>
+          </div>
+          <div class="composer__area" style="min-height:120px;font-size:var(--fs-small);line-height:24px">Pada ayat <span class="ar-inline" lang="ar" dir="rtl">وَالْقُرْآنِ الْحَكِيْمِ</span>, huruf wawu-nya wawu qasam. Apakah karena itu <span class="ar-inline" lang="ar" dir="rtl">الْقُرْآنِ</span> dibaca kasrah?</div>
+          <div class="ar-kb" lang="ar" dir="rtl">
+            <div class="ar-kb__row"><span class="ar-kb__key ar-kb__key--hk">&#x0640;&#x064E;</span><span class="ar-kb__key ar-kb__key--hk">&#x0640;&#x064F;</span><span class="ar-kb__key ar-kb__key--hk">&#x0640;&#x0650;</span><span class="ar-kb__key ar-kb__key--hk">&#x0640;&#x0652;</span><span class="ar-kb__key ar-kb__key--hk">&#x0640;&#x0651;</span></div>
+          </div>
+        </div>
+      </div>
+      <span class="checkbox is-checked text-small" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Minta ustadz pengampu menjawab (kategori Tanya Ustadz)</span>
+    </div>
+    <div class="modal__footer">
+      <span class="text-caption text-muted" style="margin-right:auto;align-self:center">Dengan mengirim, Anda menyetujui adab berdiskusi.</span>
+      <a class="btn btn--ghost" href="#" data-close>Batal</a>
+      <a class="btn btn--primary" href="#" data-close data-toast="toast-posted"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg> Kirim diskusi</a>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div class="toast-stack">
+  <div class="toast toast--success" id="toast-reply" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Balasan terkirim</p><p class="toast__text">Anda akan diberi tahu jika ustadz atau santri lain membalas.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--success" id="toast-posted" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Diskusi diterbitkan</p><p class="toast__text">Pertanyaan Anda tampil di kategori I'rab Ayat.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+</div>
+
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

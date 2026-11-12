@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Sertifikat · Al-Abqary LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Sertifikat-only styles */
+.cert-card { display: flex; gap: var(--space-5); padding: var(--space-5); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
+.cert-card.is-selected { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-soft), var(--shadow); }
+.cert-thumb { width: 132px; height: 96px; flex: none; border-radius: var(--radius-sm); background: var(--surface); padding: 4px; box-shadow: var(--shadow-sm); border: 1px solid var(--line); }
+.cert-thumb__in { height: 100%; border: 1.5px solid var(--gold); background: var(--gold-soft); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+.cert-thumb__in svg { width: 22px; height: 22px; color: var(--gold-ink); }
+.cert-thumb__in b { font-size: 9px; line-height: 11px; color: var(--blue-deep); letter-spacing: 0.04em; text-transform: uppercase; }
+.cert-thumb__in i { width: 56px; height: 2px; background: var(--gold-line); }
+.cert-card__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.cert-card__title { font-size: var(--fs-h4); line-height: var(--lh-h4); font-weight: var(--fw-semibold); }
+.cert-facts { display: grid; grid-template-columns: repeat(2, auto); justify-content: start; gap: var(--space-1) var(--space-6); margin-top: var(--space-1); }
+.cert-facts span { font-size: 11px; line-height: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.cert-facts b { display: block; font-size: var(--fs-small); line-height: var(--lh-small); color: var(--ink); text-transform: none; letter-spacing: 0; font-weight: var(--fw-semibold); }
+.cert-facts span:last-child { grid-column: 1 / -1; }
+.mono { white-space: nowrap; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; }
+
+/* Preview */
+.preview { background: var(--bg-subtle); border-top: 1px solid var(--line); padding: var(--space-10) 0; display: flex; justify-content: center; }
+.share-bar { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-6); border-top: 1px solid var(--line); }
+.verify-link { display: flex; align-items: center; gap: var(--space-2); height: 40px; padding: 0 var(--space-2) 0 var(--space-3); border: 1px solid var(--line-strong); border-radius: var(--radius-md); background: var(--blue-tint); min-width: 0; flex: 1; max-width: 420px; }
+.verify-link .icon { width: 16px; height: 16px; color: var(--muted); }
+.verify-link span { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: var(--fs-small); color: var(--ink); }
+.btn--text { background: transparent; border: 0; padding: 0 var(--space-2); color: var(--blue); }
+.btn--text:hover { text-decoration: underline; }
+
+/* In progress */
+.req { display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--fs-small); line-height: var(--lh-small); }
+.req li { display: flex; align-items: flex-start; gap: var(--space-2); }
+.req .icon { width: 18px; height: 18px; color: var(--good); margin-top: 1px; }
+.req .is-todo { color: var(--muted); }
+.req .is-todo .icon { color: var(--subtle); }
+.req .is-lock { color: var(--subtle); }
+.req .is-lock .icon { color: var(--subtle); }
+.req small { margin-left: auto; font-size: var(--fs-caption); color: var(--muted); white-space: nowrap; }
+
+/* Verification (public style) */
+.verify { background: var(--blue-deep); color: var(--on-blue); border-radius: var(--radius-xl); display: grid; overflow: hidden; }
+.verify > * { grid-area: 1 / 1; }
+.verify__inner { position: relative; padding: var(--space-10); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: var(--space-10); align-items: center; }
+.verify__form { display: flex; flex-direction: column; gap: var(--space-4); }
+.verify__form p { color: var(--blue-on-deep); font-size: var(--fs-small); line-height: 22px; }
+.verify__row { display: flex; gap: var(--space-2); }
+.verify__row .input { border-color: transparent; }
+.result { background: var(--surface); color: var(--ink); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); overflow: hidden; }
+.result__head { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-5); background: var(--good-soft); color: var(--good); border-bottom: 1px solid var(--good-line); }
+.result__head b { font-size: var(--fs-body); }
+.result__head .icon { width: 22px; height: 22px; }
+.result__body { display: flex; gap: var(--space-5); padding: var(--space-5); }
+.result dl { flex: 1; display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: var(--space-2) var(--space-3); margin: 0; font-size: var(--fs-small); line-height: var(--lh-small); }
+.result dt { color: var(--muted); }
+.result dd { margin: 0; font-weight: var(--fw-semibold); }
+.qr-box { flex: none; display: flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+.qr { width: 120px; height: 120px; border: 1px solid var(--line); border-radius: var(--radius-sm); }
+.qr-box span { font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body class="app">
+
+<!-- APP TOPNAV START (santri) — copy as-is to every santri page -->
+<header class="topnav app__topnav">
+  <div class="topnav__inner">
+    <a class="brand" href="10-dashboard.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+    <div class="input topnav__search"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari kelas, materi, atau kata…</span><span class="kbd">/</span></div>
+    <div class="topnav__actions">
+      <a class="pill pill--streak" href="18-pencapaian.html" title="Hari beruntun"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>12 <span class="pill__label">hari</span></a>
+      <a class="pill pill--xp" href="18-pencapaian.html" title="Total XP"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>1.120 <span class="pill__label">XP</span></a>
+      <span class="topnav__divider"></span>
+      <a class="btn btn--ghost btn--icon topnav__icon-btn" href="21-notifikasi.html" aria-label="Notifikasi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="notif-dot"></span></a>
+      <a class="avatar-with-meta" href="20-profil.html"><span class="avatar avatar--ring">MF</span><span><span class="avatar-with-meta__name" style="display:block">Muhammad Fauzan</span><span class="avatar-with-meta__sub">Level 4 · Mutqin</span></span></a>
+    </div>
+  </div>
+</header>
+<!-- APP TOPNAV END -->
+
+<div class="app__body">
+
+<!-- SANTRI SIDEBAR START — copy as-is; move .sidebar__item--active to the current page's item -->
+<aside class="sidebar app__sidebar">
+  <div class="sidebar__section">
+    <span class="sidebar__title">Belajar</span>
+    <a class="sidebar__item" href="10-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9.5 9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> Beranda</a>
+    <a class="sidebar__item" href="11-kelas-saya.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Kelas Saya<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="02-katalog.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6z"/></svg> Jelajah Kelas</a>
+    <a class="sidebar__item" href="15-jadwal.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg> Jadwal Live<span class="sidebar__count">2</span></a>
+    <a class="sidebar__item" href="14-tugas.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9zM9 12h6M9 16h4"/></svg> Tugas &amp; Setoran<span class="sidebar__count">2</span></a>
+    <a class="sidebar__item" href="16-mushaf.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg> Mushaf &amp; Pustaka</a>
+    <a class="sidebar__item" href="17-diskusi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Diskusi</a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Prestasi</span>
+    <a class="sidebar__item" href="18-pencapaian.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0z"/></svg> Pencapaian</a>
+    <a class="sidebar__item sidebar__item--active" href="19-sertifikat.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg> Sertifikat<span class="sidebar__count">1</span></a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Akun</span>
+    <a class="sidebar__item" href="21-notifikasi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Notifikasi<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="20-profil.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profil &amp; Pengaturan</a>
+  </div>
+  <div class="sidebar__promo">
+    <span class="badge badge--on-dark" style="align-self:flex-start"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Paket Santri aktif</span>
+    <span class="sidebar__promo-title">Naik ke Halaqah Plus</span>
+    <span class="sidebar__promo-text">Halaqah kelompok kecil maksimal 10 santri, setoran tanpa batas, dan laporan perkembangan bulanan.</span>
+    <a class="btn btn--gold btn--sm btn--block" href="04-harga.html">Lihat paket</a>
+  </div>
+</aside>
+<!-- SANTRI SIDEBAR END -->
+
+<main class="app__main">
+
+  <!-- Page head -->
+  <div class="page-head">
+    <nav class="breadcrumb"><a class="breadcrumb__item" href="10-dashboard.html">Beranda</a><span class="breadcrumb__sep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span><span class="breadcrumb__current">Sertifikat</span></nav>
+    <div class="page-head__row">
+      <div>
+        <h1 class="page-head__title">Sertifikat</h1>
+        <p class="page-head__sub">Syahadah terbit otomatis setelah semua syarat kelas terpenuhi. Setiap syahadah punya nomor yang bisa diverifikasi.</p>
+      </div>
+      <div class="page-head__actions">
+        <a class="btn btn--secondary" href="#verifikasi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Verifikasi sertifikat</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="stack stack--lg" data-tabs data-tab-default="nd">
+    <!-- Earned -->
+    <section class="stack">
+      <div class="cluster cluster--between"><h2 class="text-h3">Sudah diraih <span class="text-muted" style="font-weight:var(--fw-regular)">· 2</span></h2></div>
+      <div class="grid-2">
+        <article class="cert-card is-selected">
+          <div class="cert-thumb"><div class="cert-thumb__in"><svg viewBox="0 0 24 24" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.6"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg><b>Syahadah</b><i></i></div></div>
+          <div class="cert-card__main">
+            <span class="course-card__eyebrow">Nahwu · Dasar</span>
+            <h3 class="cert-card__title">Nahwu Dasar: Membaca Akhir Kata</h3>
+            <div class="cert-facts">
+              <span>Terbit<b>8 Nov 2026</b></span>
+              <span>Nilai<b>92 · Mumtaz</b></span>
+              <span>Nomor<b class="mono">ABQ-ND-2026-00318</b></span>
+            </div>
+            <div class="cluster cluster--sm" style="margin-top:var(--space-2)">
+              <a class="btn btn--secondary btn--sm" href="#pratinjau" data-tab="nd"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> Lihat</a>
+              <a class="btn btn--ghost btn--sm" href="#" data-toast="toast-pdf"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> PDF</a>
+            </div>
+          </div>
+        </article>
+        <article class="cert-card">
+          <div class="cert-thumb"><div class="cert-thumb__in"><svg viewBox="0 0 24 24" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.6"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg><b>Syahadah</b><i></i></div></div>
+          <div class="cert-card__main">
+            <div class="cluster cluster--sm"><span class="course-card__eyebrow">Qaidaty · Jilid 1</span><span class="badge badge--new">Baru hari ini</span></div>
+            <h3 class="cert-card__title">Qaidaty Jilid 1</h3>
+            <div class="cert-facts">
+              <span>Terbit<b>13 Nov 2026</b></span>
+              <span>Nilai<b>90 · Mumtaz</b></span>
+              <span>Nomor<b class="mono">ABQ-L1-2026-00481</b></span>
+            </div>
+            <div class="cluster cluster--sm" style="margin-top:var(--space-2)">
+              <a class="btn btn--secondary btn--sm" href="#pratinjau" data-tab="l1"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> Lihat</a>
+              <a class="btn btn--ghost btn--sm" href="#" data-toast="toast-pdf"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> PDF</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Preview -->
+    <section class="panel" id="pratinjau">
+      <div class="panel__head">
+        <div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg> Pratinjau syahadah</span><span class="panel__sub" data-panel="nd">Nahwu Dasar: Membaca Akhir Kata · ABQ-ND-2026-00318</span><span class="panel__sub" data-panel="l1" hidden>Qaidaty Jilid 1 · ABQ-L1-2026-00481</span></div>
+        <div class="cluster cluster--sm">
+          <a class="btn btn--primary btn--sm" href="#" data-toast="toast-pdf"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Unduh PDF</a>
+          <a class="btn btn--secondary btn--sm" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg> Unduh gambar</a>
+        </div>
+      </div>
+      <div class="preview" data-panel="nd">
+<div class="certificate"><div class="certificate__frame"><div class="certificate__inner"><svg class="certificate__ornament" viewBox="0 0 64 64" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.3"><path d="M32.0 2.0 L40.8 10.8 L53.2 10.8 L53.2 23.2 L62.0 32.0 L53.2 40.8 L53.2 53.2 L40.8 53.2 L32.0 62.0 L23.2 53.2 L10.8 53.2 L10.8 40.8 L2.0 32.0 L10.8 23.2 L10.8 10.8 L23.2 10.8Z"/><path d="M40.0 12.6 L43.4 20.6 L51.4 24.0 L48.1 32.0 L51.4 40.0 L43.4 43.4 L40.0 51.4 L32.0 48.1 L24.0 51.4 L20.6 43.4 L12.6 40.0 L15.9 32.0 L12.6 24.0 L20.6 20.6 L24.0 12.6 L32.0 15.9Z"/><path d="M32.0 20.0 L35.5 23.5 L40.5 23.5 L40.5 28.5 L44.0 32.0 L40.5 35.5 L40.5 40.5 L35.5 40.5 L32.0 44.0 L28.5 40.5 L23.5 40.5 L23.5 35.5 L20.0 32.0 L23.5 28.5 L23.5 23.5 L28.5 23.5Z"/><circle cx="32" cy="32" r="6.6"/></svg><p class="certificate__basmalah" lang="ar" dir="rtl">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p><span class="certificate__eyebrow">Ma'had Al-Abqary · Serang, Banten</span><h3 class="certificate__title">Syahadah Penyelesaian</h3><p class="certificate__ar" lang="ar" dir="rtl">شَهَادَةُ إِتْمَامِ الدِّرَاسَةِ</p><span class="certificate__given">Diberikan kepada</span><span class="certificate__name">Muhammad Fauzan</span><p class="certificate__text">atas keberhasilannya menuntaskan <b>Nahwu Dasar: Membaca Akhir Kata</b> (30 materi, ujian akhir 30 soal) di Al-Abqary LMS dengan predikat <b>Mumtaz</b> (nilai akhir 92).</p><div class="certificate__footer"><div class="certificate__sign"><span class="certificate__sign-line"></span><span class="certificate__sign-name">KH. Yasin Muthohar</span><span class="certificate__sign-role">Mudir Ma'had Al-Abqary</span></div><svg class="certificate__seal" viewBox="0 0 96 96" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.4"><path d="M48.0 2.0 L61.5 15.5 L80.5 15.5 L80.5 34.5 L94.0 48.0 L80.5 61.5 L80.5 80.5 L61.5 80.5 L48.0 94.0 L34.5 80.5 L15.5 80.5 L15.5 61.5 L2.0 48.0 L15.5 34.5 L15.5 15.5 L34.5 15.5Z"/><path d="M62.5 12.9 L68.6 27.4 L83.1 33.5 L77.1 48.0 L83.1 62.5 L68.6 68.6 L62.5 83.1 L48.0 77.1 L33.5 83.1 L27.4 68.6 L12.9 62.5 L18.9 48.0 L12.9 33.5 L27.4 27.4 L33.5 12.9 L48.0 18.9Z"/><circle cx="48" cy="48" r="26"/><circle cx="48" cy="48" r="21"/><path d="M48.0 36.0 L51.5 39.5 L56.5 39.5 L56.5 44.5 L60.0 48.0 L56.5 51.5 L56.5 56.5 L51.5 56.5 L48.0 60.0 L44.5 56.5 L39.5 56.5 L39.5 51.5 L36.0 48.0 L39.5 44.5 L39.5 39.5 L44.5 39.5Z" style="fill:currentColor;stroke:none"/></svg><div class="certificate__sign"><span class="certificate__sign-name">8 November 2026</span><span class="certificate__sign-role">Tanggal terbit</span><span class="certificate__id">No. ABQ-ND-2026-00318 · alabqary.sch.id</span></div></div></div></div></div>
+      </div>
+      <div class="preview" data-panel="l1" hidden>
+<div class="certificate"><div class="certificate__frame"><div class="certificate__inner"><svg class="certificate__ornament" viewBox="0 0 64 64" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.3"><path d="M32.0 2.0 L40.8 10.8 L53.2 10.8 L53.2 23.2 L62.0 32.0 L53.2 40.8 L53.2 53.2 L40.8 53.2 L32.0 62.0 L23.2 53.2 L10.8 53.2 L10.8 40.8 L2.0 32.0 L10.8 23.2 L10.8 10.8 L23.2 10.8Z"/><path d="M40.0 12.6 L43.4 20.6 L51.4 24.0 L48.1 32.0 L51.4 40.0 L43.4 43.4 L40.0 51.4 L32.0 48.1 L24.0 51.4 L20.6 43.4 L12.6 40.0 L15.9 32.0 L12.6 24.0 L20.6 20.6 L24.0 12.6 L32.0 15.9Z"/><path d="M32.0 20.0 L35.5 23.5 L40.5 23.5 L40.5 28.5 L44.0 32.0 L40.5 35.5 L40.5 40.5 L35.5 40.5 L32.0 44.0 L28.5 40.5 L23.5 40.5 L23.5 35.5 L20.0 32.0 L23.5 28.5 L23.5 23.5 L28.5 23.5Z"/><circle cx="32" cy="32" r="6.6"/></svg><p class="certificate__basmalah" lang="ar" dir="rtl">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p><span class="certificate__eyebrow">Ma'had Al-Abqary · Serang, Banten</span><h3 class="certificate__title">Syahadah Penyelesaian</h3><p class="certificate__ar" lang="ar" dir="rtl">شَهَادَةُ إِتْمَامِ الدِّرَاسَةِ</p><span class="certificate__given">Diberikan kepada</span><span class="certificate__name">Muhammad Fauzan</span><p class="certificate__text">atas keberhasilannya menuntaskan <b>Qaidaty Jilid 1</b> (23 materi, Enam Tangga) di Al-Abqary LMS dengan predikat <b>Mumtaz</b> (nilai akhir 90).</p><div class="certificate__footer"><div class="certificate__sign"><span class="certificate__sign-line"></span><span class="certificate__sign-name">KH. Yasin Muthohar</span><span class="certificate__sign-role">Mudir Ma'had Al-Abqary</span></div><svg class="certificate__seal" viewBox="0 0 96 96" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.4"><path d="M48.0 2.0 L61.5 15.5 L80.5 15.5 L80.5 34.5 L94.0 48.0 L80.5 61.5 L80.5 80.5 L61.5 80.5 L48.0 94.0 L34.5 80.5 L15.5 80.5 L15.5 61.5 L2.0 48.0 L15.5 34.5 L15.5 15.5 L34.5 15.5Z"/><path d="M62.5 12.9 L68.6 27.4 L83.1 33.5 L77.1 48.0 L83.1 62.5 L68.6 68.6 L62.5 83.1 L48.0 77.1 L33.5 83.1 L27.4 68.6 L12.9 62.5 L18.9 48.0 L12.9 33.5 L27.4 27.4 L33.5 12.9 L48.0 18.9Z"/><circle cx="48" cy="48" r="26"/><circle cx="48" cy="48" r="21"/><path d="M48.0 36.0 L51.5 39.5 L56.5 39.5 L56.5 44.5 L60.0 48.0 L56.5 51.5 L56.5 56.5 L51.5 56.5 L48.0 60.0 L44.5 56.5 L39.5 56.5 L39.5 51.5 L36.0 48.0 L39.5 44.5 L39.5 39.5 L44.5 39.5Z" style="fill:currentColor;stroke:none"/></svg><div class="certificate__sign"><span class="certificate__sign-name">13 November 2026</span><span class="certificate__sign-role">Tanggal terbit</span><span class="certificate__id">No. ABQ-L1-2026-00481 · alabqary.sch.id</span></div></div></div></div></div>
+      </div>
+      <div class="share-bar">
+        <span class="text-small text-muted">Bagikan:</span>
+        <a class="btn btn--text btn--sm" href="#" data-toast="toast-linkedin">Bagikan ke LinkedIn</a>
+        <a class="btn btn--text btn--sm" href="#">Kirim via WhatsApp</a>
+        <div class="verify-link ml-auto"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span data-panel="nd">alabqary.sch.id/verifikasi/ABQ-ND-2026-00318</span><span data-panel="l1" hidden>alabqary.sch.id/verifikasi/ABQ-L1-2026-00481</span><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-copy"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Salin tautan verifikasi</a></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- In progress -->
+  <section class="stack">
+    <div><h2 class="text-h3">Sedang ditempuh <span class="text-muted" style="font-weight:var(--fw-regular)">· 3</span></h2><p class="text-small text-muted">Syahadah terbit setelah semua syarat di bawah tercentang.</p></div>
+    <div class="grid-3">
+      <article class="panel">
+        <div class="panel__body">
+          <div class="cluster cluster--between"><span class="course-card__eyebrow">Sharf · Lanjutan</span><span class="badge badge--info">56%</span></div>
+          <h3 class="text-h4">Membaca Bangunan: Harf dan Fi'il</h3>
+          <div class="progress"><div class="progress__bar" style="width:56%"></div></div>
+          <ul class="req">
+            <li class="is-todo"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Selesaikan 16 materi <small>9/16</small></li>
+            <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg> Hadir minimal 4 halaqah live <small>4/4</small></li>
+            <li class="is-todo"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Kirim 3 setoran bacaan <small>2/3</small></li>
+            <li class="is-lock"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Lulus ujian akhir, nilai ≥ 70 <small>dibuka 20 Nov</small></li>
+          </ul>
+        </div>
+        <div class="panel__foot"><a class="panel__link" href="11-kelas-saya.html">Lanjutkan kelas <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></div>
+      </article>
+      <article class="panel">
+        <div class="panel__body">
+          <div class="cluster cluster--between"><span class="course-card__eyebrow">Mushaf Nahwi</span><span class="badge badge--info">24%</span></div>
+          <h3 class="text-h4">Mushaf Nahwi: Surah Yasin</h3>
+          <div class="progress progress--gold"><div class="progress__bar" style="width:24%"></div></div>
+          <ul class="req">
+            <li class="is-todo"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Tuntaskan i'rab 83 ayat <small>20/83</small></li>
+            <li class="is-todo"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Lulus 7 kuis per bagian <small>2/7</small></li>
+            <li class="is-todo"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Setoran bacaan Yasin 1–12 <small>0/1</small></li>
+          </ul>
+        </div>
+        <div class="panel__foot"><a class="panel__link" href="16-mushaf.html">Buka Mushaf Nahwi <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></div>
+      </article>
+      <article class="panel">
+        <div class="panel__body">
+          <div class="cluster cluster--between"><span class="course-card__eyebrow">Nahwu · Lanjutan</span><span class="badge badge--info">14%</span></div>
+          <h3 class="text-h4">Membaca Akhir: Isim Mu'rab</h3>
+          <div class="progress"><div class="progress__bar" style="width:14%"></div></div>
+          <ul class="req">
+            <li class="is-todo"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Selesaikan 21 materi <small>3/21</small></li>
+            <li class="is-todo"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Hadir minimal 4 halaqah live <small>1/4</small></li>
+            <li class="is-lock"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Lulus ujian akhir, nilai ≥ 70 <small>terkunci</small></li>
+          </ul>
+        </div>
+        <div class="panel__foot"><a class="panel__link" href="11-kelas-saya.html">Lanjutkan kelas <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Public verification -->
+  <section class="verify" id="verifikasi">
+    <svg class="hero__pattern" viewBox="0 0 1048 360" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M180.0 -60.0 L256.2 16.2 L363.8 16.2 L363.8 123.8 L440.0 200.0 L363.8 276.2 L363.8 383.8 L256.2 383.8 L180.0 460.0 L103.8 383.8 L-3.8 383.8 L-3.8 276.2 L-80.0 200.0 L-3.8 123.8 L-3.8 16.2 L103.8 16.2Z"/><path d="M180.0 35.0 L228.3 83.3 L296.7 83.3 L296.7 151.7 L345.0 200.0 L296.7 248.3 L296.7 316.7 L228.3 316.7 L180.0 365.0 L131.7 316.7 L63.3 316.7 L63.3 248.3 L15.0 200.0 L63.3 151.7 L63.3 83.3 L131.7 83.3Z"/><circle cx="180" cy="200" r="45"/></svg>
+    <div class="verify__inner">
+      <div class="verify__form">
+        <span class="text-overline" style="color:var(--gold-bright)">Halaman publik</span>
+        <h2 class="text-h2">Verifikasi Sertifikat</h2>
+        <p>Pihak lain (sekolah, pesantren, atau pemberi kerja) bisa memeriksa keaslian syahadah Al-Abqary dengan nomor sertifikat atau memindai kode QR di bagian bawahnya. Halaman ini bisa dibuka tanpa akun.</p>
+        <div class="verify__row">
+          <div class="input"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__text mono">ABQ-ND-2026-00318</span></div>
+          <a class="btn btn--gold" href="#" data-toast="toast-valid">Periksa</a>
+        </div>
+        <span class="text-caption" style="color:var(--blue-on-deep)">Format nomor: ABQ-[kode kelas]-[tahun]-[urutan]</span>
+      </div>
+      <div class="result">
+        <div class="result__head"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><b>Sertifikat valid</b><span class="text-caption ml-auto">Diperiksa 13 Nov 2026, 20.08 WIB</span></div>
+        <div class="result__body">
+          <dl>
+            <dt>Nama</dt><dd>Muhammad Fauzan</dd>
+            <dt>Program</dt><dd>Nahwu Dasar: Membaca Akhir Kata</dd>
+            <dt>Predikat</dt><dd>Mumtaz · nilai 92</dd>
+            <dt>Tanggal terbit</dt><dd>8 November 2026</dd>
+            <dt>Penerbit</dt><dd>Ma'had Al-Abqary, Serang</dd>
+            <dt>Nomor</dt><dd class="mono">ABQ-ND-2026-00318</dd>
+          </dl>
+          <div class="qr-box"><svg class="qr" viewBox="-2 -2 29 29" role="img" aria-label="Kode QR verifikasi (placeholder)" shape-rendering="crispEdges"><rect x="-2" y="-2" width="29" height="29" style="fill:var(--surface)"/><path d="M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM9 0h1v1h-1zM10 0h1v1h-1zM11 0h1v1h-1zM14 0h1v1h-1zM16 0h1v1h-1zM18 0h1v1h-1zM19 0h1v1h-1zM20 0h1v1h-1zM21 0h1v1h-1zM22 0h1v1h-1zM23 0h1v1h-1zM24 0h1v1h-1zM0 1h1v1h-1zM6 1h1v1h-1zM9 1h1v1h-1zM10 1h1v1h-1zM11 1h1v1h-1zM14 1h1v1h-1zM16 1h1v1h-1zM18 1h1v1h-1zM24 1h1v1h-1zM0 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM6 2h1v1h-1zM8 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1zM12 2h1v1h-1zM14 2h1v1h-1zM15 2h1v1h-1zM18 2h1v1h-1zM20 2h1v1h-1zM21 2h1v1h-1zM22 2h1v1h-1zM24 2h1v1h-1zM0 3h1v1h-1zM2 3h1v1h-1zM3 3h1v1h-1zM4 3h1v1h-1zM6 3h1v1h-1zM9 3h1v1h-1zM12 3h1v1h-1zM13 3h1v1h-1zM14 3h1v1h-1zM16 3h1v1h-1zM18 3h1v1h-1zM20 3h1v1h-1zM21 3h1v1h-1zM22 3h1v1h-1zM24 3h1v1h-1zM0 4h1v1h-1zM2 4h1v1h-1zM3 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM9 4h1v1h-1zM11 4h1v1h-1zM12 4h1v1h-1zM18 4h1v1h-1zM20 4h1v1h-1zM21 4h1v1h-1zM22 4h1v1h-1zM24 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM10 5h1v1h-1zM11 5h1v1h-1zM13 5h1v1h-1zM14 5h1v1h-1zM15 5h1v1h-1zM18 5h1v1h-1zM24 5h1v1h-1zM0 6h1v1h-1zM1 6h1v1h-1zM2 6h1v1h-1zM3 6h1v1h-1zM4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM19 6h1v1h-1zM20 6h1v1h-1zM21 6h1v1h-1zM22 6h1v1h-1zM23 6h1v1h-1zM24 6h1v1h-1zM8 7h1v1h-1zM9 7h1v1h-1zM11 7h1v1h-1zM13 7h1v1h-1zM15 7h1v1h-1zM16 7h1v1h-1zM1 8h1v1h-1zM6 8h1v1h-1zM7 8h1v1h-1zM8 8h1v1h-1zM12 8h1v1h-1zM15 8h1v1h-1zM19 8h1v1h-1zM21 8h1v1h-1zM4 9h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM11 9h1v1h-1zM14 9h1v1h-1zM16 9h1v1h-1zM18 9h1v1h-1zM21 9h1v1h-1zM22 9h1v1h-1zM23 9h1v1h-1zM24 9h1v1h-1zM0 10h1v1h-1zM3 10h1v1h-1zM5 10h1v1h-1zM6 10h1v1h-1zM8 10h1v1h-1zM13 10h1v1h-1zM15 10h1v1h-1zM20 10h1v1h-1zM1 11h1v1h-1zM4 11h1v1h-1zM5 11h1v1h-1zM7 11h1v1h-1zM16 11h1v1h-1zM17 11h1v1h-1zM18 11h1v1h-1zM20 11h1v1h-1zM21 11h1v1h-1zM22 11h1v1h-1zM0 12h1v1h-1zM1 12h1v1h-1zM4 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM8 12h1v1h-1zM10 12h1v1h-1zM11 12h1v1h-1zM12 12h1v1h-1zM17 12h1v1h-1zM21 12h1v1h-1zM22 12h1v1h-1zM0 13h1v1h-1zM1 13h1v1h-1zM3 13h1v1h-1zM4 13h1v1h-1zM5 13h1v1h-1zM8 13h1v1h-1zM11 13h1v1h-1zM14 13h1v1h-1zM16 13h1v1h-1zM21 13h1v1h-1zM2 14h1v1h-1zM3 14h1v1h-1zM6 14h1v1h-1zM9 14h1v1h-1zM11 14h1v1h-1zM12 14h1v1h-1zM14 14h1v1h-1zM17 14h1v1h-1zM19 14h1v1h-1zM20 14h1v1h-1zM21 14h1v1h-1zM23 14h1v1h-1zM24 14h1v1h-1zM0 15h1v1h-1zM3 15h1v1h-1zM4 15h1v1h-1zM7 15h1v1h-1zM8 15h1v1h-1zM10 15h1v1h-1zM11 15h1v1h-1zM12 15h1v1h-1zM13 15h1v1h-1zM15 15h1v1h-1zM18 15h1v1h-1zM21 15h1v1h-1zM23 15h1v1h-1zM6 16h1v1h-1zM7 16h1v1h-1zM8 16h1v1h-1zM10 16h1v1h-1zM12 16h1v1h-1zM15 16h1v1h-1zM20 16h1v1h-1zM21 16h1v1h-1zM14 17h1v1h-1zM15 17h1v1h-1zM19 17h1v1h-1zM20 17h1v1h-1zM21 17h1v1h-1zM22 17h1v1h-1zM0 18h1v1h-1zM1 18h1v1h-1zM2 18h1v1h-1zM3 18h1v1h-1zM4 18h1v1h-1zM5 18h1v1h-1zM6 18h1v1h-1zM8 18h1v1h-1zM9 18h1v1h-1zM10 18h1v1h-1zM11 18h1v1h-1zM16 18h1v1h-1zM19 18h1v1h-1zM24 18h1v1h-1zM0 19h1v1h-1zM6 19h1v1h-1zM10 19h1v1h-1zM11 19h1v1h-1zM15 19h1v1h-1zM17 19h1v1h-1zM18 19h1v1h-1zM20 19h1v1h-1zM21 19h1v1h-1zM22 19h1v1h-1zM24 19h1v1h-1zM0 20h1v1h-1zM2 20h1v1h-1zM3 20h1v1h-1zM4 20h1v1h-1zM6 20h1v1h-1zM11 20h1v1h-1zM12 20h1v1h-1zM14 20h1v1h-1zM16 20h1v1h-1zM19 20h1v1h-1zM21 20h1v1h-1zM22 20h1v1h-1zM23 20h1v1h-1zM24 20h1v1h-1zM0 21h1v1h-1zM2 21h1v1h-1zM3 21h1v1h-1zM4 21h1v1h-1zM6 21h1v1h-1zM9 21h1v1h-1zM10 21h1v1h-1zM14 21h1v1h-1zM16 21h1v1h-1zM21 21h1v1h-1zM22 21h1v1h-1zM24 21h1v1h-1zM0 22h1v1h-1zM2 22h1v1h-1zM3 22h1v1h-1zM4 22h1v1h-1zM6 22h1v1h-1zM8 22h1v1h-1zM11 22h1v1h-1zM12 22h1v1h-1zM14 22h1v1h-1zM15 22h1v1h-1zM17 22h1v1h-1zM20 22h1v1h-1zM0 23h1v1h-1zM6 23h1v1h-1zM8 23h1v1h-1zM10 23h1v1h-1zM11 23h1v1h-1zM12 23h1v1h-1zM13 23h1v1h-1zM14 23h1v1h-1zM15 23h1v1h-1zM21 23h1v1h-1zM22 23h1v1h-1zM0 24h1v1h-1zM1 24h1v1h-1zM2 24h1v1h-1zM3 24h1v1h-1zM4 24h1v1h-1zM5 24h1v1h-1zM6 24h1v1h-1zM12 24h1v1h-1zM13 24h1v1h-1zM14 24h1v1h-1zM15 24h1v1h-1zM16 24h1v1h-1zM17 24h1v1h-1zM20 24h1v1h-1zM21 24h1v1h-1zM23 24h1v1h-1z" style="fill:var(--ink)"/><rect x="9.5" y="9.5" width="6" height="6" rx="1" style="fill:var(--surface)"/><path d="M12.5 10.3 L13.4 11.6 L14.7 12.5 L13.4 13.4 L12.5 14.7 L11.6 13.4 L10.3 12.5 L11.6 11.6Z" style="fill:var(--gold)"/></svg><span>Pindai untuk membuka</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<!-- Toasts -->
+<div class="toast-stack">
+  <div class="toast toast--success" id="toast-pdf" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></span>
+    <div class="toast__main"><p class="toast__title">PDF sedang disiapkan</p><p class="toast__text">Syahadah ukuran A4 landscape akan terunduh dalam beberapa detik.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--success" id="toast-copy" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Tautan verifikasi disalin</p><p class="toast__text">Siapa pun yang membuka tautan ini bisa melihat status keaslian syahadah.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--info" id="toast-linkedin" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Membuka LinkedIn…</p><p class="toast__text">Nama sertifikat, penerbit, nomor, dan tautan verifikasi sudah terisi di bagian Licenses &amp; certifications.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--success" id="toast-valid" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Nomor ditemukan</p><p class="toast__text">ABQ-ND-2026-00318 tercatat sebagai syahadah yang sah.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+</div>
+
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

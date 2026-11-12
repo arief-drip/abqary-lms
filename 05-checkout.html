@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Checkout · Al-Abqary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Checkout-only styles */
+.mock-state { background: var(--ink); color: var(--on-blue); }
+.mock-state__inner { width: var(--container); margin: 0 auto; height: 52px; display: flex; align-items: center; gap: var(--space-4); }
+.mock-state__label { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--fs-caption); line-height: var(--lh-caption); font-weight: var(--fw-semibold); letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--gold-bright); }
+.mock-state__label .icon { width: 16px; height: 16px; }
+.mock-state .tabs--segmented { background: rgba(255, 255, 255, 0.08); }
+.mock-state .tabs--segmented .tab { color: var(--blue-on-deep); }
+.mock-state .tabs--segmented .tab--active { background: var(--surface); color: var(--ink); }
+.mock-state__hint { margin-left: auto; font-size: var(--fs-caption); color: var(--blue-on-deep); }
+
+.co-header { background: var(--surface); border-bottom: 1px solid var(--line); }
+.co-header__inner { width: var(--container); margin: 0 auto; height: var(--nav-height); display: flex; align-items: center; gap: var(--space-8); }
+.co-steps { display: flex; align-items: center; gap: var(--space-3); margin: 0 auto; }
+.co-step { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-medium); color: var(--muted); }
+.co-step__num { width: 28px; height: 28px; border-radius: var(--radius-full); border: 1.5px solid var(--line-strong); background: var(--surface); display: inline-flex; align-items: center; justify-content: center; font-size: var(--fs-caption); font-weight: var(--fw-semibold); }
+.co-step__num .icon { width: 14px; height: 14px; stroke-width: 2.6; }
+.co-step--done { color: var(--ink); }
+.co-step--done .co-step__num { background: var(--good); border-color: var(--good); color: var(--on-blue); }
+.co-step--current { color: var(--blue); font-weight: var(--fw-semibold); }
+.co-step--current .co-step__num { background: var(--blue); border-color: var(--blue); color: var(--on-blue); box-shadow: 0 0 0 4px var(--blue-soft); }
+.co-steps__line { width: 40px; height: 2px; border-radius: var(--radius-full); background: var(--line-strong); }
+.co-steps__line--done { background: var(--good); }
+.co-secure { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--fs-small); font-weight: var(--fw-semibold); color: var(--good); }
+.co-secure .icon { width: 20px; height: 20px; }
+
+.co-main { width: var(--container); margin: 0 auto; padding: var(--space-8) 0 var(--space-20); display: flex; flex-direction: column; gap: var(--space-6); }
+.co-layout { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: var(--space-8); align-items: start; }
+.co-col { display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
+.co-aside { position: sticky; top: var(--space-6); display: flex; flex-direction: column; gap: var(--space-5); }
+.co-num { width: 28px; height: 28px; border-radius: var(--radius-full); background: var(--blue-soft); color: var(--blue); display: inline-flex; align-items: center; justify-content: center; font-size: var(--fs-small); font-weight: var(--fw-bold); }
+.co-signed { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); background: var(--blue-tint); border: 1px solid var(--blue-line); border-radius: var(--radius-md); font-size: var(--fs-small); line-height: var(--lh-small); }
+.co-signed .link { margin-left: auto; }
+
+/* Radio card */
+.opt { position: relative; display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-5); border: 1.5px solid var(--line-strong); border-radius: var(--radius-lg); background: var(--surface); cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.opt:hover { border-color: var(--blue-line); }
+.opt.is-active { border-color: var(--blue); background: var(--blue-tint); box-shadow: var(--shadow-focus); }
+.opt.is-active .radio__dot { border-color: var(--blue); }
+.opt.is-active .radio__dot span { background: var(--blue); }
+.opt__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.opt__title { font-weight: var(--fw-semibold); display: flex; align-items: center; gap: var(--space-2); }
+.opt__sub { font-size: var(--fs-caption); line-height: 18px; color: var(--muted); }
+.opt__price { text-align: right; display: flex; flex-direction: column; gap: 2px; }
+.opt__price b { font-size: var(--fs-h4); line-height: var(--lh-h4); }
+.opt__price span { font-size: var(--fs-caption); color: var(--muted); }
+.opt--compact { flex-direction: column; align-items: flex-start; gap: var(--space-3); padding: var(--space-4); }
+.opt--compact .radio__dot { position: absolute; top: var(--space-3); right: var(--space-3); width: 20px; height: 20px; }
+.opt--compact .opt__title { font-size: var(--fs-small); line-height: var(--lh-small); }
+.paylogo { display: inline-flex; align-items: center; justify-content: center; height: 30px; min-width: 64px; padding: 0 var(--space-3); border-radius: var(--radius-sm); background: var(--bg-subtle); border: 1px solid var(--line); font-size: var(--fs-small); font-weight: var(--fw-bold); letter-spacing: 0.02em; color: var(--blue-deep); white-space: nowrap; }
+.paylogo--qris { background: var(--blue-deep); color: var(--on-blue); border-color: var(--blue-deep); }
+.pay-group { display: flex; flex-direction: column; gap: var(--space-3); }
+.pay-group + .pay-group { padding-top: var(--space-5); border-top: 1px solid var(--line); }
+.pay-group__label { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-small); font-weight: var(--fw-semibold); }
+.pay-group__label .icon { width: 18px; height: 18px; color: var(--muted); }
+.pay-group__label small { font-weight: var(--fw-regular); color: var(--muted); font-size: var(--fs-caption); }
+
+/* Summary */
+.sum-item { display: flex; gap: var(--space-3); align-items: flex-start; }
+.sum-feats { display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--fs-small); line-height: var(--lh-small); }
+.sum-feats li { display: flex; gap: var(--space-2); align-items: flex-start; }
+.sum-feats .icon { width: 18px; height: 18px; color: var(--good); }
+.sum-lines { display: flex; flex-direction: column; gap: var(--space-3); font-size: var(--fs-small); line-height: var(--lh-small); }
+.sum-line { display: flex; justify-content: space-between; gap: var(--space-4); }
+.sum-line span:first-child { color: var(--muted); }
+.sum-line--good span:last-child { color: var(--good); font-weight: var(--fw-semibold); }
+.sum-total { display: flex; justify-content: space-between; align-items: baseline; padding-top: var(--space-4); border-top: 1px dashed var(--line-strong); }
+.sum-total b { font-size: var(--fs-h2); line-height: var(--lh-h2); letter-spacing: var(--ls-tight); }
+.coupon-row { display: flex; gap: var(--space-2); }
+.coupon-row .input { height: 44px; border-color: var(--good); }
+.coupon-row .input .icon { color: var(--good); }
+.coupon-ok { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--good); font-weight: var(--fw-medium); }
+.coupon-ok .icon { width: 16px; height: 16px; }
+.coupon-ok .link { margin-left: auto; color: var(--muted); font-weight: var(--fw-regular); }
+.fineprint { font-size: var(--fs-caption); line-height: 18px; color: var(--muted); }
+.fineprint u { color: var(--blue); text-decoration: none; cursor: pointer; }
+.secure-note { display: flex; gap: var(--space-2); align-items: flex-start; font-size: var(--fs-caption); line-height: 18px; color: var(--muted); }
+.secure-note .icon { width: 18px; height: 18px; color: var(--good); }
+
+/* Waiting state */
+.wait-hero { display: flex; align-items: center; gap: var(--space-6); padding: var(--space-6); border-radius: var(--radius-xl); background: var(--warn-soft); border: 1px solid var(--gold-line); }
+.wait-hero__text { flex: 1; display: flex; flex-direction: column; gap: var(--space-1); }
+.wait-hero__title { font-size: var(--fs-h3); line-height: var(--lh-h3); }
+.wait-hero__text > span { font-size: var(--fs-small); color: var(--muted); }
+.wait-hero__text > span b { color: var(--ink); }
+.countdown { display: flex; align-items: flex-start; gap: var(--space-2); }
+.countdown__box { width: 64px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.countdown__box b { width: 64px; height: 56px; border-radius: var(--radius-md); background: var(--surface); border: 1px solid var(--gold-line); display: flex; align-items: center; justify-content: center; font-size: var(--fs-h2); font-weight: var(--fw-bold); color: var(--warn); font-variant-numeric: tabular-nums; }
+.countdown__box span { font-size: 11px; line-height: 14px; color: var(--muted); }
+.countdown__sep { font-size: var(--fs-h2); line-height: 56px; font-weight: var(--fw-bold); color: var(--warn); }
+.va { display: flex; flex-direction: column; gap: var(--space-5); }
+.va__row { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-5); background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.va__label { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.va__num { font-size: 30px; line-height: 38px; font-weight: var(--fw-bold); letter-spacing: 0.06em; color: var(--blue-deep); font-variant-numeric: tabular-nums; }
+.va__amount { font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: var(--fw-bold); font-variant-numeric: tabular-nums; }
+.va__amount small { font-size: var(--fs-small); color: var(--muted); font-weight: var(--fw-regular); }
+.note { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--blue-tint); font-size: var(--fs-small); line-height: var(--lh-small); color: var(--ink); }
+.note .icon { width: 20px; height: 20px; color: var(--blue); }
+.note--warn { background: var(--warn-soft); }
+.note--warn .icon { color: var(--warn); }
+.steps-ol { list-style: decimal; padding-left: var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); color: var(--ink); }
+.steps-ol b { font-weight: var(--fw-semibold); }
+.qr-box { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); text-align: center; }
+.qr-frame { padding: var(--space-3); border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); position: relative; }
+.qr-svg { width: 184px; height: 184px; display: block; }
+.qr-frame__tag { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+
+/* Success state */
+.done-wrap { width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--space-6); }
+.done-hero { text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--space-4); padding: var(--space-10) var(--space-10) var(--space-8); }
+.done-hero__icon { width: 88px; height: 88px; border-radius: var(--radius-full); background: var(--good-soft); color: var(--good); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 10px var(--good-soft), 0 0 0 11px var(--good-line); margin-bottom: var(--space-4); }
+.done-hero__icon .icon { width: 44px; height: 44px; stroke-width: 2.2; }
+.done-hero__ar { font-family: var(--font-ar); font-size: var(--fs-ar-body); line-height: 1.6; color: var(--gold-ink); }
+.inv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4) var(--space-8); font-size: var(--fs-small); line-height: var(--lh-small); }
+.inv-grid dt { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.inv-grid dd { margin: 2px 0 0; font-weight: var(--fw-medium); }
+.unlock-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+</style>
+</head>
+<body>
+<div data-tabs>
+
+<!-- Mockup-only state switcher -->
+<div class="mock-state">
+  <div class="mock-state__inner">
+    <span class="mock-state__label"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg> State mockup</span>
+    <div class="tabs tabs--segmented">
+      <a class="tab tab--active" data-tab="form" href="#tab-form">1 · Form</a>
+      <a class="tab" data-tab="menunggu" href="#tab-menunggu">2 · Menunggu Pembayaran</a>
+      <a class="tab" data-tab="berhasil" href="#tab-berhasil">3 · Berhasil</a>
+    </div>
+    <span class="mock-state__hint">Bar ini hanya untuk mockup, tidak tampil di produk.</span>
+  </div>
+</div>
+
+<!-- Minimal checkout header -->
+<header class="co-header">
+  <div class="co-header__inner">
+    <a class="brand" href="01-landing.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+    <div class="co-steps" data-panel="form">
+      <span class="co-step co-step--done"><span class="co-step__num"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Paket</span><span class="co-steps__line co-steps__line--done"></span>
+      <span class="co-step co-step--current"><span class="co-step__num">2</span>Data</span><span class="co-steps__line"></span>
+      <span class="co-step"><span class="co-step__num">3</span>Bayar</span><span class="co-steps__line"></span>
+      <span class="co-step"><span class="co-step__num">4</span>Selesai</span>
+    </div>
+    <div class="co-steps" data-panel="menunggu" hidden>
+      <span class="co-step co-step--done"><span class="co-step__num"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Paket</span><span class="co-steps__line co-steps__line--done"></span>
+      <span class="co-step co-step--done"><span class="co-step__num"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Data</span><span class="co-steps__line co-steps__line--done"></span>
+      <span class="co-step co-step--current"><span class="co-step__num">3</span>Bayar</span><span class="co-steps__line"></span>
+      <span class="co-step"><span class="co-step__num">4</span>Selesai</span>
+    </div>
+    <div class="co-steps" data-panel="berhasil" hidden>
+      <span class="co-step co-step--done"><span class="co-step__num"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Paket</span><span class="co-steps__line co-steps__line--done"></span>
+      <span class="co-step co-step--done"><span class="co-step__num"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Data</span><span class="co-steps__line co-steps__line--done"></span>
+      <span class="co-step co-step--done"><span class="co-step__num"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Bayar</span><span class="co-steps__line co-steps__line--done"></span>
+      <span class="co-step co-step--done"><span class="co-step__num"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Selesai</span>
+    </div>
+    <span class="co-secure"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Pembayaran aman</span>
+  </div>
+</header>
+
+<!-- ============ STATE 1: FORM ============ -->
+<main class="co-main" data-panel="form">
+  <div class="page-head">
+    <a class="link text-small" href="04-harga.html" style="display:inline-flex;align-items:center;gap:var(--space-1)"><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg> Kembali ke paket &amp; harga</a>
+    <h1 class="page-head__title">Selesaikan pendaftaran Paket Santri</h1>
+    <p class="page-head__sub">Periksa data Anda, pilih durasi paket, lalu pilih cara bayar. Akses langsung aktif setelah pembayaran terkonfirmasi.</p>
+  </div>
+
+  <div class="co-layout">
+    <div class="co-col">
+      <!-- 1. Buyer data -->
+      <section class="panel">
+        <div class="panel__head"><h2 class="panel__title"><span class="co-num">1</span> Data pembeli</h2><span class="panel__sub">Terisi dari akun Anda</span></div>
+        <div class="panel__body">
+          <div class="co-signed"><span class="avatar avatar--sm avatar--ring">MF</span><span>Masuk sebagai <b>Muhammad Fauzan</b></span><a class="link" href="06-auth.html">Bukan Anda? Ganti akun</a></div>
+          <div class="grid-2 grid--tight">
+            <div class="field"><label class="field__label">Nama lengkap</label><div class="input"><span class="input__text">Muhammad Fauzan</span></div><span class="field__hint">Tertulis di invoice dan syahadah.</span></div>
+            <div class="field"><label class="field__label">Email</label><div class="input"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><span class="input__text">fauzan@contoh.id</span></div><span class="field__hint">Invoice dikirim ke email ini.</span></div>
+            <div class="field"><label class="field__label">Nomor WhatsApp</label><div class="input"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21l1.6-4.7A8.5 8.5 0 1 1 7.8 19.6z"/><path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.6-2-1-1 1c-1.2-.5-2.4-1.7-2.9-2.9l1-1-1-2z"/></svg><span class="input__text">+62 812-3456-4471</span></div><span class="field__hint">Untuk instruksi bayar dan pengingat belajar.</span></div>
+            <div class="field"><label class="field__label">Kota (opsional)</label><div class="input select"><span class="input__text">Kota Serang, Banten</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Plan duration -->
+      <section class="panel">
+        <div class="panel__head"><h2 class="panel__title"><span class="co-num">2</span> Pilihan paket</h2><a class="panel__link" href="04-harga.html">Bandingkan paket <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></div>
+        <div class="panel__body">
+          <div class="stack stack--sm" data-chips data-active-class="is-active">
+            <div class="opt" data-chip>
+              <span class="radio__dot"><span></span></span>
+              <div class="opt__body"><span class="opt__title">Paket Santri · Bulanan</span><span class="opt__sub">Ditagih setiap bulan. Bisa dihentikan kapan saja dari halaman profil.</span></div>
+              <div class="opt__price"><b>Rp99.000</b><span>per bulan</span></div>
+            </div>
+            <div class="opt is-active" data-chip>
+              <span class="radio__dot"><span></span></span>
+              <div class="opt__body"><span class="opt__title">Paket Santri · Tahunan <span class="badge badge--premium">Hemat Rp198.000</span></span><span class="opt__sub">Dibayar sekali untuk 12 bulan, setara Rp82.500 per bulan. Berlaku 13 Nov 2026 – 13 Nov 2027.</span></div>
+              <div class="opt__price"><b>Rp990.000</b><span>per tahun</span></div>
+            </div>
+          </div>
+          <p class="text-small text-muted">Ingin dibimbing dalam kelompok kecil? <a class="link" href="04-harga.html">Lihat Halaqah Plus (Rp249.000/bulan)</a></p>
+        </div>
+      </section>
+
+      <!-- 3. Payment method -->
+      <section class="panel">
+        <div class="panel__head"><h2 class="panel__title"><span class="co-num">3</span> Metode pembayaran</h2><span class="panel__sub">Semua metode dikonfirmasi otomatis</span></div>
+        <div class="panel__body" data-chips data-active-class="is-active">
+          <div class="pay-group">
+            <span class="pay-group__label"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg> QRIS <small>· semua aplikasi bank &amp; e-wallet</small></span>
+            <div class="opt" data-chip>
+              <span class="paylogo paylogo--qris">QRIS</span>
+              <div class="opt__body"><span class="opt__title">Pindai kode QRIS</span><span class="opt__sub">Bisa dibayar dari m-banking atau e-wallet apa pun. Kode berlaku 30 menit.</span></div>
+              <span class="radio__dot"><span></span></span>
+            </div>
+          </div>
+          <div class="pay-group">
+            <span class="pay-group__label"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M4 10h16M12 3 3 8v2h18V8z"/><path d="M6 10v8M10 10v8M14 10v8M18 10v8"/></svg> Virtual Account <small>· transfer dari ATM, m-banking, atau internet banking</small></span>
+            <div class="grid-4 grid--tight">
+              <div class="opt opt--compact is-active" data-chip><span class="paylogo">BCA</span><span class="opt__title">BCA Virtual Account</span><span class="radio__dot"><span></span></span></div>
+              <div class="opt opt--compact" data-chip><span class="paylogo">BNI</span><span class="opt__title">BNI Virtual Account</span><span class="radio__dot"><span></span></span></div>
+              <div class="opt opt--compact" data-chip><span class="paylogo">BRI</span><span class="opt__title">BRIVA</span><span class="radio__dot"><span></span></span></div>
+              <div class="opt opt--compact" data-chip><span class="paylogo">Mandiri</span><span class="opt__title">Mandiri Bill Payment</span><span class="radio__dot"><span></span></span></div>
+            </div>
+          </div>
+          <div class="pay-group">
+            <span class="pay-group__label"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a2 2 0 0 1-2-2V5"/><path d="M17 13.5h.01"/></svg> E-wallet <small>· diarahkan ke aplikasi</small></span>
+            <div class="grid-4 grid--tight">
+              <div class="opt opt--compact" data-chip><span class="paylogo">GoPay</span><span class="opt__title">GoPay</span><span class="radio__dot"><span></span></span></div>
+              <div class="opt opt--compact" data-chip><span class="paylogo">OVO</span><span class="opt__title">OVO</span><span class="radio__dot"><span></span></span></div>
+              <div class="opt opt--compact" data-chip><span class="paylogo">DANA</span><span class="opt__title">DANA</span><span class="radio__dot"><span></span></span></div>
+              <div class="opt opt--compact" data-chip><span class="paylogo">ShopeePay</span><span class="opt__title">ShopeePay</span><span class="radio__dot"><span></span></span></div>
+            </div>
+          </div>
+          <div class="pay-group">
+            <span class="pay-group__label"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg> Kartu kredit / debit</span>
+            <div class="opt" data-chip>
+              <span class="cluster cluster--sm"><span class="paylogo">VISA</span><span class="paylogo">Mastercard</span><span class="paylogo">JCB</span></span>
+              <div class="opt__body"><span class="opt__title">Bayar dengan kartu</span><span class="opt__sub">Verifikasi 3D Secure dari bank penerbit. Nomor kartu tidak disimpan oleh Al-Abqary.</span></div>
+              <span class="radio__dot"><span></span></span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Sticky order summary -->
+    <aside class="co-aside">
+      <section class="panel">
+        <div class="panel__head"><h2 class="panel__title">Ringkasan pesanan</h2></div>
+        <div class="panel__body">
+          <div class="sum-item">
+            <span class="icon-tile icon-tile--deep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg></span>
+            <div class="media__body"><span class="media__title">Paket Santri · Tahunan</span><span class="media__sub">12 bulan · 13 Nov 2026 – 13 Nov 2027</span></div>
+          </div>
+          <ul class="sum-feats">
+            <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Semua kelas nahwu, sharf, dan qiraah</li>
+            <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Mushaf Nahwi dan Sharfi lengkap</li>
+            <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> 4 setoran per bulan dengan feedback ustadz</li>
+            <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Live halaqah umum 2 kali sepekan</li>
+          </ul>
+          <div class="divider"></div>
+          <div class="field">
+            <label class="field__label">Kode kupon</label>
+            <div class="coupon-row">
+              <div class="input"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><path d="M7 7h.01"/></svg><span class="input__text">AWALBELAJAR</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></div>
+              <a class="btn btn--secondary" data-toast="toast-coupon" href="#tab-form">Pakai</a>
+            </div>
+            <span class="coupon-ok"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg> Kupon dipakai: diskon 10% untuk pembelian pertama <span class="link">Hapus</span></span>
+          </div>
+          <div class="sum-lines">
+            <div class="sum-line"><span>Harga paket (12 bulan)</span><span>Rp990.000</span></div>
+            <div class="sum-line sum-line--good"><span>Diskon kupon AWALBELAJAR</span><span>−Rp99.000</span></div>
+            <div class="sum-line"><span>Biaya layanan</span><span>Rp0</span></div>
+          </div>
+          <div class="sum-total"><span class="text-small text-muted">Total bayar</span><b>Rp891.000</b></div>
+          <a class="btn btn--primary btn--lg btn--block" data-tab="menunggu" href="#tab-menunggu"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Bayar Sekarang</a>
+          <p class="fineprint">Dengan menekan Bayar Sekarang, Anda menyetujui <u>Syarat Layanan</u> dan <u>Kebijakan Pengembalian Dana</u> Ma'had Al-Abqary.</p>
+        </div>
+        <div class="panel__foot"><span class="secure-note"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Koneksi terenkripsi. Pembayaran diproses oleh penyedia payment gateway; data kartu tidak disimpan di server Al-Abqary.</span></div>
+      </section>
+      <div class="media" style="padding:0 var(--space-2)"><span class="icon-tile icon-tile--sm"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></svg></span><div class="media__body"><span class="media__title">Butuh bantuan membayar?</span><span class="media__sub">Admin Al-Abqary via WhatsApp, 08.00–20.00 WIB</span></div></div>
+    </aside>
+  </div>
+</main>
+
+<!-- ============ STATE 2: WAITING FOR PAYMENT ============ -->
+<main class="co-main" data-panel="menunggu" hidden>
+  <div class="page-head">
+    <h1 class="page-head__title">Selesaikan pembayaran Anda</h1>
+    <p class="page-head__sub">Pesanan <b>#ABQ-261113-0482</b> sudah dibuat. Instruksi yang sama juga kami kirim ke email dan WhatsApp Anda.</p>
+  </div>
+
+  <div class="co-layout">
+    <div class="co-col">
+      <div class="wait-hero">
+        <span class="icon-tile icon-tile--lg icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+        <div class="wait-hero__text"><b class="wait-hero__title">Menunggu pembayaran</b><span>Bayar sebelum <b>Sabtu, 14 November 2026 pukul 10.42 WIB</b>. Setelah itu nomor VA tidak berlaku dan pesanan dibatalkan otomatis.</span></div>
+        <div class="countdown" aria-label="Sisa waktu">
+          <div class="countdown__box"><b>23</b><span>Jam</span></div><span class="countdown__sep">:</span>
+          <div class="countdown__box"><b>59</b><span>Menit</span></div><span class="countdown__sep">:</span>
+          <div class="countdown__box"><b>12</b><span>Detik</span></div>
+        </div>
+      </div>
+
+      <section class="panel">
+        <div class="panel__head"><h2 class="panel__title"><span class="paylogo">BCA</span> Transfer ke BCA Virtual Account</h2><a class="panel__link" data-tab="form" href="#tab-form">Ganti metode</a></div>
+        <div class="panel__body va">
+          <div class="va__row">
+            <div class="flex-1"><div class="va__label">Nomor Virtual Account</div><div class="va__num">8277 0812 3456 4471</div><div class="va__label">a.n. Ma'had Al-Abqary</div></div>
+            <a class="btn btn--secondary" data-toast="toast-copy-va" href="#tab-menunggu"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Salin nomor</a>
+          </div>
+          <div class="va__row">
+            <div class="flex-1"><div class="va__label">Jumlah yang harus dibayar</div><div class="va__amount">Rp891.000 <small>· sudah termasuk diskon kupon</small></div></div>
+            <a class="btn btn--secondary" data-toast="toast-copy-amount" href="#tab-menunggu"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Salin jumlah</a>
+          </div>
+          <div class="note note--warn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3zM12 9v4M12 17h.01"/></svg><span>Transfer <b>tepat Rp891.000</b>. Jumlah yang berbeda akan ditolak oleh sistem bank. Pembayaran terdeteksi otomatis dalam 1–5 menit.</span></div>
+        </div>
+      </section>
+
+      <section class="stack">
+        <h2 class="text-h4">Cara membayar</h2>
+        <div class="accordion">
+          <details class="accordion__item" open>
+            <summary class="accordion__summary">BCA mobile (m-BCA) <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+            <div class="accordion__body">
+              <ol class="steps-ol">
+                <li>Buka aplikasi <b>BCA mobile</b>, pilih <b>m-BCA</b>, lalu masukkan kode akses.</li>
+                <li>Pilih <b>m-Transfer</b> → <b>BCA Virtual Account</b>.</li>
+                <li>Masukkan nomor <b>8277 0812 3456 4471</b>, lalu tekan <b>Send</b>.</li>
+                <li>Pastikan nama penerima <b>Ma'had Al-Abqary</b> dan jumlah <b>Rp891.000</b>.</li>
+                <li>Masukkan PIN m-BCA. Simpan bukti transaksi sampai paket aktif.</li>
+              </ol>
+            </div>
+          </details>
+          <details class="accordion__item">
+            <summary class="accordion__summary">ATM BCA <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+            <div class="accordion__body">
+              <ol class="steps-ol">
+                <li>Masukkan kartu ATM dan PIN.</li>
+                <li>Pilih <b>Transaksi Lainnya</b> → <b>Transfer</b> → <b>ke Rekening BCA Virtual Account</b>.</li>
+                <li>Masukkan nomor VA, periksa detail, lalu konfirmasi.</li>
+              </ol>
+            </div>
+          </details>
+          <details class="accordion__item">
+            <summary class="accordion__summary">KlikBCA (internet banking) <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+            <div class="accordion__body">
+              <ol class="steps-ol">
+                <li>Masuk ke KlikBCA Individual.</li>
+                <li>Pilih <b>Transfer Dana</b> → <b>Transfer ke BCA Virtual Account</b>.</li>
+                <li>Masukkan nomor VA, lalu ikuti verifikasi KeyBCA.</li>
+              </ol>
+            </div>
+          </details>
+        </div>
+      </section>
+    </div>
+
+    <aside class="co-aside">
+      <section class="panel">
+        <div class="panel__head"><h2 class="panel__title">Detail pesanan</h2><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Menunggu</span></div>
+        <div class="panel__body">
+          <div class="sum-item">
+            <span class="icon-tile icon-tile--deep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg></span>
+            <div class="media__body"><span class="media__title">Paket Santri · Tahunan</span><span class="media__sub">Pesanan #ABQ-261113-0482</span></div>
+          </div>
+          <div class="sum-lines">
+            <div class="sum-line"><span>Harga paket</span><span>Rp990.000</span></div>
+            <div class="sum-line sum-line--good"><span>Diskon AWALBELAJAR</span><span>−Rp99.000</span></div>
+          </div>
+          <div class="sum-total"><span class="text-small text-muted">Total</span><b>Rp891.000</b></div>
+          <a class="btn btn--primary btn--block" data-tab="berhasil" href="#tab-berhasil"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></svg> Saya sudah bayar, cek status</a>
+          <a class="btn btn--ghost btn--block" data-tab="form" href="#tab-form">Ubah metode pembayaran</a>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="panel__body qr-box">
+          <span class="text-small" style="font-weight:var(--fw-semibold)">Lebih mudah dari HP lain? Pindai QRIS</span>
+          <div class="qr-frame"><svg class="qr-svg" viewBox="-2 -2 29 29" role="img" aria-label="Kode QRIS (placeholder)" shape-rendering="crispEdges"><rect x="-2" y="-2" width="29" height="29" style="fill:var(--surface)"/><path d="M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM9 0h1v1h-1zM11 0h1v1h-1zM13 0h1v1h-1zM14 0h1v1h-1zM16 0h1v1h-1zM18 0h1v1h-1zM19 0h1v1h-1zM20 0h1v1h-1zM21 0h1v1h-1zM22 0h1v1h-1zM23 0h1v1h-1zM24 0h1v1h-1zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM9 1h1v1h-1zM10 1h1v1h-1zM11 1h1v1h-1zM13 1h1v1h-1zM14 1h1v1h-1zM18 1h1v1h-1zM24 1h1v1h-1zM0 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM6 2h1v1h-1zM9 2h1v1h-1zM11 2h1v1h-1zM13 2h1v1h-1zM14 2h1v1h-1zM15 2h1v1h-1zM16 2h1v1h-1zM18 2h1v1h-1zM20 2h1v1h-1zM21 2h1v1h-1zM22 2h1v1h-1zM24 2h1v1h-1zM0 3h1v1h-1zM2 3h1v1h-1zM3 3h1v1h-1zM4 3h1v1h-1zM6 3h1v1h-1zM9 3h1v1h-1zM12 3h1v1h-1zM14 3h1v1h-1zM15 3h1v1h-1zM16 3h1v1h-1zM18 3h1v1h-1zM20 3h1v1h-1zM21 3h1v1h-1zM22 3h1v1h-1zM24 3h1v1h-1zM0 4h1v1h-1zM2 4h1v1h-1zM3 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM9 4h1v1h-1zM10 4h1v1h-1zM12 4h1v1h-1zM13 4h1v1h-1zM16 4h1v1h-1zM18 4h1v1h-1zM20 4h1v1h-1zM21 4h1v1h-1zM22 4h1v1h-1zM24 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM12 5h1v1h-1zM14 5h1v1h-1zM15 5h1v1h-1zM18 5h1v1h-1zM24 5h1v1h-1zM0 6h1v1h-1zM1 6h1v1h-1zM2 6h1v1h-1zM3 6h1v1h-1zM4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM19 6h1v1h-1zM20 6h1v1h-1zM21 6h1v1h-1zM22 6h1v1h-1zM23 6h1v1h-1zM24 6h1v1h-1zM10 7h1v1h-1zM13 7h1v1h-1zM15 7h1v1h-1zM3 8h1v1h-1zM4 8h1v1h-1zM6 8h1v1h-1zM7 8h1v1h-1zM8 8h1v1h-1zM9 8h1v1h-1zM10 8h1v1h-1zM12 8h1v1h-1zM13 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM17 8h1v1h-1zM22 8h1v1h-1zM23 8h1v1h-1zM24 8h1v1h-1zM2 9h1v1h-1zM3 9h1v1h-1zM4 9h1v1h-1zM5 9h1v1h-1zM8 9h1v1h-1zM9 9h1v1h-1zM10 9h1v1h-1zM11 9h1v1h-1zM18 9h1v1h-1zM23 9h1v1h-1zM24 9h1v1h-1zM0 10h1v1h-1zM2 10h1v1h-1zM3 10h1v1h-1zM4 10h1v1h-1zM5 10h1v1h-1zM6 10h1v1h-1zM7 10h1v1h-1zM8 10h1v1h-1zM9 10h1v1h-1zM10 10h1v1h-1zM11 10h1v1h-1zM12 10h1v1h-1zM15 10h1v1h-1zM16 10h1v1h-1zM17 10h1v1h-1zM18 10h1v1h-1zM19 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM0 11h1v1h-1zM1 11h1v1h-1zM2 11h1v1h-1zM4 11h1v1h-1zM5 11h1v1h-1zM8 11h1v1h-1zM10 11h1v1h-1zM15 11h1v1h-1zM16 11h1v1h-1zM17 11h1v1h-1zM21 11h1v1h-1zM22 11h1v1h-1zM4 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM8 12h1v1h-1zM9 12h1v1h-1zM10 12h1v1h-1zM13 12h1v1h-1zM17 12h1v1h-1zM18 12h1v1h-1zM19 12h1v1h-1zM20 12h1v1h-1zM21 12h1v1h-1zM0 13h1v1h-1zM3 13h1v1h-1zM8 13h1v1h-1zM9 13h1v1h-1zM11 13h1v1h-1zM14 13h1v1h-1zM15 13h1v1h-1zM18 13h1v1h-1zM19 13h1v1h-1zM20 13h1v1h-1zM23 13h1v1h-1zM2 14h1v1h-1zM4 14h1v1h-1zM5 14h1v1h-1zM6 14h1v1h-1zM10 14h1v1h-1zM13 14h1v1h-1zM14 14h1v1h-1zM15 14h1v1h-1zM16 14h1v1h-1zM18 14h1v1h-1zM19 14h1v1h-1zM20 14h1v1h-1zM22 14h1v1h-1zM23 14h1v1h-1zM1 15h1v1h-1zM7 15h1v1h-1zM8 15h1v1h-1zM9 15h1v1h-1zM11 15h1v1h-1zM12 15h1v1h-1zM15 15h1v1h-1zM19 15h1v1h-1zM21 15h1v1h-1zM22 15h1v1h-1zM3 16h1v1h-1zM6 16h1v1h-1zM8 16h1v1h-1zM10 16h1v1h-1zM15 16h1v1h-1zM19 16h1v1h-1zM20 16h1v1h-1zM21 16h1v1h-1zM22 16h1v1h-1zM23 16h1v1h-1zM24 16h1v1h-1zM11 17h1v1h-1zM14 17h1v1h-1zM17 17h1v1h-1zM19 17h1v1h-1zM23 17h1v1h-1zM24 17h1v1h-1zM0 18h1v1h-1zM1 18h1v1h-1zM2 18h1v1h-1zM3 18h1v1h-1zM4 18h1v1h-1zM5 18h1v1h-1zM6 18h1v1h-1zM9 18h1v1h-1zM10 18h1v1h-1zM11 18h1v1h-1zM13 18h1v1h-1zM15 18h1v1h-1zM16 18h1v1h-1zM17 18h1v1h-1zM20 18h1v1h-1zM24 18h1v1h-1zM0 19h1v1h-1zM6 19h1v1h-1zM8 19h1v1h-1zM9 19h1v1h-1zM11 19h1v1h-1zM12 19h1v1h-1zM13 19h1v1h-1zM16 19h1v1h-1zM17 19h1v1h-1zM21 19h1v1h-1zM22 19h1v1h-1zM24 19h1v1h-1zM0 20h1v1h-1zM2 20h1v1h-1zM3 20h1v1h-1zM4 20h1v1h-1zM6 20h1v1h-1zM8 20h1v1h-1zM12 20h1v1h-1zM14 20h1v1h-1zM16 20h1v1h-1zM17 20h1v1h-1zM20 20h1v1h-1zM21 20h1v1h-1zM23 20h1v1h-1zM24 20h1v1h-1zM0 21h1v1h-1zM2 21h1v1h-1zM3 21h1v1h-1zM4 21h1v1h-1zM6 21h1v1h-1zM8 21h1v1h-1zM9 21h1v1h-1zM10 21h1v1h-1zM11 21h1v1h-1zM12 21h1v1h-1zM14 21h1v1h-1zM16 21h1v1h-1zM17 21h1v1h-1zM18 21h1v1h-1zM19 21h1v1h-1zM20 21h1v1h-1zM23 21h1v1h-1zM24 21h1v1h-1zM0 22h1v1h-1zM2 22h1v1h-1zM3 22h1v1h-1zM4 22h1v1h-1zM6 22h1v1h-1zM9 22h1v1h-1zM11 22h1v1h-1zM14 22h1v1h-1zM18 22h1v1h-1zM22 22h1v1h-1zM23 22h1v1h-1zM24 22h1v1h-1zM0 23h1v1h-1zM6 23h1v1h-1zM8 23h1v1h-1zM9 23h1v1h-1zM11 23h1v1h-1zM12 23h1v1h-1zM13 23h1v1h-1zM17 23h1v1h-1zM18 23h1v1h-1zM19 23h1v1h-1zM20 23h1v1h-1zM21 23h1v1h-1zM22 23h1v1h-1zM23 23h1v1h-1zM0 24h1v1h-1zM1 24h1v1h-1zM2 24h1v1h-1zM3 24h1v1h-1zM4 24h1v1h-1zM5 24h1v1h-1zM6 24h1v1h-1zM10 24h1v1h-1zM12 24h1v1h-1zM13 24h1v1h-1zM14 24h1v1h-1zM15 24h1v1h-1zM16 24h1v1h-1zM18 24h1v1h-1zM20 24h1v1h-1zM21 24h1v1h-1zM22 24h1v1h-1zM23 24h1v1h-1zM24 24h1v1h-1z" style="fill:var(--ink)"/></svg><span class="paylogo paylogo--qris qr-frame__tag">QRIS</span></div>
+          <span class="text-caption text-muted">Kode QR untuk pesanan yang sama, Rp891.000. Gambar ini placeholder mockup.</span>
+          <a class="btn btn--secondary btn--sm" data-toast="toast-qr" href="#tab-menunggu"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Simpan gambar QR</a>
+        </div>
+      </section>
+    </aside>
+  </div>
+</main>
+
+<!-- ============ STATE 3: SUCCESS ============ -->
+<main class="co-main" data-panel="berhasil" hidden>
+  <div class="done-wrap">
+    <section class="card done-hero">
+      <span class="done-hero__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+      <span class="done-hero__ar" lang="ar" dir="rtl">اَلْحَمْدُ لِلّٰهِ</span>
+      <h1 class="text-h1">Pembayaran berhasil</h1>
+      <p class="text-body-lg text-muted" style="max-width:600px">Paket Santri Tahunan sudah aktif sampai <b style="color:var(--ink)">13 November 2027</b>. Invoice dikirim ke fauzan@contoh.id dan WhatsApp <span class="nowrap">+62 812-xxxx-4471</span>.</p>
+      <div class="cluster" style="justify-content:center;margin-top:var(--space-2)">
+        <a class="btn btn--primary btn--lg" href="07-onboarding.html">Mulai Belajar <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        <a class="btn btn--secondary btn--lg" href="10-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9.5 9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> Ke Beranda</a>
+      </div>
+      <p class="text-caption text-muted">Santri baru akan diarahkan ke tes penempatan singkat (± 3 menit) agar mulai dari kelas yang tepat.</p>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head">
+        <div class="media"><span class="icon-tile icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2v20l3-2 3 2 2-2 2 2 3-2 3 2V2l-3 2-3-2-2 2-2-2-3 2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><div class="media__body"><span class="media__title">Invoice INV/2026/11/00482</span><span class="media__sub">Pesanan #ABQ-261113-0482</span></div></div>
+        <div class="cluster"><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Lunas</span><a class="btn btn--secondary btn--sm" data-toast="toast-invoice" href="#tab-berhasil"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Unduh PDF</a></div>
+      </div>
+      <div class="panel__body">
+        <dl class="inv-grid">
+          <div><dt>Nama</dt><dd>Muhammad Fauzan</dd></div>
+          <div><dt>Tanggal bayar</dt><dd>Jumat, 13 November 2026 · 10.47 WIB</dd></div>
+          <div><dt>Paket</dt><dd>Paket Santri · Tahunan</dd></div>
+          <div><dt>Metode</dt><dd>BCA Virtual Account ·· 4471</dd></div>
+          <div><dt>Masa aktif</dt><dd>13 Nov 2026 – 13 Nov 2027</dd></div>
+          <div><dt>Perpanjangan</dt><dd>Diingatkan 7 hari sebelum berakhir</dd></div>
+        </dl>
+        <div class="divider"></div>
+        <div class="sum-lines">
+          <div class="sum-line"><span>Harga paket</span><span>Rp990.000</span></div>
+          <div class="sum-line sum-line--good"><span>Diskon kupon AWALBELAJAR (10%)</span><span>−Rp99.000</span></div>
+          <div class="sum-line"><span>Biaya layanan</span><span>Rp0</span></div>
+        </div>
+        <div class="sum-total"><span class="text-small text-muted">Total dibayar</span><b>Rp891.000</b></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head"><h2 class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.75-1.4"/></svg> Yang sekarang terbuka untuk Anda</h2></div>
+      <div class="panel__body">
+        <div class="unlock-grid">
+          <div class="media"><span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg></span><div class="media__body"><span class="media__title">Semua kelas premium</span><span class="media__sub">Nahwu, sharf, dan Qiraatul Kutub</span></div></div>
+          <div class="media"><span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg></span><div class="media__body"><span class="media__title">Mushaf Nahwi &amp; Sharfi</span><span class="media__sub">Pewarnaan i'rab dan wazan lengkap</span></div></div>
+          <div class="media"><span class="icon-tile icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4"/></svg></span><div class="media__body"><span class="media__title">4 setoran per bulan</span><span class="media__sub">Dengan feedback tertulis dari ustadz</span></div></div>
+          <div class="media"><span class="icon-tile icon-tile--streak"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg></span><div class="media__body"><span class="media__title">Live halaqah umum</span><span class="media__sub">Selasa &amp; Jumat, 20.00 WIB</span></div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+</div>
+
+<!-- Toasts (triggered by data-toast) -->
+<div class="toast-stack" style="top:var(--space-6)">
+  <div class="toast toast--success" id="toast-coupon" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><path d="M7 7h.01"/></svg></span><div class="toast__main"><p class="toast__title">Kupon AWALBELAJAR dipakai</p><p class="toast__text">Total berkurang Rp99.000.</p></div><span class="toast__close" data-dismiss><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+  <div class="toast toast--success" id="toast-copy-va" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span><div class="toast__main"><p class="toast__title">Nomor VA disalin</p><p class="toast__text">8277 0812 3456 4471</p></div><span class="toast__close" data-dismiss><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+  <div class="toast toast--success" id="toast-copy-amount" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span><div class="toast__main"><p class="toast__title">Jumlah disalin</p><p class="toast__text">891000</p></div><span class="toast__close" data-dismiss><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+  <div class="toast toast--info" id="toast-qr" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></span><div class="toast__main"><p class="toast__title">Gambar QR disimpan</p><p class="toast__text">Buka aplikasi bank atau e-wallet, lalu pilih dari galeri.</p></div><span class="toast__close" data-dismiss><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+  <div class="toast toast--info" id="toast-invoice" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span><div class="toast__main"><p class="toast__title">Invoice sedang diunduh</p><p class="toast__text">INV-2026-11-00482.pdf</p></div><span class="toast__close" data-dismiss><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div>
+</div>
+
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

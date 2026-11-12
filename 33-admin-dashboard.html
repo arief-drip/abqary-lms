@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Dasbor Admin · Al-Abqary LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Staff chrome (shared by 30-34): role switcher in the topnav */
+.app--staff .topnav__inner { gap: var(--space-6); }
+.app--staff .brand { flex: none; }
+.app--staff .topnav__search { width: 260px; flex: none; }
+.app--staff .avatar-with-meta__name, .app--staff .avatar-with-meta__sub { white-space: nowrap; }
+.role-switch { flex: none; }
+.role-switch .tab .icon { width: 16px; height: 16px; }
+
+/* Admin dashboard page styles */
+.badge--warn { background: var(--warn-soft); color: var(--warn); border-color: var(--warn-soft); }
+.range { display: flex; align-items: center; gap: var(--space-3); }
+.range .input { width: auto; height: 40px; font-size: var(--fs-small); }
+.stat__delta--down-good { color: var(--good); background: var(--good-soft); }
+.stat__foot { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+
+/* Charts (inline SVG, tokens only) */
+.chart { width: 100%; height: auto; display: block; overflow: visible; }
+.chart__grid { stroke: var(--line); stroke-width: 1; }
+.chart__tick { font-family: var(--font-ui); font-size: 11px; fill: var(--muted); }
+.chart__label { font-family: var(--font-ui); font-size: 12px; font-weight: 600; fill: var(--ink); }
+.chart__label--muted { fill: var(--muted); font-weight: 500; }
+.chart__line { fill: none; stroke: var(--blue); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.chart__line--proj { stroke-dasharray: 5 5; }
+.chart__area { fill: var(--blue-soft); opacity: 0.7; }
+.chart__dot { fill: var(--blue); stroke: var(--surface); stroke-width: 2; }
+.chart__dot--proj { fill: var(--surface); stroke: var(--blue); }
+.chart__hit:hover .chart__dot { r: 6; }
+.chart__bar--a { fill: var(--blue); }
+.chart__bar--b { fill: var(--gold-ink); }
+.chart__hit:hover .chart__bar { opacity: 0.85; }
+.chart__hit:hover rect { fill: var(--blue-tint); }
+.chart-legend { display: flex; flex-wrap: wrap; gap: var(--space-4); font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.chart-legend span { display: inline-flex; align-items: center; gap: var(--space-2); }
+.chart-legend i { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+.swatch-blue { background: var(--blue); }
+.swatch-gold { background: var(--gold-ink); }
+.swatch-free { background: var(--subtle); }
+.chart-note { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+
+.donut-wrap { display: flex; align-items: center; gap: var(--space-6); }
+.donut { width: 168px; height: 168px; flex: none; }
+.chart__seg { fill: none; stroke-width: 22; }
+.chart__seg--free { stroke: var(--subtle); }
+.chart__seg--santri { stroke: var(--blue); }
+.chart__seg--plus { stroke: var(--gold-ink); }
+.chart__seg:hover { stroke-width: 26; }
+.donut__num { font-family: var(--font-ui); font-size: 24px; font-weight: 700; fill: var(--ink); }
+.donut__sub { font-family: var(--font-ui); font-size: 11px; fill: var(--muted); }
+.plan-legend { flex: 1; display: flex; flex-direction: column; gap: var(--space-3); }
+.plan-legend__row { display: grid; grid-template-columns: 12px 1fr auto; gap: var(--space-2) var(--space-3); align-items: center; font-size: var(--fs-small); line-height: var(--lh-small); }
+.plan-legend__row i { width: 12px; height: 12px; border-radius: 3px; }
+.plan-legend__row b { font-variant-numeric: tabular-nums; }
+.plan-legend__row small { grid-column: 2 / 4; font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); margin-top: -6px; }
+
+/* Funnel */
+.funnel { display: flex; flex-direction: column; gap: var(--space-4); }
+.funnel__row { display: grid; grid-template-columns: 136px minmax(0, 1fr) 128px; gap: var(--space-3); align-items: center; }
+.funnel__name { font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-medium); }
+.funnel__track { height: 28px; border-radius: var(--radius-sm); background: var(--bg-subtle); overflow: hidden; }
+.funnel__bar { height: 100%; border-radius: var(--radius-sm); background: var(--blue); display: flex; align-items: center; padding-left: var(--space-2); font-size: var(--fs-caption); font-weight: var(--fw-semibold); color: var(--on-blue); white-space: nowrap; }
+.funnel__bar--deep { background: var(--blue-deep); }
+.funnel__bar--paid { background: var(--gold-ink); }
+.funnel__val { text-align: right; display: flex; flex-direction: column; }
+.funnel__val b { font-size: var(--fs-small); line-height: var(--lh-small); font-variant-numeric: tabular-nums; }
+.funnel__val span { font-size: 11px; line-height: 14px; color: var(--muted); }
+.funnel__break { display: flex; align-items: center; gap: var(--space-3); font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.funnel__break::before, .funnel__break::after { content: ""; flex: 1; border-top: 1px dashed var(--line-strong); }
+
+/* Tables */
+.course-cell { display: flex; flex-direction: column; gap: 2px; }
+.course-cell span { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.mini-bar { display: flex; align-items: center; gap: var(--space-2); }
+.mini-bar .progress { width: 56px; }
+.table--compact th, .table--compact td { padding-left: var(--space-4); padding-right: var(--space-4); }
+.table--compact .course-cell { min-width: 200px; }
+.table--compact td { white-space: nowrap; }
+.table--compact td:first-child { white-space: normal; }
+.rating { display: inline-flex; align-items: center; gap: var(--space-1); }
+.rating .icon { width: 14px; height: 14px; color: var(--gold); fill: currentColor; }
+
+/* System health */
+.health { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-5); }
+.health__state { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--fs-caption); font-weight: var(--fw-semibold); white-space: nowrap; }
+.health__state .icon { width: 14px; height: 14px; stroke-width: 2.2; }
+.health__state--ok { color: var(--good); }
+.health__state--warn { color: var(--warn); }
+.alert-row { display: flex; gap: var(--space-3); align-items: flex-start; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); font-size: var(--fs-small); line-height: var(--lh-small); }
+.alert-row .icon { width: 18px; height: 18px; flex: none; margin-top: 1px; }
+.alert-row--bad { background: var(--bad-soft); color: var(--ink); }
+.alert-row--bad > .icon { color: var(--bad); }
+.alert-row--warn { background: var(--warn-soft); }
+.alert-row--warn > .icon { color: var(--warn); }
+.alert-row a { color: var(--blue); font-weight: var(--fw-semibold); white-space: nowrap; cursor: pointer; }
+
+/* Transactions */
+.trx-sum { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); }
+.trx-sum__item { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-5); display: flex; flex-direction: column; gap: var(--space-1); }
+.trx-sum__item b { font-size: var(--fs-h4); line-height: var(--lh-h4); }
+.toolbar { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.toolbar .input { height: 40px; font-size: var(--fs-small); }
+.table--trx th, .table--trx td { white-space: nowrap; padding-left: var(--space-4); padding-right: var(--space-4); }
+.inv { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; color: var(--muted); }
+.icon-actions { display: inline-flex; gap: var(--space-1); }
+.pagination { display: flex; align-items: center; justify-content: space-between; padding: var(--space-3) var(--space-5); border-top: 1px solid var(--line); font-size: var(--fs-small); color: var(--muted); }
+.pagination__pages { display: flex; gap: var(--space-1); }
+.pagination__pages a { min-width: 32px; height: 32px; border-radius: var(--radius-sm); display: inline-flex; align-items: center; justify-content: center; color: var(--ink); }
+.pagination__pages a.is-current { background: var(--blue); color: var(--on-blue); font-weight: var(--fw-semibold); }
+
+/* Reports */
+.report { display: flex; gap: var(--space-4); align-items: flex-start; }
+.report__body { flex: 1; display: flex; flex-direction: column; gap: var(--space-1); }
+</style>
+</head>
+<body class="app app--staff">
+
+<!-- STAFF TOPNAV START (admin) — copy as-is to every admin page; role switcher links 10 / 30 / 33 -->
+<header class="topnav app__topnav">
+  <div class="topnav__inner">
+    <a class="brand" href="33-admin-dashboard.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+    <div class="input topnav__search"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari pengguna, invoice, atau kupon…</span><span class="kbd">/</span></div>
+    <nav class="tabs tabs--segmented role-switch" aria-label="Masuk sebagai: ganti peran">
+      <a class="tab" href="10-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Santri</a>
+      <a class="tab" href="30-ustadz-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5"/></svg> Ustadz</a>
+      <a class="tab tab--active" href="33-admin-dashboard.html" aria-current="page"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Admin</a>
+    </nav>
+    <div class="topnav__actions">
+      <a class="btn btn--ghost btn--icon topnav__icon-btn" href="21-notifikasi.html" aria-label="Notifikasi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="notif-dot"></span></a>
+      <a class="avatar-with-meta" href="20-profil.html"><span class="avatar avatar--gold avatar--ring">AA</span><span><span class="avatar-with-meta__name" style="display:block">Admin Al-Abqary</span><span class="avatar-with-meta__sub">Pengelola platform</span></span></a>
+    </div>
+  </div>
+</header>
+<!-- STAFF TOPNAV END -->
+
+<div class="app__body">
+
+<!-- ADMIN SIDEBAR START — copy as-is to every admin page; move .sidebar__item--active to the current page's item -->
+<aside class="sidebar app__sidebar">
+  <div class="sidebar__role sidebar__role--admin"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span><b>Panel Admin</b><small>Admin Al-Abqary</small></span></div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Ikhtisar</span>
+    <a class="sidebar__item sidebar__item--active" href="33-admin-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg> Dashboard</a>
+    <a class="sidebar__item" href="33-admin-dashboard.html#tab-transaksi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg> Transaksi<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="33-admin-dashboard.html#tab-laporan"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 18v-2M12 18v-5M16 18v-3"/></svg> Laporan</a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Kelola</span>
+    <a class="sidebar__item" href="34-admin-pengguna.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> Pengguna<span class="sidebar__count">3.480</span></a>
+    <a class="sidebar__item" href="31-course-builder.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Kelas &amp; Kurikulum<span class="sidebar__count">12</span></a>
+    <a class="sidebar__item" href="34-admin-pengguna.html#tab-kupon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><path d="M7 7h.01"/></svg> Kupon</a>
+    <a class="sidebar__item" href="34-admin-pengguna.html#tab-peran"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Pengaturan</a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Beralih</span>
+    <a class="sidebar__item" href="30-ustadz-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5"/></svg> Ruang Ustadz</a>
+  </div>
+</aside>
+<!-- ADMIN SIDEBAR END -->
+
+<main class="app__main">
+
+  <!-- Page head with date range -->
+  <div class="page-head">
+    <div class="page-head__row">
+      <div>
+        <h1 class="page-head__title">Dasbor Admin</h1>
+        <p class="page-head__sub">Ringkasan platform per Jumat, 13 November 2026 · semua angka adalah contoh</p>
+      </div>
+      <div class="page-head__actions">
+        <div class="range">
+          <div class="tabs tabs--segmented" data-chips data-active-class="tab--active">
+            <span class="tab" data-chip>7 hari</span>
+            <span class="tab" data-chip>30 hari</span>
+            <span class="tab tab--active" data-chip>Bulan ini</span>
+            <span class="tab" data-chip>12 bulan</span>
+          </div>
+          <div class="input select"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="input__text">1–13 Nov 2026</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div data-tabs class="stack stack--lg">
+    <div class="tabs">
+      <a class="tab tab--active" href="#" data-tab="ringkasan"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg> Ringkasan</a>
+      <a class="tab" href="#" data-tab="transaksi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg> Transaksi <span class="tab__count">3 gagal</span></a>
+      <a class="tab" href="#" data-tab="laporan"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 18v-2M12 18v-5M16 18v-3"/></svg> Laporan</a>
+    </div>
+
+    <!-- ================= RINGKASAN ================= -->
+    <div data-panel="ringkasan" class="stack stack--lg">
+      <!-- KPI tiles -->
+      <div class="grid-3 grid--tight">
+        <div class="stat stat--gold"><div class="stat__head"><span class="stat__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span><span class="stat__delta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg> 12,4%</span></div><span class="stat__label">Pendapatan bulan ini</span><span class="stat__value">Rp71,8 <small>jt</small></span><span class="stat__foot">1–13 Nov · dibanding 1–13 Okt (Rp63,9 jt)</span></div>
+        <div class="stat"><div class="stat__head"><span class="stat__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></span><span class="stat__delta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg> 8,1%</span></div><span class="stat__label">MRR (pendapatan berulang bulanan)</span><span class="stat__value">Rp162,7 <small>jt</small></span><span class="stat__foot">1.050 paket Santri · 236 paket Halaqah Plus</span></div>
+        <div class="stat stat--good"><div class="stat__head"><span class="stat__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="stat__delta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg> 6,2%</span></div><span class="stat__label">Santri aktif (30 hari)</span><span class="stat__value">1.912</span><span class="stat__foot">55% dari 3.480 akun terdaftar</span></div>
+        <div class="stat"><div class="stat__head"><span class="stat__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></span><span class="stat__delta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg> 18%</span></div><span class="stat__label">Santri baru</span><span class="stat__value">486</span><span class="stat__foot">74 langsung memilih paket berbayar</span></div>
+        <div class="stat stat--good"><div class="stat__head"><span class="stat__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span><span class="stat__delta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg> 3 poin</span></div><span class="stat__label">Tingkat penyelesaian kelas</span><span class="stat__value">64%</span><span class="stat__foot">Santri yang menuntaskan kelas yang dimulai</span></div>
+        <div class="stat stat--streak"><div class="stat__head"><span class="stat__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m22 17-8.5-8.5-5 5L2 7"/><path d="M16 17h6v-6"/></svg></span><span class="stat__delta stat__delta--down-good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg> 0,6 poin · membaik</span></div><span class="stat__label">Churn bulanan</span><span class="stat__value">4,1%</span><span class="stat__foot">53 langganan berhenti bulan lalu</span></div>
+      </div>
+
+      <!-- Revenue + plan distribution -->
+      <div class="grid-2-1">
+        <section class="panel">
+          <div class="panel__head">
+            <div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg> Pendapatan per bulan</span><span class="panel__sub">Desember 2025 – November 2026 · garis putus-putus = proyeksi dari MRR</span></div>
+            <a class="panel__link" href="#" data-tab="laporan">Laporan keuangan <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+          </div>
+          <div class="panel__body">
+            <svg class="chart" viewBox="0 0 640 248" role="img" aria-labelledby="rev-title rev-desc">
+<title id="rev-title">Pendapatan per bulan, Desember 2025 sampai November 2026</title>
+<desc id="rev-desc">Naik dari Rp78 juta menjadi Rp151 juta pada Oktober; November proyeksi Rp163 juta.</desc>
+<line class="chart__grid" x1="56" x2="620" y1="216.0" y2="216.0"/>
+<text class="chart__tick" x="46" y="220.0" text-anchor="end">0</text>
+<line class="chart__grid" x1="56" x2="620" y1="158.9" y2="158.9"/>
+<text class="chart__tick" x="46" y="162.9" text-anchor="end">50</text>
+<line class="chart__grid" x1="56" x2="620" y1="101.7" y2="101.7"/>
+<text class="chart__tick" x="46" y="105.7" text-anchor="end">100</text>
+<line class="chart__grid" x1="56" x2="620" y1="44.6" y2="44.6"/>
+<text class="chart__tick" x="46" y="48.6" text-anchor="end">150</text>
+<text class="chart__tick" x="46" y="10" text-anchor="end">juta Rp</text>
+<path class="chart__area" d="M56.0,216 L56.0,126.9 L107.3,120.0 L158.5,106.3 L209.8,97.1 L261.1,102.9 L312.4,94.9 L363.6,88.0 L414.9,81.1 L466.2,70.9 L517.5,57.1 L568.7,43.4 L568.7,216Z"/>
+<polyline class="chart__line" points="56.0,126.9 107.3,120.0 158.5,106.3 209.8,97.1 261.1,102.9 312.4,94.9 363.6,88.0 414.9,81.1 466.2,70.9 517.5,57.1 568.7,43.4"/>
+<line class="chart__line chart__line--proj" x1="568.7" y1="43.4" x2="620.0" y2="29.7"/>
+<text class="chart__tick" x="56.0" y="236" text-anchor="middle">Des</text>
+<g class="chart__hit"><circle class="chart__dot" cx="56.0" cy="126.9" r="4"/><circle cx="56.0" cy="126.9" r="14" fill="transparent"><title>Des 2025: Rp78 jt</title></circle></g>
+<text class="chart__tick" x="107.3" y="236" text-anchor="middle">Jan</text>
+<g class="chart__hit"><circle class="chart__dot" cx="107.3" cy="120.0" r="4"/><circle cx="107.3" cy="120.0" r="14" fill="transparent"><title>Jan 2026: Rp84 jt</title></circle></g>
+<text class="chart__tick" x="158.5" y="236" text-anchor="middle">Feb</text>
+<g class="chart__hit"><circle class="chart__dot" cx="158.5" cy="106.3" r="4"/><circle cx="158.5" cy="106.3" r="14" fill="transparent"><title>Feb 2026: Rp96 jt</title></circle></g>
+<text class="chart__tick" x="209.8" y="236" text-anchor="middle">Mar</text>
+<g class="chart__hit"><circle class="chart__dot" cx="209.8" cy="97.1" r="4"/><circle cx="209.8" cy="97.1" r="14" fill="transparent"><title>Mar 2026: Rp104 jt</title></circle></g>
+<text class="chart__tick" x="261.1" y="236" text-anchor="middle">Apr</text>
+<g class="chart__hit"><circle class="chart__dot" cx="261.1" cy="102.9" r="4"/><circle cx="261.1" cy="102.9" r="14" fill="transparent"><title>Apr 2026: Rp99 jt</title></circle></g>
+<text class="chart__tick" x="312.4" y="236" text-anchor="middle">Mei</text>
+<g class="chart__hit"><circle class="chart__dot" cx="312.4" cy="94.9" r="4"/><circle cx="312.4" cy="94.9" r="14" fill="transparent"><title>Mei 2026: Rp106 jt</title></circle></g>
+<text class="chart__tick" x="363.6" y="236" text-anchor="middle">Jun</text>
+<g class="chart__hit"><circle class="chart__dot" cx="363.6" cy="88.0" r="4"/><circle cx="363.6" cy="88.0" r="14" fill="transparent"><title>Jun 2026: Rp112 jt</title></circle></g>
+<text class="chart__tick" x="414.9" y="236" text-anchor="middle">Jul</text>
+<g class="chart__hit"><circle class="chart__dot" cx="414.9" cy="81.1" r="4"/><circle cx="414.9" cy="81.1" r="14" fill="transparent"><title>Jul 2026: Rp118 jt</title></circle></g>
+<text class="chart__tick" x="466.2" y="236" text-anchor="middle">Agu</text>
+<g class="chart__hit"><circle class="chart__dot" cx="466.2" cy="70.9" r="4"/><circle cx="466.2" cy="70.9" r="14" fill="transparent"><title>Agu 2026: Rp127 jt</title></circle></g>
+<text class="chart__tick" x="517.5" y="236" text-anchor="middle">Sep</text>
+<g class="chart__hit"><circle class="chart__dot" cx="517.5" cy="57.1" r="4"/><circle cx="517.5" cy="57.1" r="14" fill="transparent"><title>Sep 2026: Rp139 jt</title></circle></g>
+<text class="chart__tick" x="568.7" y="236" text-anchor="middle">Okt</text>
+<g class="chart__hit"><circle class="chart__dot" cx="568.7" cy="43.4" r="4"/><circle cx="568.7" cy="43.4" r="14" fill="transparent"><title>Okt 2026: Rp151 jt</title></circle></g>
+<text class="chart__tick" x="620.0" y="236" text-anchor="middle">Nov</text>
+<g class="chart__hit"><circle class="chart__dot chart__dot--proj" cx="620.0" cy="29.7" r="4"/><circle cx="620.0" cy="29.7" r="14" fill="transparent"><title>Nov 2026: Rp163 jt (proyeksi dari MRR)</title></circle></g>
+<text class="chart__label" x="62.0" y="148.9" text-anchor="start">Rp78 jt</text>
+<text class="chart__label chart__label--muted" x="620.0" y="17.7" text-anchor="end">Rp163 jt proyeksi</text>
+</svg>
+            <p class="chart-note">Lonjakan Februari–Maret bertepatan dengan program Ramadhan. Oktober Rp151 jt. Arahkan kursor ke titik untuk melihat nilai tiap bulan.</p>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel__head"><div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Distribusi paket</span><span class="panel__sub">Semua akun terdaftar</span></div></div>
+          <div class="panel__body">
+            <div class="donut-wrap">
+              <svg class="donut" viewBox="0 0 160 160" role="img" aria-labelledby="dn-title">
+<title id="dn-title">Distribusi paket: Gratis 63%, Santri 30%, Halaqah Plus 7% dari 3.480 pengguna</title>
+<g transform="rotate(-90 80 80)">
+<circle class="chart__seg chart__seg--free" cx="80" cy="80" r="60" stroke-dasharray="235.7 377.0" stroke-dashoffset="0.0"><title>Gratis: 2.194 pengguna (63.0%)</title></circle>
+<circle class="chart__seg chart__seg--santri" cx="80" cy="80" r="60" stroke-dasharray="111.7 377.0" stroke-dashoffset="-237.7"><title>Santri: 1.050 pengguna (30.2%)</title></circle>
+<circle class="chart__seg chart__seg--plus" cx="80" cy="80" r="60" stroke-dasharray="23.6 377.0" stroke-dashoffset="-351.4"><title>Halaqah Plus: 236 pengguna (6.8%)</title></circle>
+</g>
+<text class="donut__num" x="80" y="80" text-anchor="middle">3.480</text>
+<text class="donut__sub" x="80" y="98" text-anchor="middle">pengguna</text>
+</svg>
+            </div>
+            <div class="plan-legend">
+              <div class="plan-legend__row"><i class="swatch-free"></i><span>Gratis · Rp0</span><b>2.194 · 63%</b></div>
+              <div class="plan-legend__row"><i class="swatch-blue"></i><span>Santri · Rp99.000/bulan</span><b>1.050 · 30%</b></div>
+              <div class="plan-legend__row"><i class="swatch-gold"></i><span>Halaqah Plus · Rp249.000/bulan</span><b>236 · 7%</b></div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Signups vs active + funnel -->
+      <div class="grid-2">
+        <section class="panel">
+          <div class="panel__head">
+            <div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V10M18 20V4M6 20v-4"/></svg> Pendaftar vs aktif belajar</span><span class="panel__sub">Per pekan · aktif = menyelesaikan minimal 1 materi dalam 7 hari pertama</span></div>
+          </div>
+          <div class="panel__body">
+            <div class="chart-legend"><span><i class="swatch-blue"></i> Pendaftar baru</span><span><i class="swatch-gold"></i> Aktif belajar</span></div>
+            <svg class="chart" viewBox="0 0 470 228" role="img" aria-labelledby="sg-title">
+<title id="sg-title">Pendaftar baru dan yang aktif belajar dalam 7 hari, per pekan</title>
+<line class="chart__grid" x1="40" x2="456" y1="200.0" y2="200.0"/>
+<text class="chart__tick" x="30" y="204.0" text-anchor="end">0</text>
+<line class="chart__grid" x1="40" x2="456" y1="154.0" y2="154.0"/>
+<text class="chart__tick" x="30" y="158.0" text-anchor="end">40</text>
+<line class="chart__grid" x1="40" x2="456" y1="108.0" y2="108.0"/>
+<text class="chart__tick" x="30" y="112.0" text-anchor="end">80</text>
+<line class="chart__grid" x1="40" x2="456" y1="62.0" y2="62.0"/>
+<text class="chart__tick" x="30" y="66.0" text-anchor="end">120</text>
+<line class="chart__grid" x1="40" x2="456" y1="16.0" y2="16.0"/>
+<text class="chart__tick" x="30" y="20.0" text-anchor="end">160</text>
+<g class="chart__hit">
+<rect x="40.0" y="16" width="52.0" height="184" fill="transparent"><title>Pekan 21 Sep: 92 pendaftar, 61 aktif (66%)</title></rect>
+<path class="chart__bar chart__bar--a" d="M49.0,200 V98.2 Q49.0,94.2 53.0,94.2 H61.0 Q65.0,94.2 65.0,98.2 V200Z"><title>Pekan 21 Sep: 92 pendaftar baru</title></path>
+<path class="chart__bar chart__bar--b" d="M67.0,200 V133.8 Q67.0,129.8 71.0,129.8 H79.0 Q83.0,129.8 83.0,133.8 V200Z"><title>Pekan 21 Sep: 61 aktif belajar (66%)</title></path>
+</g>
+<text class="chart__tick" x="66.0" y="220" text-anchor="middle">21 Sep</text>
+<g class="chart__hit">
+<rect x="92.0" y="16" width="52.0" height="184" fill="transparent"><title>Pekan 28 Sep: 88 pendaftar, 60 aktif (68%)</title></rect>
+<path class="chart__bar chart__bar--a" d="M101.0,200 V102.8 Q101.0,98.8 105.0,98.8 H113.0 Q117.0,98.8 117.0,102.8 V200Z"><title>Pekan 28 Sep: 88 pendaftar baru</title></path>
+<path class="chart__bar chart__bar--b" d="M119.0,200 V135.0 Q119.0,131.0 123.0,131.0 H131.0 Q135.0,131.0 135.0,135.0 V200Z"><title>Pekan 28 Sep: 60 aktif belajar (68%)</title></path>
+</g>
+<text class="chart__tick" x="118.0" y="220" text-anchor="middle">28 Sep</text>
+<g class="chart__hit">
+<rect x="144.0" y="16" width="52.0" height="184" fill="transparent"><title>Pekan 5 Okt: 104 pendaftar, 72 aktif (69%)</title></rect>
+<path class="chart__bar chart__bar--a" d="M153.0,200 V84.4 Q153.0,80.4 157.0,80.4 H165.0 Q169.0,80.4 169.0,84.4 V200Z"><title>Pekan 5 Okt: 104 pendaftar baru</title></path>
+<path class="chart__bar chart__bar--b" d="M171.0,200 V121.2 Q171.0,117.2 175.0,117.2 H183.0 Q187.0,117.2 187.0,121.2 V200Z"><title>Pekan 5 Okt: 72 aktif belajar (69%)</title></path>
+</g>
+<text class="chart__tick" x="170.0" y="220" text-anchor="middle">5 Okt</text>
+<g class="chart__hit">
+<rect x="196.0" y="16" width="52.0" height="184" fill="transparent"><title>Pekan 12 Okt: 97 pendaftar, 69 aktif (71%)</title></rect>
+<path class="chart__bar chart__bar--a" d="M205.0,200 V92.5 Q205.0,88.5 209.0,88.5 H217.0 Q221.0,88.5 221.0,92.5 V200Z"><title>Pekan 12 Okt: 97 pendaftar baru</title></path>
+<path class="chart__bar chart__bar--b" d="M223.0,200 V124.7 Q223.0,120.7 227.0,120.7 H235.0 Q239.0,120.7 239.0,124.7 V200Z"><title>Pekan 12 Okt: 69 aktif belajar (71%)</title></path>
+</g>
+<text class="chart__tick" x="222.0" y="220" text-anchor="middle">12 Okt</text>
+<g class="chart__hit">
+<rect x="248.0" y="16" width="52.0" height="184" fill="transparent"><title>Pekan 19 Okt: 118 pendaftar, 85 aktif (72%)</title></rect>
+<path class="chart__bar chart__bar--a" d="M257.0,200 V68.3 Q257.0,64.3 261.0,64.3 H269.0 Q273.0,64.3 273.0,68.3 V200Z"><title>Pekan 19 Okt: 118 pendaftar baru</title></path>
+<path class="chart__bar chart__bar--b" d="M275.0,200 V106.2 Q275.0,102.2 279.0,102.2 H287.0 Q291.0,102.2 291.0,106.2 V200Z"><title>Pekan 19 Okt: 85 aktif belajar (72%)</title></path>
+</g>
+<text class="chart__tick" x="274.0" y="220" text-anchor="middle">19 Okt</text>
+<g class="chart__hit">
+<rect x="300.0" y="16" width="52.0" height="184" fill="transparent"><title>Pekan 26 Okt: 126 pendaftar, 93 aktif (74%)</title></rect>
+<path class="chart__bar chart__bar--a" d="M309.0,200 V59.1 Q309.0,55.1 313.0,55.1 H321.0 Q325.0,55.1 325.0,59.1 V200Z"><title>Pekan 26 Okt: 126 pendaftar baru</title></path>
+<path class="chart__bar chart__bar--b" d="M327.0,200 V97.0 Q327.0,93.0 331.0,93.0 H339.0 Q343.0,93.0 343.0,97.0 V200Z"><title>Pekan 26 Okt: 93 aktif belajar (74%)</title></path>
+</g>
+<text class="chart__tick" x="326.0" y="220" text-anchor="middle">26 Okt</text>
+<g class="chart__hit">
+<rect x="352.0" y="16" width="52.0" height="184" fill="transparent"><title>Pekan 2 Nov: 131 pendaftar, 99 aktif (76%)</title></rect>
+<path class="chart__bar chart__bar--a" d="M361.0,200 V53.3 Q361.0,49.3 365.0,49.3 H373.0 Q377.0,49.3 377.0,53.3 V200Z"><title>Pekan 2 Nov: 131 pendaftar baru</title></path>
+<path class="chart__bar chart__bar--b" d="M379.0,200 V90.2 Q379.0,86.2 383.0,86.2 H391.0 Q395.0,86.2 395.0,90.2 V200Z"><title>Pekan 2 Nov: 99 aktif belajar (76%)</title></path>
+</g>
+<text class="chart__tick" x="378.0" y="220" text-anchor="middle">2 Nov</text>
+<g class="chart__hit">
+<rect x="404.0" y="16" width="52.0" height="184" fill="transparent"><title>Pekan 9 Nov: 142 pendaftar, 108 aktif (76%)</title></rect>
+<path class="chart__bar chart__bar--a" d="M413.0,200 V40.7 Q413.0,36.7 417.0,36.7 H425.0 Q429.0,36.7 429.0,40.7 V200Z"><title>Pekan 9 Nov: 142 pendaftar baru</title></path>
+<path class="chart__bar chart__bar--b" d="M431.0,200 V79.8 Q431.0,75.8 435.0,75.8 H443.0 Q447.0,75.8 447.0,79.8 V200Z"><title>Pekan 9 Nov: 108 aktif belajar (76%)</title></path>
+</g>
+<text class="chart__tick" x="430.0" y="220" text-anchor="middle">9 Nov</text>
+<text class="chart__label" x="421.0" y="28.7" text-anchor="middle">142</text>
+<text class="chart__label" x="439.0" y="67.8" text-anchor="middle">108</text>
+</svg>
+            <p class="chart-note">Aktivasi pekan terakhir 76% (108 dari 142), naik dari 66% di akhir September.</p>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel__head">
+            <div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 3H2l8 9.46V19l4 2v-8.54z"/></svg> Corong pendaftaran</span><span class="panel__sub">Bulan ini · persentase dari tahap sebelumnya</span></div>
+          </div>
+          <div class="panel__body">
+            <div class="funnel">
+              <div class="funnel__row"><span class="funnel__name">Pengunjung situs</span><div class="funnel__track"><div class="funnel__bar funnel__bar--deep" style="width:100%">100%</div></div><span class="funnel__val"><b>12.940</b><span>orang</span></span></div>
+              <div class="funnel__break">3,8% pengunjung mendaftar · lebar batang di bawah dihitung dari pendaftar</div>
+              <div class="funnel__row"><span class="funnel__name">Daftar akun</span><div class="funnel__track"><div class="funnel__bar" style="width:100%">100%</div></div><span class="funnel__val"><b>486</b><span>3,8% dari pengunjung</span></span></div>
+              <div class="funnel__row"><span class="funnel__name">Onboarding selesai</span><div class="funnel__track"><div class="funnel__bar" style="width:80.5%">80%</div></div><span class="funnel__val"><b>391</b><span>80% dari daftar</span></span></div>
+              <div class="funnel__row"><span class="funnel__name">Kelas pertama</span><div class="funnel__track"><div class="funnel__bar" style="width:62.1%">62%</div></div><span class="funnel__val"><b>302</b><span>77% dari onboarding</span></span></div>
+              <div class="funnel__row"><span class="funnel__name">Berbayar</span><div class="funnel__track"><div class="funnel__bar funnel__bar--paid" style="width:15.2%">15%</div></div><span class="funnel__val"><b>74</b><span>25% dari kelas pertama</span></span></div>
+            </div>
+            <div class="alert-row alert-row--warn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg><span>Penurunan terbesar ada di tahap kelas pertama → berbayar. Coba uji kupon <b>ABQARY50</b> di akhir materi gratis.</span></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Top classes + system health -->
+      <div class="grid-2-1">
+        <section class="panel">
+          <div class="panel__head">
+            <div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0z"/></svg> Kelas teratas</span><span class="panel__sub">Diurutkan menurut jumlah pendaftar</span></div>
+            <a class="panel__link" href="31-course-builder.html">Kelola kelas <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+          </div>
+          <div class="panel__body panel__body--flush">
+            <table class="table table--compact">
+              <thead><tr><th>Kelas</th><th class="table__num">Pendaftar</th><th>Penyelesaian</th><th class="table__num">Rating</th><th class="table__num">Pendapatan*</th></tr></thead>
+              <tbody>
+                <tr><td><a class="course-cell" href="31-course-builder.html"><b>Nahwu Dasar: Membaca Akhir Kata</b><span>Ust. Ahmad Hanafi · Nahwu</span></a></td><td class="table__num">612</td><td><span class="mini-bar"><span class="progress progress--sm progress--good"><span class="progress__bar" style="width:68%"></span></span>68%</span></td><td class="table__num"><span class="rating"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> 4,9</span></td><td class="table__num">Rp38,2 jt</td></tr>
+                <tr><td><span class="course-cell"><b>Membaca Bangunan: Harf dan Fi'il</b><span>Ust. Muhammad Ridwan · Sharf</span></span></td><td class="table__num">488</td><td><span class="mini-bar"><span class="progress progress--sm progress--good"><span class="progress__bar" style="width:56%"></span></span>56%</span></td><td class="table__num"><span class="rating"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> 4,8</span></td><td class="table__num">Rp31,5 jt</td></tr>
+                <tr><td><span class="course-cell"><b>Mushaf Nahwi: Surah Yasin</b><span>Ust. Abdurrahman Hakim · Mushaf</span></span></td><td class="table__num">421</td><td><span class="mini-bar"><span class="progress progress--sm progress--good"><span class="progress__bar" style="width:24%"></span></span>24%</span></td><td class="table__num"><span class="rating"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> 4,9</span></td><td class="table__num">Rp27,9 jt</td></tr>
+                <tr><td><span class="course-cell"><b>Membaca Akhir: Isim Mu'rab</b><span>Ust. Ahmad Hanafi · Nahwu</span></span></td><td class="table__num">356</td><td><span class="mini-bar"><span class="progress progress--sm progress--good"><span class="progress__bar" style="width:41%"></span></span>41%</span></td><td class="table__num"><span class="rating"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> 4,8</span></td><td class="table__num">Rp22,4 jt</td></tr>
+                <tr><td><span class="course-cell"><b>Mushaf Sharfi: Surah As-Sajdah</b><span>Ust. Muhammad Ridwan · Mushaf</span></span></td><td class="table__num">204</td><td><span class="mini-bar"><span class="progress progress--sm progress--good"><span class="progress__bar" style="width:31%"></span></span>31%</span></td><td class="table__num"><span class="rating"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> 4,7</span></td><td class="table__num">Rp12,6 jt</td></tr>
+                <tr><td><span class="course-cell"><b>Qiraatul Kutub: Al-Ajurrumiyyah</b><span>Ust. Ahmad Hanafi · khusus Halaqah Plus</span></span></td><td class="table__num">42</td><td><span class="mini-bar"><span class="progress progress--sm progress--good"><span class="progress__bar" style="width:23%"></span></span>23%</span></td><td class="table__num"><span class="rating"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> 5,0</span></td><td class="table__num">Rp29,4 jt</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel__foot text-caption text-muted">*Pendapatan teratribusi: nilai langganan dibagi menurut waktu belajar santri di tiap kelas, ditambah pembelian satuan.</div>
+        </section>
+
+        <section class="panel">
+          <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> Status sistem</span><span class="badge badge--warn">1 dicek</span></div>
+          <div class="panel__body panel__body--flush list-divided">
+            <div class="health"><span class="icon-tile icon-tile--sm icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg></span><span class="media__body"><span class="media__title">Server &amp; video</span><span class="media__sub">Uptime 30 hari 99,98%</span></span><span class="health__state health__state--ok"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg> Normal</span></div>
+            <div class="health"><span class="icon-tile icon-tile--sm icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span><span class="media__body"><span class="media__title">Gateway pembayaran</span><span class="media__sub">Respons rata-rata 420 ms</span></span><span class="health__state health__state--ok"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg> Normal</span></div>
+            <div class="health"><span class="icon-tile icon-tile--sm icon-tile--streak"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg></span><span class="media__body"><span class="media__title">Notifikasi WhatsApp</span><span class="media__sub">12 pesan antre sejak 10.30</span></span><span class="health__state health__state--warn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3zM12 9v4M12 17h.01"/></svg> Tertunda</span></div>
+            <div class="health"><span class="icon-tile icon-tile--sm"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></span><span class="media__body"><span class="media__title">Penyimpanan audio setoran</span><span class="progress progress--sm" style="margin-top:4px"><span class="progress__bar" style="width:78%"></span></span><span class="media__sub">780 GB dari 1 TB (78%)</span></span></div>
+            <div class="health"><span class="icon-tile icon-tile--sm icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="media__body"><span class="media__title">Backup database</span><span class="media__sub">Terakhir hari ini 03.00 WIB</span></span><span class="health__state health__state--ok"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg> Berhasil</span></div>
+          </div>
+          <div class="panel__body" style="border-top:1px solid var(--line)">
+            <span class="text-overline">Perlu tindakan</span>
+            <div class="alert-row alert-row--bad"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg><span class="flex-1">3 pembayaran gagal hari ini</span><a href="#" data-tab="transaksi">Tinjau</a></div>
+            <div class="alert-row alert-row--warn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="flex-1">6 setoran menunggu lebih dari 48 jam</span><a href="32-penilaian.html">Lihat</a></div>
+            <div class="alert-row alert-row--warn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span class="flex-1">Kohort Halaqah Plus B sudah penuh</span><a href="34-admin-pengguna.html#tab-kohort">Atur</a></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ================= TRANSAKSI ================= -->
+    <div data-panel="transaksi" hidden class="stack stack--lg">
+      <div class="trx-sum">
+        <div class="trx-sum__item"><span class="badge badge--free" style="align-self:flex-start"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Berhasil</span><b>Rp71,8 jt</b><span class="text-caption text-muted">612 transaksi bulan ini</span></div>
+        <div class="trx-sum__item"><span class="badge badge--warn" style="align-self:flex-start"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Menunggu</span><b>Rp2,2 jt</b><span class="text-caption text-muted">9 menunggu pembayaran</span></div>
+        <div class="trx-sum__item"><span class="badge badge--danger" style="align-self:flex-start"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg> Gagal</span><b>Rp347 rb</b><span class="text-caption text-muted">3 transaksi hari ini</span></div>
+        <div class="trx-sum__item"><span class="badge badge--locked" style="align-self:flex-start"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg> Refund</span><b>Rp99 rb</b><span class="text-caption text-muted">1 transaksi</span></div>
+      </div>
+
+      <div class="toolbar">
+        <div class="input" style="width:240px"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari invoice atau nama…</span></div>
+        <div class="cluster cluster--sm" data-chips>
+          <span class="chip chip--active">Semua</span>
+          <span class="chip">Berhasil</span>
+          <span class="chip">Menunggu</span>
+          <span class="chip">Gagal <span class="chip__count">3</span></span>
+          <span class="chip">Refund</span>
+        </div>
+        <div class="input select" style="width:auto"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><span class="input__text">Semua metode</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div>
+        <a class="btn btn--secondary btn--sm ml-auto" href="#" data-toast="toast-csv"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Ekspor CSV</a>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table table--trx">
+          <thead><tr><th>Invoice</th><th>Santri</th><th>Paket</th><th>Metode</th><th class="table__num">Jumlah</th><th>Status</th><th class="text-right">Aksi</th></tr></thead>
+          <tbody>
+            <tr><td><span class="inv">INV-2611-0612</span><br><span class="text-caption text-muted">13 Nov · 07.02</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm">FA</span><span class="avatar-with-meta__name">Fikri Abdullah</span></span></td><td>Santri<br><span class="text-caption text-muted">Bulanan</span></td><td>QRIS</td><td class="table__num">Rp99.000</td><td><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Berhasil</span></td><td class="text-right"><span class="icon-actions"><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Lihat detail"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></a><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Unduh kuitansi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></a></span></td></tr>
+            <tr><td><span class="inv">INV-2611-0611</span><br><span class="text-caption text-muted">13 Nov · 06.40</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--deep">SN</span><span class="avatar-with-meta__name">Siti Nurhaliza</span></span></td><td>Halaqah Plus<br><span class="text-caption text-muted">Bulanan</span></td><td>Virtual account</td><td class="table__num">Rp249.000</td><td><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Berhasil</span></td><td class="text-right"><span class="icon-actions"><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Lihat detail"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></a><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Unduh kuitansi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></a></span></td></tr>
+            <tr><td><span class="inv">INV-2611-0610</span><br><span class="text-caption text-muted">12 Nov · 21.15</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--gold">RZ</span><span class="avatar-with-meta__name">Rizqi Zulfikar</span></span></td><td>Santri<br><span class="text-caption text-muted">Kupon ABQARY50</span></td><td>E-wallet</td><td class="table__num">Rp49.500</td><td><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Berhasil</span></td><td class="text-right"><span class="icon-actions"><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Lihat detail"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></a><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Unduh kuitansi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></a></span></td></tr>
+            <tr><td><span class="inv">INV-2611-0609</span><br><span class="text-caption text-muted">12 Nov · 20.02</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--gold">HB</span><span class="avatar-with-meta__name">Hamzah Baihaqi</span></span></td><td>Kelas satuan<br><span class="text-caption text-muted">Nahwu Dasar</span></td><td>Kartu kredit</td><td class="table__num">Rp149.000</td><td><span class="badge badge--danger"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg> Gagal</span></td><td class="text-right"><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-tagih">Tagih ulang</a></td></tr>
+            <tr><td><span class="inv">INV-2611-0608</span><br><span class="text-caption text-muted">12 Nov · 19.48</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--good">AZ</span><span class="avatar-with-meta__name">Aisyah Zahra</span></span></td><td>Halaqah Plus<br><span class="text-caption text-muted">Bulanan</span></td><td>QRIS</td><td class="table__num">Rp249.000</td><td><span class="badge badge--warn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Menunggu</span></td><td class="text-right"><span class="icon-actions"><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Lihat detail"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></a><a class="btn btn--ghost btn--icon btn--sm" href="#" data-toast="toast-tagih" aria-label="Kirim pengingat bayar"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></a></span></td></tr>
+            <tr><td><span class="inv">INV-2611-0607</span><br><span class="text-caption text-muted">12 Nov · 15.30</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--gold">UK</span><span class="avatar-with-meta__name">Umar Khattab</span></span></td><td>Santri<br><span class="text-caption text-muted">Bulanan</span></td><td>Virtual account</td><td class="table__num">Rp99.000</td><td><span class="badge badge--warn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Menunggu</span></td><td class="text-right"><span class="icon-actions"><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Lihat detail"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></a><a class="btn btn--ghost btn--icon btn--sm" href="#" data-toast="toast-tagih" aria-label="Kirim pengingat bayar"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></a></span></td></tr>
+            <tr><td><span class="inv">INV-2611-0606</span><br><span class="text-caption text-muted">11 Nov · 10.12</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm">NF</span><span class="avatar-with-meta__name">Nur Fadhilah</span></span></td><td>Santri<br><span class="text-caption text-muted">Bulanan</span></td><td>E-wallet</td><td class="table__num">Rp99.000</td><td><span class="badge badge--locked"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg> Refund</span></td><td class="text-right"><span class="icon-actions"><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Lihat detail"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></a><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Unduh kuitansi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></a></span></td></tr>
+            <tr><td><span class="inv">INV-2611-0605</span><br><span class="text-caption text-muted">11 Nov · 08.55</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm">LA</span><span class="avatar-with-meta__name">Laila Azzahra</span></span></td><td>Halaqah Plus<br><span class="text-caption text-muted">Kupon HALAQAH25</span></td><td>QRIS</td><td class="table__num">Rp186.750</td><td><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Berhasil</span></td><td class="text-right"><span class="icon-actions"><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Lihat detail"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></a><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Unduh kuitansi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></a></span></td></tr>
+            <tr><td><span class="inv">INV-2611-0604</span><br><span class="text-caption text-muted">10 Nov · 22.41</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--deep">YA</span><span class="avatar-with-meta__name">Yusuf Ali</span></span></td><td>Santri<br><span class="text-caption text-muted">Bulanan</span></td><td>QRIS</td><td class="table__num">Rp99.000</td><td><span class="badge badge--danger"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg> Gagal</span></td><td class="text-right"><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-tagih">Tagih ulang</a></td></tr>
+            <tr><td><span class="inv">INV-2611-0603</span><br><span class="text-caption text-muted">10 Nov · 19.07</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--gold">FR</span><span class="avatar-with-meta__name">Fatimah Rahma</span></span></td><td>Halaqah Plus<br><span class="text-caption text-muted">Bulanan</span></td><td>Virtual account</td><td class="table__num">Rp249.000</td><td><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Berhasil</span></td><td class="text-right"><span class="icon-actions"><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Lihat detail"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></a><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Unduh kuitansi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></a></span></td></tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span>Menampilkan 1–10 dari 625 transaksi</span>
+          <div class="pagination__pages"><a href="#" aria-label="Sebelumnya"><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></a><a class="is-current" href="#">1</a><a href="#">2</a><a href="#">3</a><a href="#">…</a><a href="#">63</a><a href="#" aria-label="Berikutnya"><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= LAPORAN ================= -->
+    <div data-panel="laporan" hidden class="stack stack--lg">
+      <div class="grid-2">
+        <section class="panel"><div class="panel__body report"><span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span><div class="report__body"><b>Laporan keuangan bulanan</b><span class="text-small text-muted">Pendapatan, MRR, refund, dan pemakaian kupon per paket.</span><span class="text-caption text-muted">Oktober 2026 · dibuat 1 Nov, 05.00</span></div><div class="stack stack--sm"><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-csv"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> PDF</a><a class="btn btn--ghost btn--sm" href="#" data-toast="toast-csv">CSV</a></div></div></section>
+        <section class="panel"><div class="panel__body report"><span class="icon-tile icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><div class="report__body"><b>Keaktifan &amp; retensi santri</b><span class="text-small text-muted">Santri aktif, kohort retensi 30/60/90 hari, dan churn.</span><span class="text-caption text-muted">Diperbarui setiap Senin</span></div><div class="stack stack--sm"><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-csv"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> PDF</a><a class="btn btn--ghost btn--sm" href="#" data-toast="toast-csv">CSV</a></div></div></section>
+        <section class="panel"><div class="panel__body report"><span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5"/></svg></span><div class="report__body"><b>Kinerja ustadz</b><span class="text-small text-muted">Waktu menilai setoran, kehadiran live, dan rating kelas.</span><span class="text-caption text-muted">6 ustadz · 12 kelas</span></div><div class="stack stack--sm"><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-csv"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> PDF</a><a class="btn btn--ghost btn--sm" href="#" data-toast="toast-csv">CSV</a></div></div></section>
+        <section class="panel"><div class="panel__body report"><span class="icon-tile icon-tile--deep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg></span><div class="report__body"><b>Penyelesaian kelas &amp; sertifikat</b><span class="text-small text-muted">Tingkat tuntas per kelas dan syahadah yang terbit.</span><span class="text-caption text-muted">214 sertifikat terbit tahun ini</span></div><div class="stack stack--sm"><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-csv"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> PDF</a><a class="btn btn--ghost btn--sm" href="#" data-toast="toast-csv">CSV</a></div></div></section>
+      </div>
+      <section class="panel">
+        <div class="panel__body">
+          <div class="cluster cluster--between">
+            <div><b>Kirim laporan otomatis</b><p class="text-small text-muted">Laporan keuangan dan keaktifan dikirim ke email pengurus setiap tanggal 1, pukul 05.00 WIB.</p></div>
+            <span class="switch is-on" data-toggle="is-on" style="cursor:pointer"><span class="switch__track"><span class="switch__thumb"></span></span><span class="text-small">Aktif</span></span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- Toasts -->
+<div class="toast-stack">
+  <div class="toast toast--success" id="toast-csv" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Ekspor sedang disiapkan</p><p class="toast__text">transaksi-nov-2026.csv akan terunduh otomatis dalam beberapa detik.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--info" id="toast-tagih" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Tagihan dikirim ulang</p><p class="toast__text">Tautan pembayaran baru dikirim lewat email dan WhatsApp, berlaku 24 jam.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+</div>
+
+<script>
+// Same-page links like #tab-transaksi only change the hash; switch the matching tab too.
+window.addEventListener("hashchange", function () {
+  var key = location.hash.replace(/^#tab-/, "");
+  var tab = document.querySelector('[data-tabs] [data-tab="' + key + '"]');
+  if (tab) tab.click();
+});
+</script>
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Mushaf &amp; Pustaka · Al-Abqary LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Mushaf & Pustaka page styles */
+.mz { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: var(--space-6); align-items: start; margin-top: var(--space-5); }
+.mz__tools { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-4); }
+.surah-pick { position: relative; }
+.surah-pick .input { width: 284px; height: 44px; cursor: pointer; }
+.surah-pick__menu { display: none; position: absolute; top: 50px; left: 0; z-index: 20; width: 300px; padding: var(--space-2); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
+.surah-pick.is-on .surah-pick__menu { display: block; }
+.surah-opt { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); }
+.surah-opt:hover { background: var(--bg-subtle); }
+.surah-opt.is-cur { background: var(--blue-soft); }
+.surah-opt__no { width: 32px; height: 32px; border-radius: var(--radius-sm); background: var(--bg-subtle); display: flex; align-items: center; justify-content: center; font-size: var(--fs-caption); font-weight: var(--fw-semibold); color: var(--muted); flex: none; }
+.surah-opt__ar { margin-left: auto; font-family: var(--font-quran); font-size: 22px; line-height: 1.4; color: var(--blue-deep); }
+.tabs--segmented .tab.is-disabled { color: var(--subtle); cursor: not-allowed; }
+.size-ctl { display: inline-flex; align-items: center; gap: var(--space-1); }
+
+.paper { background: var(--surface); border: 1px solid var(--gold-line); border-radius: var(--radius-xl); box-shadow: var(--shadow); padding: var(--space-3); }
+.paper__frame { border: 2px solid var(--gold); border-radius: var(--radius-lg); padding: var(--space-6) var(--space-10) var(--space-8); }
+.paper__head { display: flex; align-items: center; justify-content: space-between; font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--gold-ink); margin-bottom: var(--space-4); }
+.surah-band { display: flex; align-items: center; justify-content: center; height: 64px; margin-bottom: var(--space-3); border: 1.5px solid var(--gold); border-radius: var(--radius-md); background: var(--gold-soft); font-family: var(--font-quran); font-size: 30px; color: var(--blue-deep); }
+.basmalah { text-align: center; font-family: var(--font-quran); font-size: 30px; line-height: 2; color: var(--ink); margin-bottom: var(--space-3); }
+.mushaf-text { font-family: var(--font-quran); font-size: 34px; line-height: 2.35; text-align: justify; text-align-last: center; color: var(--ink); }
+.mushaf-text.is-lg { font-size: 40px; }
+.mw { cursor: pointer; border-radius: var(--radius-sm); transition: background-color .12s, opacity .12s; }
+.mw:hover { background: var(--blue-tint); }
+.mw.is-selected { background: var(--gold-soft); box-shadow: 0 0 0 2px var(--gold); }
+.mw.is-dim { opacity: .18; }
+.is-plain .mw { --word-color: var(--ink); }
+.ayah-num { display: inline-flex; align-items: center; justify-content: center; min-width: 1.15em; height: 1.15em; margin: 0 .15em; padding: 0 .1em; border: 1.5px solid var(--gold); border-radius: var(--radius-full); font-family: var(--font-ar); font-size: .5em; line-height: 1; color: var(--gold-ink); vertical-align: middle; }
+.paper__foot { display: flex; align-items: center; justify-content: space-between; margin-top: var(--space-5); }
+
+.wd { position: sticky; top: calc(var(--nav-height) + var(--space-6)); display: flex; flex-direction: column; gap: var(--space-4); }
+.wd__word { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); padding: var(--space-5); border-radius: var(--radius-lg); background: var(--bg); }
+.wd__ar { font-family: var(--font-quran); font-size: 48px; line-height: 1.6; color: var(--word-color); }
+.wd__ayah { font-size: var(--fs-caption); color: var(--muted); }
+.wd__rows { display: flex; flex-direction: column; }
+.wd__row { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: var(--space-3); padding: var(--space-3) 0; border-top: 1px solid var(--line); font-size: var(--fs-small); line-height: 20px; }
+.wd__row > span:first-child { color: var(--muted); font-size: var(--fs-caption); }
+.wd__row .ar-inline { font-size: 1.35em; }
+.wd__chip { align-self: center; }
+.legend { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.legend .legend-chip { cursor: pointer; height: auto; min-height: 30px; padding-top: 2px; padding-bottom: 2px; }
+.legend .legend-chip .ar-inline { font-size: 15px; color: var(--muted); }
+.legend .legend-chip.is-active { border-color: var(--word-color); box-shadow: 0 0 0 2px var(--word-color); }
+.legend .legend-chip.is-off { opacity: .45; }
+
+/* Pustaka */
+.kitab-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); margin-top: var(--space-5); }
+.kitab { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); }
+.kitab__cover { height: 176px; display: grid; background: var(--blue-deep); overflow: hidden; position: relative; }
+.kitab__cover > * { grid-area: 1 / 1; }
+.kitab__cover::before { content: ""; grid-area: 1 / 1; width: 14px; background: var(--gold); opacity: .85; position: relative; z-index: 1; }
+.kitab__ar { align-self: center; justify-self: center; font-family: var(--font-ar); font-size: 32px; line-height: 1.5; color: var(--gold-bright); text-align: center; position: relative; padding: 0 var(--space-6); }
+.kitab__cover--gold { background: var(--gold-soft); }
+.kitab__cover--gold::before { background: var(--blue-deep); }
+.kitab__cover--gold .kitab__ar { color: var(--blue-deep); }
+.kitab__cover--gold .course-card__pattern { color: var(--gold-ink); opacity: .16; }
+.kitab__cover--blue { background: var(--blue); }
+.kitab__cover--blue .kitab__ar { color: var(--on-blue); }
+.kitab__tag { align-self: start; justify-self: end; margin: var(--space-3); position: relative; }
+.kitab__body { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); flex: 1; }
+.kitab__title { font-size: var(--fs-h4); line-height: var(--lh-h4); font-weight: var(--fw-semibold); }
+.kitab__by { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--muted); }
+.kitab__meta { display: flex; flex-wrap: wrap; gap: var(--space-3); font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); margin-top: var(--space-1); }
+.kitab__meta span { display: inline-flex; align-items: center; gap: var(--space-1); }
+.kitab__meta .icon { width: 14px; height: 14px; }
+.kitab__foot { display: flex; align-items: center; gap: var(--space-2); padding-top: var(--space-4); margin-top: auto; border-top: 1px solid var(--line); }
+
+/* Kamus */
+.kamus-search { display: flex; gap: var(--space-3); align-items: center; }
+.kamus-search .input { height: 56px; flex: 1; }
+.kamus-search .input__text { font-family: var(--font-ar); font-size: 26px; direction: rtl; text-align: right; }
+.caret { display: inline-block; width: 2px; height: 30px; background: var(--blue); vertical-align: middle; margin-right: 2px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.root { display: flex; gap: var(--space-2); direction: rtl; }
+.root span { width: 56px; height: 56px; border-radius: var(--radius-md); background: var(--blue-deep); color: var(--gold-bright); display: flex; align-items: center; justify-content: center; font-family: var(--font-ar); font-size: 30px; line-height: 1; }
+.entry-head { display: flex; align-items: center; gap: var(--space-6); }
+.entry-ar { font-family: var(--font-ar); font-size: var(--fs-ar-lg); line-height: 1.5; color: var(--blue-deep); }
+.tashrif td.t-ar { font-family: var(--font-ar); font-size: 26px; line-height: 1.5; text-align: right; }
+.tashrif td.t-wz { font-family: var(--font-ar); font-size: 22px; line-height: 1.5; color: var(--muted); text-align: right; }
+.tashrif .word-inline { font-weight: var(--fw-bold); }
+.deriv { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+.deriv div { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); border: 1px solid var(--line); font-size: var(--fs-small); }
+.deriv .ar-inline { font-size: 24px; line-height: 1.4; }
+</style>
+</head>
+<body class="app">
+
+<!-- APP TOPNAV START (santri) — copy as-is to every santri page -->
+<header class="topnav app__topnav">
+  <div class="topnav__inner">
+    <a class="brand" href="10-dashboard.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+    <div class="input topnav__search"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari kelas, materi, atau kata…</span><span class="kbd">/</span></div>
+    <div class="topnav__actions">
+      <a class="pill pill--streak" href="18-pencapaian.html" title="Hari beruntun"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>12 <span class="pill__label">hari</span></a>
+      <a class="pill pill--xp" href="18-pencapaian.html" title="Total XP"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>1.120 <span class="pill__label">XP</span></a>
+      <span class="topnav__divider"></span>
+      <a class="btn btn--ghost btn--icon topnav__icon-btn" href="21-notifikasi.html" aria-label="Notifikasi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="notif-dot"></span></a>
+      <a class="avatar-with-meta" href="20-profil.html"><span class="avatar avatar--ring">MF</span><span><span class="avatar-with-meta__name" style="display:block">Muhammad Fauzan</span><span class="avatar-with-meta__sub">Level 4 · Mutqin</span></span></a>
+    </div>
+  </div>
+</header>
+<!-- APP TOPNAV END -->
+
+<div class="app__body">
+
+<!-- SANTRI SIDEBAR START — copy as-is; move .sidebar__item--active to the current page's item -->
+<aside class="sidebar app__sidebar">
+  <div class="sidebar__section">
+    <span class="sidebar__title">Belajar</span>
+    <a class="sidebar__item" href="10-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9.5 9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> Beranda</a>
+    <a class="sidebar__item" href="11-kelas-saya.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Kelas Saya<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="02-katalog.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6z"/></svg> Jelajah Kelas</a>
+    <a class="sidebar__item" href="15-jadwal.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg> Jadwal Live<span class="sidebar__count">2</span></a>
+    <a class="sidebar__item" href="14-tugas.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9zM9 12h6M9 16h4"/></svg> Tugas &amp; Setoran<span class="sidebar__count">2</span></a>
+    <a class="sidebar__item sidebar__item--active" href="16-mushaf.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg> Mushaf &amp; Pustaka</a>
+    <a class="sidebar__item" href="17-diskusi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Diskusi</a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Prestasi</span>
+    <a class="sidebar__item" href="18-pencapaian.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0z"/></svg> Pencapaian</a>
+    <a class="sidebar__item" href="19-sertifikat.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg> Sertifikat<span class="sidebar__count">1</span></a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Akun</span>
+    <a class="sidebar__item" href="21-notifikasi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Notifikasi<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="20-profil.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profil &amp; Pengaturan</a>
+  </div>
+  <div class="sidebar__promo">
+    <span class="badge badge--on-dark" style="align-self:flex-start"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Paket Santri aktif</span>
+    <span class="sidebar__promo-title">Naik ke Halaqah Plus</span>
+    <span class="sidebar__promo-text">Halaqah kelompok kecil maksimal 10 santri, setoran tanpa batas, dan laporan perkembangan bulanan.</span>
+    <a class="btn btn--gold btn--sm btn--block" href="04-harga.html">Lihat paket</a>
+  </div>
+</aside>
+<!-- SANTRI SIDEBAR END -->
+
+<main class="app__main">
+
+  <div class="page-head">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a class="breadcrumb__item" href="10-dashboard.html"><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9.5 9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> Beranda</a><span class="breadcrumb__sep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span><span class="breadcrumb__current">Mushaf &amp; Pustaka</span></nav>
+    <div class="page-head__row">
+      <div>
+        <h1 class="page-head__title">Mushaf &amp; Pustaka</h1>
+        <p class="page-head__sub">Baca ayat dengan warna i'rab dan sharf, buka kitab rujukan, dan cari kata di kamus.</p>
+      </div>
+      <div class="page-head__actions">
+        <a class="btn btn--secondary" href="11-kelas-saya.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Kelas Mushaf Nahwi · 24%</a>
+      </div>
+    </div>
+  </div>
+
+  <section data-tabs>
+    <div class="tabs">
+      <a class="tab tab--active" data-tab="nahwi" href="#"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg> Mushaf Nahwi</a>
+      <a class="tab" data-tab="sharfi" href="#"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg> Mushaf Sharfi</a>
+      <a class="tab" data-tab="pustaka" href="#"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Pustaka Kitab <span class="tab__count">6</span></a>
+      <a class="tab" data-tab="kamus" href="#"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M9 7h7M9 11h5"/></svg> Kamus</a>
+    </div>
+
+    <!-- ================= MUSHAF NAHWI ================= -->
+    <div data-panel="nahwi">
+      <div class="mz">
+        <div>
+          <div class="mz__tools">
+            <span class="surah-pick" data-toggle="is-on">
+              <span class="input select"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg><span class="input__text"><b>36 · Yasin</b> <span class="text-muted">· 83 ayat</span></span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+              <span class="surah-pick__menu">
+                <a class="surah-opt is-cur" href="16-mushaf.html#tab-nahwi"><span class="surah-opt__no">36</span><span class="media__body"><span class="media__title">Yasin</span><span class="media__sub">Warna nahwi tersedia</span></span><span class="surah-opt__ar" lang="ar" dir="rtl">يسٓ</span></a>
+                <a class="surah-opt" href="16-mushaf.html#tab-sharfi"><span class="surah-opt__no">32</span><span class="media__body"><span class="media__title">As-Sajdah</span><span class="media__sub">Warna sharf tersedia</span></span><span class="surah-opt__ar" lang="ar" dir="rtl">السجدة</span></a>
+              </span>
+            </span>
+            <div class="tabs tabs--segmented" data-mode-group="n" role="group" aria-label="Mode warna">
+              <span class="tab tab--active" data-mode="color"><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c.93 0 1.5-.75 1.5-1.5 0-.4-.15-.74-.4-1-.25-.27-.4-.6-.4-1 0-.83.67-1.5 1.5-1.5H16a6 6 0 0 0 6-6c0-5-4.5-9-10-9z"/></svg> Nahwi</span>
+              <span class="tab is-disabled" title="Data sharf untuk Yasin belum tersedia. Buka Mushaf Sharfi As-Sajdah.">Sharfi</span>
+              <span class="tab" data-mode="plain">Polos</span>
+            </div>
+            <span class="size-ctl ml-auto"><a class="btn btn--ghost btn--icon btn--sm" href="#" data-size="sm" aria-label="Perkecil huruf" style="font-size:13px">A</a><a class="btn btn--ghost btn--icon btn--sm" href="#" data-size="lg" aria-label="Perbesar huruf" style="font-size:19px">A</a></span>
+          </div>
+
+          <div class="paper">
+            <div class="paper__frame">
+              <div class="paper__head"><span>Juz 22–23</span><span>Halaman 440</span><span>Ayat 1–12</span></div>
+              <div class="surah-band" lang="ar" dir="rtl">سُورَةُ يسٓ</div>
+              <p class="basmalah" lang="ar" dir="rtl">بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ</p>
+              <p class="mushaf-text" id="reader-n" lang="ar" dir="rtl"><span class="mw word-inline irab--harf-lain" data-k="27" data-ayah="1">يسٓ</span> <span class="ayah-num" aria-label="ayat 1">١</span> <span class="mw word-inline irab--jar-majrur" data-k="18" data-ayah="2">وَٱلۡقُرۡءَانِ</span> <span class="mw word-inline irab--naat" data-k="20" data-ayah="2">ٱلۡحَكِيمِ</span> <span class="ayah-num" aria-label="ayat 2">٢</span> <span class="mw word-inline irab--inna-isim" data-k="1" data-ayah="3">إِنَّ</span><span class="mw word-inline irab--inna-isim" data-k="1" data-ayah="3">كَ</span> <span class="mw word-inline irab--harf-lain" data-k="27" data-ayah="3">لَ</span><span class="mw word-inline irab--khabar-inna" data-k="3" data-ayah="3">مِنَ</span> <span class="mw word-inline irab--khabar-inna" data-k="3" data-ayah="3">ٱلۡمُرۡسَلِينَ</span> <span class="ayah-num" aria-label="ayat 3">٣</span> <span class="mw word-inline irab--khabar-inna" data-k="3" data-ayah="4">عَلَىٰ</span> <span class="mw word-inline irab--khabar-inna" data-k="3" data-ayah="4">صِرَٰطٖ</span> <span class="mw word-inline irab--naat" data-k="20" data-ayah="4">مُّسۡتَقِيمٖ</span> <span class="ayah-num" aria-label="ayat 4">٤</span> <span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="5">تَنزِيلَ</span> <span class="mw word-inline irab--mudhaf-ilaih" data-k="16" data-ayah="5">ٱلۡعَزِيزِ</span> <span class="mw word-inline irab--naat" data-k="20" data-ayah="5">ٱلرَّحِيمِ</span> <span class="ayah-num" aria-label="ayat 5">٥</span> <span class="mw word-inline irab--nashib" data-k="24" data-ayah="6">لِ</span><span class="mw word-inline irab--fiil-fail" data-k="17" data-ayah="6">تُنذِرَ</span> <span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="6">قَوۡمٗا</span> <span class="mw word-inline irab--nafi" data-k="23" data-ayah="6">مَّآ</span> <span class="mw word-inline irab--naat" data-k="20" data-ayah="6">أُنذِرَ</span> <span class="mw word-inline irab--fail" data-k="5" data-note="Isim sesudah fi&#39;il majhul أُنذِرَ, menggantikan fa&#39;il (na&#39;ib al-fa&#39;il), maka rafa&#39;." data-root="أ ب و" data-wazan="أَفْعَالٌ (jamak dari أَبٌ)" data-tanda="Dhammah zhahirah" data-ayah="6">ءَابَآؤُ</span><span class="mw word-inline irab--mudhaf-ilaih" data-k="16" data-ayah="6">هُمۡ</span> <span class="mw word-inline irab--harf-lain" data-k="27" data-ayah="6">فَ</span><span class="mw word-inline irab--mubtada" data-k="0" data-ayah="6">هُمۡ</span> <span class="mw word-inline irab--khabar" data-k="2" data-ayah="6">غَٰفِلُونَ</span> <span class="ayah-num" aria-label="ayat 6">٦</span> <span class="mw word-inline irab--harf-lain" data-k="27" data-ayah="7">لَقَدۡ</span> <span class="mw word-inline irab--fiil-fail" data-k="17" data-note="Fi&#39;il madhi no. 1 (هُوَ). Fa&#39;il-nya isim zhahir sesudahnya: ٱلۡقَوۡلُ." data-root="ح ق ق" data-wazan="فَعَلَ (mudha&#39;af)" data-tanda="Mabni &#39;ala al-fath" data-ayah="7">حَقَّ</span> <span class="mw word-inline irab--fail is-selected" data-k="5" data-note="Isim sesudah fi&#39;il ma&#39;lum حَقَّ (no. 1). Ia pemilik perbuatan, maka menjadi fa&#39;il dan dibaca rafa&#39;." data-root="ق و ل" data-wazan="فَعْلٌ (mashdar dari قَالَ)" data-tanda="Dhammah zhahirah" data-ayah="7">ٱلۡقَوۡلُ</span> <span class="mw word-inline irab--jar-majrur" data-k="18" data-ayah="7">عَلَىٰٓ</span> <span class="mw word-inline irab--jar-majrur" data-k="18" data-ayah="7">أَكۡثَرِ</span><span class="mw word-inline irab--mudhaf-ilaih" data-k="16" data-ayah="7">هِمۡ</span> <span class="mw word-inline irab--harf-lain" data-k="27" data-ayah="7">فَ</span><span class="mw word-inline irab--mubtada" data-k="0" data-ayah="7">هُمۡ</span> <span class="mw word-inline irab--nafi" data-k="23" data-ayah="7">لَا</span> <span class="mw word-inline irab--khabar" data-k="2" data-ayah="7">يُؤۡمِنُونَ</span> <span class="ayah-num" aria-label="ayat 7">٧</span> <span class="mw word-inline irab--inna-isim" data-k="1" data-ayah="8">إِنَّ</span><span class="mw word-inline irab--inna-isim" data-k="1" data-ayah="8">ا</span> <span class="mw word-inline irab--khabar-inna" data-k="3" data-ayah="8">جَعَلۡنَا</span> <span class="mw word-inline irab--jar-majrur" data-k="18" data-ayah="8">فِيٓ</span> <span class="mw word-inline irab--jar-majrur" data-k="18" data-ayah="8">أَعۡنَٰقِ</span><span class="mw word-inline irab--mudhaf-ilaih" data-k="16" data-ayah="8">هِمۡ</span> <span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="8">أَغۡلَٰلٗا</span> <span class="mw word-inline irab--harf-athaf" data-k="26" data-ayah="8">فَ</span><span class="mw word-inline irab--mubtada" data-k="0" data-ayah="8">هِيَ</span> <span class="mw word-inline irab--khabar" data-k="2" data-ayah="8">إِلَى</span> <span class="mw word-inline irab--khabar" data-k="2" data-ayah="8">ٱلۡأَذۡقَانِ</span> <span class="mw word-inline irab--harf-lain" data-k="27" data-ayah="8">فَ</span><span class="mw word-inline irab--mubtada" data-k="0" data-ayah="8">هُم</span> <span class="mw word-inline irab--khabar" data-k="2" data-ayah="8">مُّقۡمَحُونَ</span> <span class="ayah-num" aria-label="ayat 8">٨</span> <span class="mw word-inline irab--harf-athaf" data-k="26" data-ayah="9">وَ</span><span class="mw word-inline irab--mathuf" data-k="19" data-ayah="9">جَعَلۡنَا</span> <span class="mw word-inline irab--jar-majrur" data-k="18" data-ayah="9">مِنۢ</span> <span class="mw word-inline irab--jar-majrur" data-k="18" data-ayah="9">بَيۡنِ</span> <span class="mw word-inline irab--mudhaf-ilaih" data-k="16" data-ayah="9">أَيۡدِي</span><span class="mw word-inline irab--mudhaf-ilaih" data-k="16" data-ayah="9">هِمۡ</span> <span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="9">سَدّٗا</span> <span class="mw word-inline irab--harf-athaf" data-k="26" data-ayah="9">وَ</span><span class="mw word-inline irab--mathuf" data-k="19" data-ayah="9">مِنۡ</span> <span class="mw word-inline irab--mathuf" data-k="19" data-ayah="9">خَلۡفِ</span><span class="mw word-inline irab--mudhaf-ilaih" data-k="16" data-ayah="9">هِمۡ</span> <span class="mw word-inline irab--mathuf" data-k="19" data-ayah="9">سَدّٗا</span> <span class="mw word-inline irab--harf-athaf" data-k="26" data-ayah="9">فَ</span><span class="mw word-inline irab--mathuf" data-k="19" data-ayah="9">أَغۡشَيۡنَٰ</span><span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="9">هُمۡ</span> <span class="mw word-inline irab--harf-lain" data-k="27" data-ayah="9">فَ</span><span class="mw word-inline irab--mubtada" data-k="0" data-ayah="9">هُمۡ</span> <span class="mw word-inline irab--nafi" data-k="23" data-ayah="9">لَا</span> <span class="mw word-inline irab--khabar" data-k="2" data-ayah="9">يُبۡصِرُونَ</span> <span class="ayah-num" aria-label="ayat 9">٩</span> <span class="mw word-inline irab--harf-lain" data-k="27" data-ayah="10">وَ</span><span class="mw word-inline irab--khabar" data-k="2" data-ayah="10">سَوَآءٌ</span> <span class="mw word-inline irab--jar-majrur" data-k="18" data-ayah="10">عَلَيۡهِمۡ</span> <span class="mw word-inline irab--harf-lain" data-k="27" data-ayah="10">ءَ</span><span class="mw word-inline irab--mubtada" data-k="0" data-ayah="10">أَنذَرۡتَ</span><span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="10">هُمۡ</span> <span class="mw word-inline irab--harf-athaf" data-k="26" data-ayah="10">أَمۡ</span> <span class="mw word-inline irab--jazim" data-k="25" data-ayah="10">لَمۡ</span> <span class="mw word-inline irab--mathuf" data-k="19" data-ayah="10">تُنذِرۡ</span><span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="10">هُمۡ</span> <span class="mw word-inline irab--nafi" data-k="23" data-ayah="10">لَا</span> <span class="mw word-inline irab--fiil-fail" data-k="17" data-ayah="10">يُؤۡمِنُونَ</span> <span class="ayah-num" aria-label="ayat 10">١٠</span> <span class="mw word-inline irab--harf-lain" data-k="27" data-ayah="11">إِنَّمَا</span> <span class="mw word-inline irab--fiil-fail" data-k="17" data-ayah="11">تُنذِرُ</span> <span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="11">مَنِ</span> <span class="mw word-inline irab--fiil-fail" data-k="17" data-ayah="11">ٱتَّبَعَ</span> <span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="11">ٱلذِّكۡرَ</span> <span class="mw word-inline irab--harf-athaf" data-k="26" data-ayah="11">وَ</span><span class="mw word-inline irab--mathuf" data-k="19" data-ayah="11">خَشِيَ</span> <span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="11">ٱلرَّحۡمَٰنَ</span> <span class="mw word-inline irab--jar-majrur" data-k="18" data-ayah="11">بِٱلۡغَيۡبِۖ</span> <span class="mw word-inline irab--harf-lain" data-k="27" data-ayah="11">فَ</span><span class="mw word-inline irab--fiil-fail" data-k="17" data-ayah="11">بَشِّرۡ</span><span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="11">هُ</span> <span class="mw word-inline irab--jar-majrur" data-k="18" data-ayah="11">بِمَغۡفِرَةٖ</span> <span class="mw word-inline irab--harf-athaf" data-k="26" data-ayah="11">وَ</span><span class="mw word-inline irab--mathuf" data-k="19" data-ayah="11">أَجۡرٖ</span> <span class="mw word-inline irab--naat" data-k="20" data-ayah="11">كَرِيمٍ</span> <span class="ayah-num" aria-label="ayat 11">١١</span> <span class="mw word-inline irab--inna-isim" data-k="1" data-ayah="12">إِنَّ</span><span class="mw word-inline irab--inna-isim" data-k="1" data-ayah="12">ا</span> <span class="mw word-inline irab--taukid" data-k="22" data-ayah="12">نَحۡنُ</span> <span class="mw word-inline irab--khabar-inna" data-k="3" data-ayah="12">نُحۡيِ</span> <span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="12">ٱلۡمَوۡتَىٰ</span> <span class="mw word-inline irab--harf-athaf" data-k="26" data-ayah="12">وَ</span><span class="mw word-inline irab--mathuf" data-k="19" data-ayah="12">نَكۡتُبُ</span> <span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="12">مَا</span> <span class="mw word-inline irab--fiil-fail" data-k="17" data-ayah="12">قَدَّمُواْ</span> <span class="mw word-inline irab--harf-athaf" data-k="26" data-ayah="12">وَ</span><span class="mw word-inline irab--mathuf" data-k="19" data-ayah="12">ءَاثَٰرَ</span><span class="mw word-inline irab--mudhaf-ilaih" data-k="16" data-ayah="12">هُمۡۚ</span> <span class="mw word-inline irab--harf-athaf" data-k="26" data-ayah="12">وَ</span><span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="12">كُلَّ</span> <span class="mw word-inline irab--mudhaf-ilaih" data-k="16" data-ayah="12">شَيۡءٍ</span> <span class="mw word-inline irab--naat" data-k="20" data-ayah="12">أَحۡصَيۡنَٰ</span><span class="mw word-inline irab--maful-bih" data-k="7" data-ayah="12">هُ</span> <span class="mw word-inline irab--jar-majrur" data-k="18" data-ayah="12">فِيٓ</span> <span class="mw word-inline irab--jar-majrur" data-k="18" data-ayah="12">إِمَامٖ</span> <span class="mw word-inline irab--naat" data-k="20" data-ayah="12">مُّبِينٖ</span> <span class="ayah-num" aria-label="ayat 12">١٢</span></p>
+              <div class="paper__foot">
+                <a class="btn btn--secondary btn--sm" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg> Halaman 441</a>
+                <a class="btn btn--secondary btn--sm is-disabled" href="#">Halaman 439 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+              </div>
+            </div>
+          </div>
+          <p class="text-caption text-muted" style="margin-top:var(--space-3)">Ketuk kata untuk melihat i'rab-nya; ketuk warna di legenda untuk menyorot satu kategori. Pewarnaan mengikuti Mushaf Nahwi Yasin Ma'had Al-Abqary, teks ayat rasm Utsmani.</p>
+        </div>
+
+        <aside class="wd">
+          <section class="panel" id="nd">
+            <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg> Detail kata</span><span class="badge badge--info" id="nd-ayah">Yasin: 7</span></div>
+            <div class="panel__body">
+              <div class="wd__word irab--fail" id="nd-wordbox"><span class="wd__ar" id="nd-word" lang="ar" dir="rtl">ٱلۡقَوۡلُ</span><span class="legend-chip irab--fail wd__chip" id="nd-chip"><i></i><span id="nd-cat">Fā'il / Nā'ib al-fā'il</span></span></div>
+              <div class="wd__rows">
+                <div class="wd__row"><span>I'rab</span><span><b id="nd-irab">Fā'il</b> · <span id="nd-hukum">marfū'</span> <span class="ar-inline" id="nd-catar" lang="ar" dir="rtl">الفاعل</span></span></div>
+                <div class="wd__row"><span>Tanda</span><span id="nd-tanda">Dhammah zhahirah</span></div>
+                <div class="wd__row"><span>Alasan</span><span id="nd-note">Isim sesudah fi'il ma'lum حَقَّ (no. 1). Ia pemilik perbuatan, maka menjadi fa'il dan dibaca rafa'.</span></div>
+                <div class="wd__row"><span>Akar kata</span><span class="ar-inline" id="nd-root" lang="ar" dir="rtl">ق و ل</span></div>
+                <div class="wd__row"><span>Wazan</span><span id="nd-wazan">فَعْلٌ (mashdar dari قَالَ)</span></div>
+              </div>
+              <div class="cluster cluster--sm">
+                <a class="btn btn--secondary btn--sm" href="#" data-toast="toast-audio"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Dengar</a>
+                <a class="btn btn--secondary btn--sm" href="#" data-toast="toast-card"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Simpan ke murajaah</a>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c.93 0 1.5-.75 1.5-1.5 0-.4-.15-.74-.4-1-.25-.27-.4-.6-.4-1 0-.83.67-1.5 1.5-1.5H16a6 6 0 0 0 6-6c0-5-4.5-9-10-9z"/></svg> Legenda i'rab</span><a class="panel__link" href="#" data-legend-reset>Tampilkan semua</a></div>
+            <div class="panel__body">
+              <div class="legend" id="legend-n">
+                <span class="legend-chip irab--mubtada" data-k="0"><i></i>Mubtada' <span class="ar-inline" lang="ar" dir="rtl">المبتدأ</span></span>
+                <span class="legend-chip irab--inna-isim" data-k="1"><i></i>Inna + isimnya <span class="ar-inline" lang="ar" dir="rtl">إنّ واسمها</span></span>
+                <span class="legend-chip irab--khabar" data-k="2"><i></i>Khabar <span class="ar-inline" lang="ar" dir="rtl">الخبر</span></span>
+                <span class="legend-chip irab--khabar-inna" data-k="3"><i></i>Khabar inna <span class="ar-inline" lang="ar" dir="rtl">خبر إنّ</span></span>
+                <span class="legend-chip irab--khabar-kana" data-k="4"><i></i>Khabar kana <span class="ar-inline" lang="ar" dir="rtl">خبر كان</span></span>
+                <span class="legend-chip irab--fail is-active" data-k="5"><i></i>Fa'il / Naibul fa'il <span class="ar-inline" lang="ar" dir="rtl">الفاعل</span></span>
+                <span class="legend-chip irab--kana-isim" data-k="6"><i></i>Kana + isimnya <span class="ar-inline" lang="ar" dir="rtl">كان واسمها</span></span>
+                <span class="legend-chip irab--maful-bih" data-k="7"><i></i>Maf'ul bih <span class="ar-inline" lang="ar" dir="rtl">المفعول به</span></span>
+                <span class="legend-chip irab--maful-fih" data-k="8"><i></i>Maf'ul fih <span class="ar-inline" lang="ar" dir="rtl">الظرف</span></span>
+                <span class="legend-chip irab--maful-mutlaq" data-k="9"><i></i>Maf'ul mutlaq <span class="ar-inline" lang="ar" dir="rtl">المفعول المطلق</span></span>
+                <span class="legend-chip irab--maful-liajlih" data-k="10"><i></i>Maf'ul li-ajlih <span class="ar-inline" lang="ar" dir="rtl">المفعول لأجله</span></span>
+                <span class="legend-chip irab--maful-maah" data-k="11"><i></i>Maf'ul ma'ah <span class="ar-inline" lang="ar" dir="rtl">المفعول معه</span></span>
+                <span class="legend-chip irab--hal" data-k="12"><i></i>Hal <span class="ar-inline" lang="ar" dir="rtl">الحال</span></span>
+                <span class="legend-chip irab--tamyiz" data-k="13"><i></i>Tamyiz <span class="ar-inline" lang="ar" dir="rtl">التمييز</span></span>
+                <span class="legend-chip irab--munada" data-k="14"><i></i>Munada <span class="ar-inline" lang="ar" dir="rtl">المنادى</span></span>
+                <span class="legend-chip irab--mustatsna" data-k="15"><i></i>Mustatsna <span class="ar-inline" lang="ar" dir="rtl">المستثنى</span></span>
+                <span class="legend-chip irab--mudhaf-ilaih" data-k="16"><i></i>Mudhaf ilaih <span class="ar-inline" lang="ar" dir="rtl">المضاف إليه</span></span>
+                <span class="legend-chip irab--fiil-fail" data-k="17"><i></i>Fi'il + fa'il <span class="ar-inline" lang="ar" dir="rtl">الفعل مع فاعله</span></span>
+                <span class="legend-chip irab--jar-majrur" data-k="18"><i></i>Jar-majrur <span class="ar-inline" lang="ar" dir="rtl">الجارّ والمجرور</span></span>
+                <span class="legend-chip irab--mathuf" data-k="19"><i></i>Ma'thuf <span class="ar-inline" lang="ar" dir="rtl">المعطوف</span></span>
+                <span class="legend-chip irab--naat" data-k="20"><i></i>Na'at <span class="ar-inline" lang="ar" dir="rtl">النعت</span></span>
+                <span class="legend-chip irab--badal" data-k="21"><i></i>Badal <span class="ar-inline" lang="ar" dir="rtl">البدل</span></span>
+                <span class="legend-chip irab--taukid" data-k="22"><i></i>Taukid <span class="ar-inline" lang="ar" dir="rtl">التوكيد</span></span>
+                <span class="legend-chip irab--nafi" data-k="23"><i></i>Lā / mā nafi <span class="ar-inline" lang="ar" dir="rtl">لا وما النافيتان</span></span>
+                <span class="legend-chip irab--nashib" data-k="24"><i></i>Amil nashab <span class="ar-inline" lang="ar" dir="rtl">نواصب المضارع</span></span>
+                <span class="legend-chip irab--jazim" data-k="25"><i></i>Amil jazim <span class="ar-inline" lang="ar" dir="rtl">جوازم المضارع</span></span>
+                <span class="legend-chip irab--harf-athaf" data-k="26"><i></i>Harf 'athaf <span class="ar-inline" lang="ar" dir="rtl">حروف العطف</span></span>
+                <span class="legend-chip irab--harf-lain" data-k="27"><i></i>Harf lainnya <span class="ar-inline" lang="ar" dir="rtl">حروف المعاني</span></span>
+              </div>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ================= MUSHAF SHARFI ================= -->
+    <div data-panel="sharfi" hidden>
+      <div class="mz">
+        <div>
+          <div class="mz__tools">
+            <span class="surah-pick" data-toggle="is-on">
+              <span class="input select"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg><span class="input__text"><b>32 · As-Sajdah</b> <span class="text-muted">· 30 ayat</span></span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span>
+              <span class="surah-pick__menu">
+                <a class="surah-opt" href="16-mushaf.html#tab-nahwi"><span class="surah-opt__no">36</span><span class="media__body"><span class="media__title">Yasin</span><span class="media__sub">Warna nahwi tersedia</span></span><span class="surah-opt__ar" lang="ar" dir="rtl">يسٓ</span></a>
+                <a class="surah-opt is-cur" href="16-mushaf.html#tab-sharfi"><span class="surah-opt__no">32</span><span class="media__body"><span class="media__title">As-Sajdah</span><span class="media__sub">Warna sharf tersedia</span></span><span class="surah-opt__ar" lang="ar" dir="rtl">السجدة</span></a>
+              </span>
+            </span>
+            <div class="tabs tabs--segmented" data-mode-group="s" role="group" aria-label="Mode warna">
+              <span class="tab is-disabled" title="Data i'rab untuk As-Sajdah belum tersedia. Buka Mushaf Nahwi Yasin.">Nahwi</span>
+              <span class="tab tab--active" data-mode="color"><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c.93 0 1.5-.75 1.5-1.5 0-.4-.15-.74-.4-1-.25-.27-.4-.6-.4-1 0-.83.67-1.5 1.5-1.5H16a6 6 0 0 0 6-6c0-5-4.5-9-10-9z"/></svg> Sharfi</span>
+              <span class="tab" data-mode="plain">Polos</span>
+            </div>
+            <span class="size-ctl ml-auto"><a class="btn btn--ghost btn--icon btn--sm" href="#" data-size="sm" aria-label="Perkecil huruf" style="font-size:13px">A</a><a class="btn btn--ghost btn--icon btn--sm" href="#" data-size="lg" aria-label="Perbesar huruf" style="font-size:19px">A</a></span>
+          </div>
+
+          <div class="paper">
+            <div class="paper__frame">
+              <div class="paper__head"><span>Juz 21</span><span>Halaman 415</span><span>Ayat 1–5</span></div>
+              <div class="surah-band" lang="ar" dir="rtl">سُورَةُ السَّجۡدَةِ</div>
+              <p class="basmalah" lang="ar" dir="rtl">بِسۡمِ ٱللَّهِ ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ</p>
+              <p class="mushaf-text" id="reader-s" lang="ar" dir="rtl"><span class="mw word-inline sharf--harf" data-c="7" data-ayah="1">الٓمٓ</span> <span class="ayah-num" aria-label="ayat 1">١</span> <span class="mw word-inline sharf--mashdar is-selected" data-c="8" data-root="ن ز ل" data-wazan="تَفْعِيلٌ (mashdar dari نَزَّلَ)" data-form="Mazid tsulatsi (bentuk II)" data-ilal="Shahih salim" data-lemma="تَنزِيل" data-ayah="2">تَنزِيلُ</span> <span class="mw word-inline sharf--jamid" data-c="0" data-ayah="2">ٱلۡ</span><span class="mw word-inline sharf--jamid" data-c="0" data-root="ك ت ب" data-ilal="Shahih salim" data-lemma="كِتَٰب" data-ayah="2">كِتَٰبِ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="2">لَا</span> <span class="mw word-inline sharf--mashdar" data-c="8" data-root="ر ي ب" data-ilal="Ajwaf" data-lemma="رَيۡب" data-ayah="2">رَيۡبَ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="2">فِي</span><span class="mw word-inline sharf--mabni" data-c="6" data-ayah="2">هِ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="2">مِن</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="ر ب ب" data-ilal="Mudha&#39;af" data-lemma="رَبّ" data-ayah="2">رَّبِّ</span> <span class="mw word-inline sharf--jamid" data-c="0" data-ayah="2">ٱلۡ</span><span class="mw word-inline sharf--jamid" data-c="0" data-root="ع ل م" data-ilal="Shahih salim" data-lemma="عَٰلَمِين" data-ayah="2">عَٰلَمِينَ</span> <span class="ayah-num" aria-label="ayat 2">٢</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="3">أَمۡ</span> <span class="mw word-inline sharf--mudhari" data-c="3" data-root="ق و ل" data-wazan="يَفْعُلُونَ (ajwaf)" data-form="Mujarrad tsulatsi" data-ilal="Ajwaf" data-lemma="قَالَ" data-ayah="3">يَقُولُ</span><span class="mw word-inline sharf--mudhari" data-c="3" data-ayah="3">ونَ</span> <span class="mw word-inline sharf--madhi" data-c="2" data-root="ف ر ي" data-wazan="اِفْتَعَلَ" data-form="Mazid tsulatsi (bentuk VIII)" data-ilal="Naqish" data-lemma="ٱفۡتَرَىٰ" data-ayah="3">ٱفۡتَرَىٰ</span><span class="mw word-inline sharf--mabni" data-c="6" data-ayah="3">هُ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="3">بَلۡ</span> <span class="mw word-inline sharf--mabni" data-c="6" data-ayah="3">هُوَ</span> <span class="mw word-inline sharf--mashdar" data-c="8" data-ayah="3">ٱلۡ</span><span class="mw word-inline sharf--mashdar" data-c="8" data-root="ح ق ق" data-ilal="Mudha&#39;af" data-lemma="حَقّ" data-ayah="3">حَقُّ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="3">مِن</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="ر ب ب" data-ilal="Mudha&#39;af" data-lemma="رَبّ" data-ayah="3">رَّبِّ</span><span class="mw word-inline sharf--jamid" data-c="0" data-ayah="3">كَ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="3">لِ</span><span class="mw word-inline sharf--mudhari" data-c="3" data-root="ن ذ ر" data-wazan="تُفْعِلَ" data-form="Mazid tsulatsi (bentuk IV)" data-ilal="Shahih salim" data-lemma="أَنذَرَ" data-ayah="3">تُنذِرَ</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="ق و م" data-ilal="Ajwaf" data-lemma="قَوۡم" data-ayah="3">قَوۡمًا</span> <span class="mw word-inline sharf--mabni" data-c="6" data-ayah="3">مَّآ</span> <span class="mw word-inline sharf--madhi" data-c="2" data-root="ا ت ي" data-wazan="فَعَلَ" data-form="Mujarrad tsulatsi" data-ilal="Naqish dan mahmuz" data-lemma="أَتَى" data-ayah="3">أَتَىٰ</span><span class="mw word-inline sharf--mabni" data-c="6" data-ayah="3">هُم</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="3">مِّن</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="ن ذ ر" data-ilal="Shahih salim" data-lemma="نَذِير" data-ayah="3">نَّذِيرٍ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="3">مِّن</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="ق ب ل" data-ilal="Shahih salim" data-lemma="قَبۡل" data-ayah="3">قَبۡلِ</span><span class="mw word-inline sharf--jamid" data-c="0" data-ayah="3">كَ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="3">لَعَلَّ</span><span class="mw word-inline sharf--mabni" data-c="6" data-ayah="3">هُمۡ</span> <span class="mw word-inline sharf--mudhari" data-c="3" data-root="ه د ي" data-wazan="يَفْتَعِلُ" data-form="Mazid tsulatsi (bentuk VIII)" data-ilal="Naqish" data-lemma="ٱهۡتَدَىٰ" data-ayah="3">يَهۡتَدُ</span><span class="mw word-inline sharf--mudhari" data-c="3" data-ayah="3">ونَ</span> <span class="ayah-num" aria-label="ayat 3">٣</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="ا ل ه" data-ilal="Mahmuz" data-lemma="ٱللَّه" data-ayah="4">ٱللَّهُ</span> <span class="mw word-inline sharf--mabni" data-c="6" data-ayah="4">ٱلَّذِى</span> <span class="mw word-inline sharf--madhi" data-c="2" data-root="خ ل ق" data-wazan="فَعَلَ" data-form="Mujarrad tsulatsi" data-ilal="Shahih salim" data-lemma="خَلَقَ" data-ayah="4">خَلَقَ</span> <span class="mw word-inline sharf--jamid" data-c="0" data-ayah="4">ٱل</span><span class="mw word-inline sharf--jamid" data-c="0" data-root="س م و" data-ilal="Naqish" data-lemma="سَمَآء" data-ayah="4">سَّمَٰوَٰتِ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="4">وَ</span><span class="mw word-inline sharf--jamid" data-c="0" data-ayah="4">ٱلۡ</span><span class="mw word-inline sharf--jamid" data-c="0" data-root="ا ر ض" data-ilal="Mahmuz" data-lemma="أَرۡض" data-ayah="4">أَرۡضَ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="4">وَ</span><span class="mw word-inline sharf--mabni" data-c="6" data-ayah="4">مَا</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="ب ي ن" data-ilal="Ajwaf" data-lemma="بَيۡن" data-ayah="4">بَيۡنَ</span><span class="mw word-inline sharf--mabni" data-c="6" data-ayah="4">هُمَا</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="4">فِى</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="س ت ت" data-ilal="Mudha&#39;af" data-lemma="سِتَّة" data-ayah="4">سِتَّةِ</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="ي و م" data-ilal="Mitsal dan ajwaf" data-lemma="يَوۡم" data-ayah="4">أَيَّامٍ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="4">ثُمَّ</span> <span class="mw word-inline sharf--madhi" data-c="2" data-root="س و ي" data-wazan="اِفْتَعَلَ" data-form="Mazid tsulatsi (bentuk VIII)" data-ilal="Lafif maqrun" data-lemma="ٱسۡتَوَىٰٓ" data-ayah="4">ٱسۡتَوَىٰ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="4">عَلَى</span> <span class="mw word-inline sharf--jamid" data-c="0" data-ayah="4">ٱلۡ</span><span class="mw word-inline sharf--jamid" data-c="0" data-root="ع ر ش" data-ilal="Shahih salim" data-lemma="عَرۡش" data-ayah="4">عَرۡشِ</span> <span class="mw word-inline sharf--mabni" data-c="6" data-ayah="4">مَا</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="4">لَ</span><span class="mw word-inline sharf--mabni" data-c="6" data-ayah="4">كُم</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="4">مِّن</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="د و ن" data-ilal="Ajwaf" data-lemma="دُون" data-ayah="4">دُونِ</span><span class="mw word-inline sharf--jamid" data-c="0" data-ayah="4">هِۦ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="4">مِن</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="و ل ي" data-ilal="Lafif mafruq" data-lemma="وَلِىّ" data-ayah="4">وَلِىٍّ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="4">وَ</span><span class="mw word-inline sharf--harf" data-c="7" data-ayah="4">لَا</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="ش ف ع" data-ilal="Shahih salim" data-lemma="شَفِيع" data-ayah="4">شَفِيعٍ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="4">أَ</span><span class="mw word-inline sharf--harf" data-c="7" data-ayah="4">فَ</span><span class="mw word-inline sharf--harf" data-c="7" data-ayah="4">لَا</span> <span class="mw word-inline sharf--mudhari" data-c="3" data-root="ذ ك ر" data-wazan="تَفَعَّلَ" data-form="Mazid tsulatsi (bentuk V)" data-ilal="Shahih salim" data-lemma="تَذَكَّرَ" data-ayah="4">تَتَذَكَّرُ</span><span class="mw word-inline sharf--mudhari" data-c="3" data-ayah="4">ونَ</span> <span class="ayah-num" aria-label="ayat 4">٤</span> <span class="mw word-inline sharf--mudhari" data-c="3" data-root="د ب ر" data-wazan="فَعَّلَ" data-form="Mazid tsulatsi (bentuk II)" data-ilal="Shahih salim" data-lemma="يُدَبِّرُ" data-ayah="5">يُدَبِّرُ</span> <span class="mw word-inline sharf--mashdar" data-c="8" data-ayah="5">ٱلۡ</span><span class="mw word-inline sharf--mashdar" data-c="8" data-root="ا م ر" data-ilal="Mahmuz" data-lemma="أَمۡر" data-ayah="5">أَمۡرَ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="5">مِنَ</span> <span class="mw word-inline sharf--jamid" data-c="0" data-ayah="5">ٱل</span><span class="mw word-inline sharf--jamid" data-c="0" data-root="س م و" data-ilal="Naqish" data-lemma="سَمَآء" data-ayah="5">سَّمَآءِ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="5">إِلَى</span> <span class="mw word-inline sharf--jamid" data-c="0" data-ayah="5">ٱلۡ</span><span class="mw word-inline sharf--jamid" data-c="0" data-root="ا ر ض" data-ilal="Mahmuz" data-lemma="أَرۡض" data-ayah="5">أَرۡضِ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="5">ثُمَّ</span> <span class="mw word-inline sharf--mudhari" data-c="3" data-root="ع ر ج" data-wazan="يَفْعُلُ" data-form="Mujarrad tsulatsi" data-ilal="Shahih salim" data-lemma="يَعۡرُجُ" data-ayah="5">يَعۡرُجُ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="5">إِلَيۡ</span><span class="mw word-inline sharf--mabni" data-c="6" data-ayah="5">هِ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="5">فِى</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="ي و م" data-ilal="Mitsal dan ajwaf" data-lemma="يَوۡم" data-ayah="5">يَوۡمٍ</span> <span class="mw word-inline sharf--madhi" data-c="2" data-root="ك و ن" data-wazan="فَعَلَ" data-form="Mujarrad tsulatsi" data-ilal="Ajwaf" data-lemma="كَانَ" data-ayah="5">كَانَ</span> <span class="mw word-inline sharf--alat" data-c="12" data-root="ق د ر" data-wazan="مِفْعَالٌ" data-ilal="Shahih salim" data-lemma="مِقۡدَار" data-ayah="5">مِقۡدَارُ</span><span class="mw word-inline sharf--alat" data-c="12" data-ayah="5">هُۥٓ</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="ا ل ف" data-ilal="Mahmuz" data-lemma="أَلۡف" data-ayah="5">أَلۡفَ</span> <span class="mw word-inline sharf--jamid" data-c="0" data-root="س ن و" data-ilal="Naqish" data-lemma="سَنَة" data-ayah="5">سَنَةٍ</span> <span class="mw word-inline sharf--harf" data-c="7" data-ayah="5">مِّ</span><span class="mw word-inline sharf--harf" data-c="7" data-ayah="5">مَّا</span> <span class="mw word-inline sharf--mudhari" data-c="3" data-root="ع د د" data-form="Mujarrad tsulatsi" data-ilal="Mudha&#39;af" data-lemma="عَدَّ" data-ayah="5">تَعُدُّ</span><span class="mw word-inline sharf--mudhari" data-c="3" data-ayah="5">ونَ</span> <span class="ayah-num" aria-label="ayat 5">٥</span></p>
+              <div class="paper__foot">
+                <a class="btn btn--secondary btn--sm" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg> Ayat 6–11</a>
+                <a class="btn btn--secondary btn--sm is-disabled" href="#">Sebelumnya <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+              </div>
+            </div>
+          </div>
+          <p class="text-caption text-muted" style="margin-top:var(--space-3)">Ketuk kata untuk melihat wazan dan akar katanya. Pewarnaan mengikuti Mushaf Sharfi As-Sajdah Ma'had Al-Abqary. Kata yang klasifikasinya masih ditinjau ustadz diberi catatan di panel detail.</p>
+        </div>
+
+        <aside class="wd">
+          <section class="panel" id="sd">
+            <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg> Detail kata</span><span class="badge badge--info" id="sd-ayah">As-Sajdah: 2</span></div>
+            <div class="panel__body">
+              <div class="wd__word sharf--mashdar" id="sd-wordbox"><span class="wd__ar" id="sd-word" lang="ar" dir="rtl">تَنزِيلُ</span><span class="legend-chip sharf--mashdar wd__chip" id="sd-chip"><i></i><span id="sd-cat">Mashdar</span></span></div>
+              <div class="wd__rows">
+                <div class="wd__row"><span>Jenis kata</span><span><b id="sd-name">Mashdar</b> <span class="ar-inline" id="sd-catar" lang="ar" dir="rtl">مصدر</span></span></div>
+                <div class="wd__row"><span>Akar kata</span><span class="ar-inline" id="sd-root" lang="ar" dir="rtl">ن ز ل</span></div>
+                <div class="wd__row"><span>Wazan</span><span id="sd-wazan">تَفْعِيلٌ (mashdar dari نَزَّلَ)</span></div>
+                <div class="wd__row"><span>Bentuk</span><span id="sd-form">Mazid tsulatsi (bentuk II)</span></div>
+                <div class="wd__row"><span>I'lal</span><span id="sd-ilal">Shahih salim</span></div>
+                <div class="wd__row"><span>Keterangan</span><span id="sd-note">Kata yang menunjukkan pekerjaan tanpa terikat waktu.</span></div>
+              </div>
+              <div class="cluster cluster--sm">
+                <a class="btn btn--secondary btn--sm" href="#tab-kamus" data-goto-kamus><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M9 7h7M9 11h5"/></svg> Buka di Kamus</a>
+                <a class="btn btn--secondary btn--sm" href="#" data-toast="toast-card"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Simpan</a>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c.93 0 1.5-.75 1.5-1.5 0-.4-.15-.74-.4-1-.25-.27-.4-.6-.4-1 0-.83.67-1.5 1.5-1.5H16a6 6 0 0 0 6-6c0-5-4.5-9-10-9z"/></svg> Legenda sharf</span><a class="panel__link" href="#" data-legend-reset>Tampilkan semua</a></div>
+            <div class="panel__body">
+              <div class="legend" id="legend-s">
+                <span class="legend-chip sharf--jamid" data-c="0"><i></i>Jamid <span class="ar-inline" lang="ar" dir="rtl">جامد</span></span>
+                <span class="legend-chip sharf--musytaq" data-c="1"><i></i>Musytaq lainnya <span class="ar-inline" lang="ar" dir="rtl">مشتق</span></span>
+                <span class="legend-chip sharf--madhi" data-c="2"><i></i>Madhi <span class="ar-inline" lang="ar" dir="rtl">ماضٍ</span></span>
+                <span class="legend-chip sharf--mudhari" data-c="3"><i></i>Mudhari' <span class="ar-inline" lang="ar" dir="rtl">مضارع</span></span>
+                <span class="legend-chip sharf--amr" data-c="4"><i></i>Amr <span class="ar-inline" lang="ar" dir="rtl">أمر</span></span>
+                <span class="legend-chip sharf--nahyi" data-c="5"><i></i>Nahyi <span class="ar-inline" lang="ar" dir="rtl">نهي</span></span>
+                <span class="legend-chip sharf--mabni" data-c="6"><i></i>Mabni <span class="ar-inline" lang="ar" dir="rtl">مبني</span></span>
+                <span class="legend-chip sharf--harf" data-c="7"><i></i>Harf <span class="ar-inline" lang="ar" dir="rtl">حرف</span></span>
+                <span class="legend-chip sharf--mashdar is-active" data-c="8"><i></i>Mashdar <span class="ar-inline" lang="ar" dir="rtl">مصدر</span></span>
+                <span class="legend-chip sharf--isim-fail" data-c="9"><i></i>Isim fa'il <span class="ar-inline" lang="ar" dir="rtl">اسم فاعل</span></span>
+                <span class="legend-chip sharf--isim-maful" data-c="10"><i></i>Isim maf'ul <span class="ar-inline" lang="ar" dir="rtl">اسم مفعول</span></span>
+                <span class="legend-chip sharf--zaman-makan" data-c="11"><i></i>Zaman/makan <span class="ar-inline" lang="ar" dir="rtl">ظرف زمان ومكان</span></span>
+                <span class="legend-chip sharf--alat" data-c="12"><i></i>Isim alat <span class="ar-inline" lang="ar" dir="rtl">اسم آلة</span></span>
+                <span class="legend-chip sharf--tafdhil" data-c="13"><i></i>Isim tafdhil <span class="ar-inline" lang="ar" dir="rtl">اسم تفضيل</span></span>
+                <span class="legend-chip sharf--mubalaghah" data-c="14"><i></i>Mubalaghah <span class="ar-inline" lang="ar" dir="rtl">صيغة مبالغة</span></span>
+                <span class="legend-chip sharf--taajjub" data-c="15"><i></i>Ta'ajjub <span class="ar-inline" lang="ar" dir="rtl">فعل التعجب</span></span>
+                <span class="legend-chip sharf--musyabbahah" data-c="16"><i></i>Sifat musyabbahah <span class="ar-inline" lang="ar" dir="rtl">صفة مشبهة</span></span>
+              </div>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ================= PUSTAKA ================= -->
+    <div data-panel="pustaka" hidden>
+      <div class="cluster cluster--between" style="margin-top:var(--space-5)">
+        <div class="cluster cluster--sm" data-chips>
+          <span class="chip chip--active">Semua <span class="chip__count">6</span></span>
+          <span class="chip">Nahwu <span class="chip__count">3</span></span>
+          <span class="chip">Sharf <span class="chip__count">2</span></span>
+          <span class="chip">Nazham <span class="chip__count">1</span></span>
+          <span class="chip">Sedang dibaca <span class="chip__count">2</span></span>
+        </div>
+        <div class="input" style="width:300px;height:40px"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari judul atau pengarang…</span></div>
+      </div>
+
+      <div class="kitab-grid">
+        <article class="kitab">
+          <div class="kitab__cover kitab__cover--gold"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><span class="kitab__ar" lang="ar" dir="rtl">قَاعِدَتِيْ<br><small style="font-size:20px">الْجُزْءُ الْأَوَّلُ</small></span><span class="kitab__tag badge badge--level">Rujukan utama</span></div>
+          <div class="kitab__body">
+            <h3 class="kitab__title">Qaidaty Al-Abqary · Jilid 1</h3>
+            <p class="kitab__by">KH. Yasin Muthohar · Sharf: membaca bangunan kata</p>
+            <div class="kitab__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg> 26 materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> Dibaca sampai Materi 9</span></div>
+            <div class="progress progress--sm" style="margin-top:var(--space-2)"><div class="progress__bar" style="width:35%"></div></div>
+            <div class="kitab__foot"><a class="btn btn--primary btn--sm" href="#" data-toast="toast-open"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Baca</a><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-dl"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Unduh PDF</a><span class="text-caption text-muted ml-auto">12,4 MB</span></div>
+          </div>
+        </article>
+        <article class="kitab">
+          <div class="kitab__cover kitab__cover--blue"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><span class="kitab__ar" lang="ar" dir="rtl">قَاعِدَتِيْ<br><small style="font-size:20px">الْجُزْءُ الثَّانِيْ</small></span><span class="kitab__tag badge badge--level">Rujukan utama</span></div>
+          <div class="kitab__body">
+            <h3 class="kitab__title">Qaidaty Al-Abqary · Jilid 2</h3>
+            <p class="kitab__by">KH. Yasin Muthohar · Nahwu: membaca akhir kata</p>
+            <div class="kitab__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg> 19 bab · 202 halaman</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> Dibaca sampai hlm. 54</span></div>
+            <div class="progress progress--sm" style="margin-top:var(--space-2)"><div class="progress__bar" style="width:27%"></div></div>
+            <div class="kitab__foot"><a class="btn btn--primary btn--sm" href="#" data-toast="toast-open"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Baca</a><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-dl"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Unduh PDF</a><span class="text-caption text-muted ml-auto">18,1 MB</span></div>
+          </div>
+        </article>
+        <article class="kitab">
+          <div class="kitab__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><span class="kitab__ar" lang="ar" dir="rtl">مَتْنُ الْآجُرُّوْمِيَّةِ</span><span class="kitab__tag badge badge--on-dark">Matan</span></div>
+          <div class="kitab__body">
+            <h3 class="kitab__title">Al-Ajurrumiyyah</h3>
+            <p class="kitab__by">Ibnu Ajurrum Ash-Shinhaji · Nahwu dasar</p>
+            <div class="kitab__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg> 25 bab · teks Arab berharakat + terjemah</span></div>
+            <div class="kitab__meta"><span class="badge badge--locked">Belum dibaca</span></div>
+            <div class="kitab__foot"><a class="btn btn--primary btn--sm" href="#" data-toast="toast-open"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Baca</a><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-dl"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Unduh PDF</a><span class="text-caption text-muted ml-auto">2,3 MB</span></div>
+          </div>
+        </article>
+        <article class="kitab">
+          <div class="kitab__cover kitab__cover--gold"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><span class="kitab__ar" lang="ar" dir="rtl">الْأَمْثِلَةُ التَّصْرِيْفِيَّةُ</span><span class="kitab__tag badge badge--premium">Tabel tashrif</span></div>
+          <div class="kitab__body">
+            <h3 class="kitab__title">Al-Amtsilah At-Tashrifiyyah</h3>
+            <p class="kitab__by">KH. Muhammad Ma'shum bin Ali · Sharf</p>
+            <div class="kitab__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg> Tashrif istilahi dan lughawi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> Dibuka 5 kali</span></div>
+            <div class="progress progress--sm progress--gold" style="margin-top:var(--space-2)"><div class="progress__bar" style="width:12%"></div></div>
+            <div class="kitab__foot"><a class="btn btn--primary btn--sm" href="#" data-toast="toast-open"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Baca</a><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-dl"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Unduh PDF</a><span class="text-caption text-muted ml-auto">4,8 MB</span></div>
+          </div>
+        </article>
+        <article class="kitab">
+          <div class="kitab__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><span class="kitab__ar" lang="ar" dir="rtl">نَظْمُ الْعِمْرِيْطِيِّ</span><span class="kitab__tag badge badge--on-dark">Nazham</span></div>
+          <div class="kitab__body">
+            <h3 class="kitab__title">Nadzam Al-Imrithi</h3>
+            <p class="kitab__by">Syarafuddin Yahya Al-'Imrithi · Nahwu dalam bait</p>
+            <div class="kitab__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg> Dengan audio lagu nazham</span></div>
+            <div class="kitab__meta"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Halaqah Plus</span></div>
+            <div class="kitab__foot"><a class="btn btn--secondary btn--sm" href="04-harga.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Buka dengan Halaqah Plus</a></div>
+          </div>
+        </article>
+        <article class="kitab">
+          <div class="kitab__cover kitab__cover--blue"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><span class="kitab__ar" lang="ar" dir="rtl">مُصْحَفُ النَّحْوِ: يسٓ</span><span class="kitab__tag badge badge--on-dark">Cetak</span></div>
+          <div class="kitab__body">
+            <h3 class="kitab__title">Mushaf Nahwi Yasin (versi cetak)</h3>
+            <p class="kitab__by">Ma'had Al-Abqary · lembar berwarna untuk dicetak</p>
+            <div class="kitab__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg> 6 halaman · A4</span></div>
+            <div class="kitab__meta"><span class="badge badge--free">Termasuk paket Anda</span></div>
+            <div class="kitab__foot"><a class="btn btn--primary btn--sm" href="16-mushaf.html#tab-nahwi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg> Buka</a><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-dl"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Unduh PDF</a><span class="text-caption text-muted ml-auto">3,6 MB</span></div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- ================= KAMUS ================= -->
+    <div data-panel="kamus" hidden>
+      <div class="stack stack--lg" style="margin-top:var(--space-5)">
+        <div class="panel"><div class="panel__body">
+          <div class="kamus-search">
+            <div class="input is-focus"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__text" lang="ar">كتب<span class="caret"></span></span><span class="kbd">Enter</span></div>
+            <div class="tabs tabs--segmented" data-chips data-active-class="tab--active"><span class="tab tab--active" data-chip>Arab → Indonesia</span><span class="tab" data-chip>Indonesia → Arab</span></div>
+          </div>
+          <div class="cluster cluster--sm">
+            <span class="text-caption text-muted">Cari menurut:</span>
+            <div class="cluster cluster--sm" data-chips><span class="chip chip--active">Akar kata</span><span class="chip">Kata utuh</span><span class="chip">Wazan</span></div>
+            <span class="text-caption text-muted ml-auto">Terakhir dicari:</span>
+            <span class="chip"><span class="ar-inline" lang="ar">نصر</span></span><span class="chip"><span class="ar-inline" lang="ar">فتح</span></span><span class="chip"><span class="ar-inline" lang="ar">علم</span></span><span class="chip">menulis</span>
+          </div>
+        </div></div>
+
+        <div class="grid-2-1">
+          <section class="panel">
+            <div class="panel__head">
+              <div class="entry-head">
+                <div class="root" lang="ar"><span>ك</span><span>ت</span><span>ب</span></div>
+                <div>
+                  <p class="entry-ar" lang="ar" dir="rtl">كَتَبَ – يَكْتُبُ</p>
+                  <p class="text-small" style="line-height:28px"><b>menulis</b> · fi'il tsulatsi mujarrad · ikut bab <span class="ar-inline" lang="ar" dir="rtl">نَصَرَ يَنْصُرُ</span></p>
+                </div>
+              </div>
+              <a class="btn btn--secondary btn--sm" href="#" data-toast="toast-audio"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg> Dengar</a>
+            </div>
+            <div class="panel__body">
+              <div class="cluster cluster--between"><h3 class="text-h4">Tashrif istilahi</h3><span class="text-caption text-muted">Warna mengikuti palet sharf</span></div>
+              <div class="table-wrap tashrif">
+                <table class="table">
+                  <thead><tr><th>Bentuk</th><th class="text-right">Wazan</th><th class="text-right">Kata</th><th>Arti</th></tr></thead>
+                  <tbody>
+                    <tr><td><span class="legend-chip sharf--madhi"><i></i>Madhi</span></td><td class="t-wz" lang="ar" dir="rtl">فَعَلَ</td><td class="t-ar" lang="ar" dir="rtl"><span class="word-inline sharf--madhi">كَتَبَ</span></td><td>telah menulis</td></tr>
+                    <tr><td><span class="legend-chip sharf--mudhari"><i></i>Mudhari'</span></td><td class="t-wz" lang="ar" dir="rtl">يَفْعُلُ</td><td class="t-ar" lang="ar" dir="rtl"><span class="word-inline sharf--mudhari">يَكْتُبُ</span></td><td>sedang / akan menulis</td></tr>
+                    <tr><td><span class="legend-chip sharf--mashdar"><i></i>Mashdar</span></td><td class="t-wz" lang="ar" dir="rtl">فِعَالَةً</td><td class="t-ar" lang="ar" dir="rtl"><span class="word-inline sharf--mashdar">كِتَابَةً</span></td><td>tulisan, penulisan</td></tr>
+                    <tr><td><span class="legend-chip sharf--isim-fail"><i></i>Isim fa'il</span></td><td class="t-wz" lang="ar" dir="rtl">فَاعِلٌ</td><td class="t-ar" lang="ar" dir="rtl"><span class="word-inline sharf--isim-fail">كَاتِبٌ</span></td><td>penulis</td></tr>
+                    <tr><td><span class="legend-chip sharf--isim-maful"><i></i>Isim maf'ul</span></td><td class="t-wz" lang="ar" dir="rtl">مَفْعُوْلٌ</td><td class="t-ar" lang="ar" dir="rtl"><span class="word-inline sharf--isim-maful">مَكْتُوْبٌ</span></td><td>yang ditulis</td></tr>
+                    <tr><td><span class="legend-chip sharf--amr"><i></i>Amr</span></td><td class="t-wz" lang="ar" dir="rtl">اُفْعُلْ</td><td class="t-ar" lang="ar" dir="rtl"><span class="word-inline sharf--amr">اُكْتُبْ</span></td><td>tulislah</td></tr>
+                    <tr><td><span class="legend-chip sharf--nahyi"><i></i>Nahyi</span></td><td class="t-wz" lang="ar" dir="rtl">لَا تَفْعُلْ</td><td class="t-ar" lang="ar" dir="rtl"><span class="word-inline sharf--nahyi">لَا تَكْتُبْ</span></td><td>jangan menulis</td></tr>
+                    <tr><td><span class="legend-chip sharf--zaman-makan"><i></i>Zaman / makan</span></td><td class="t-wz" lang="ar" dir="rtl">مَفْعَلٌ</td><td class="t-ar" lang="ar" dir="rtl"><span class="word-inline sharf--zaman-makan">مَكْتَبٌ</span></td><td>tempat / waktu menulis</td></tr>
+                    <tr><td><span class="legend-chip sharf--alat"><i></i>Isim alat</span></td><td class="t-wz" lang="ar" dir="rtl">مِفْعَالٌ</td><td class="t-ar" lang="ar" dir="rtl"><span class="word-inline sharf--alat">مِكْتَابٌ</span></td><td>alat untuk menulis</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <h3 class="text-h4">Kata lain dari akar yang sama</h3>
+              <div class="deriv">
+                <div><span>buku · jamak <span class="ar-inline" lang="ar" dir="rtl">كُتُبٌ</span></span><span class="ar-inline" lang="ar" dir="rtl">كِتَابٌ</span></div>
+                <div><span>perpustakaan</span><span class="ar-inline" lang="ar" dir="rtl">مَكْتَبَةٌ</span></div>
+                <div><span>surat-menyurat</span><span class="ar-inline" lang="ar" dir="rtl">مُكَاتَبَةٌ</span></div>
+                <div><span>para penulis</span><span class="ar-inline" lang="ar" dir="rtl">كُتَّابٌ</span></div>
+              </div>
+            </div>
+          </section>
+
+          <div class="stack stack--lg">
+            <section class="panel">
+              <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg> Muncul di mushaf</span></div>
+              <div class="panel__body">
+                <a class="media media--top" href="16-mushaf.html#tab-sharfi">
+                  <span class="icon-tile icon-tile--sm"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg></span>
+                  <span class="media__body"><span class="media__title">As-Sajdah: 2 · <span class="ar-inline" lang="ar" dir="rtl">ٱلۡكِتَٰبِ</span></span><span class="media__sub" style="line-height:30px"><span class="ar-inline" lang="ar" dir="rtl">تَنزِيلُ ٱلۡكِتَٰبِ لَا رَيۡبَ فِيهِ</span></span></span>
+                </a>
+                <a class="media media--top" href="16-mushaf.html#tab-nahwi">
+                  <span class="icon-tile icon-tile--sm"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg></span>
+                  <span class="media__body"><span class="media__title">Yasin: 12 · <span class="ar-inline" lang="ar" dir="rtl">نَكۡتُبُ</span></span><span class="media__sub" style="line-height:30px"><span class="ar-inline" lang="ar" dir="rtl">وَنَكۡتُبُ مَا قَدَّمُواْ</span></span></span>
+                </a>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="panel__body">
+                <div class="media media--top">
+                  <span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>
+                  <span class="media__body"><span class="media__title">Cara mencari di kamus</span><span class="media__sub" style="line-height:26px">Kamus Arab disusun menurut akar kata. Buang huruf tambahan dulu: <span class="ar-inline" lang="ar" dir="rtl">مَكْتَبَةٌ</span> → <span class="ar-inline" lang="ar" dir="rtl">ك ت ب</span>. Pelajari caranya di kelas Membaca Bangunan.</span></span>
+                </div>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Indonesia → Arab</span></div>
+              <div class="panel__body">
+                <div class="input" style="height:40px"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__text">menulis</span></div>
+                <div class="list-divided" style="margin:0 calc(-1 * var(--space-6))">
+                  <div class="cluster cluster--between"><span class="text-small">menulis</span><span class="ar-inline" lang="ar" dir="rtl">كَتَبَ – يَكْتُبُ</span></div>
+                  <div class="cluster cluster--between"><span class="text-small">mencatat, merekam</span><span class="ar-inline" lang="ar" dir="rtl">سَجَّلَ – يُسَجِّلُ</span></div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<div class="toast-stack">
+  <div class="toast toast--info" id="toast-audio" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></span><div class="toast__main"><p class="toast__title">Memutar bacaan</p><p class="toast__text">Audio contoh, qari Ma'had Al-Abqary.</p></div><a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a></div>
+  <div class="toast toast--success" id="toast-card" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span><div class="toast__main"><p class="toast__title">Disimpan ke murajaah</p><p class="toast__text">Kata ini akan muncul di target harian "Murajaah 5 kosakata".</p></div><a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a></div>
+  <div class="toast toast--info" id="toast-open" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg></span><div class="toast__main"><p class="toast__title">Membuka pembaca kitab</p><p class="toast__text">Halaman pembaca kitab belum termasuk mockup ini.</p></div><a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a></div>
+  <div class="toast toast--info" id="toast-dl" hidden><span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></span><div class="toast__main"><p class="toast__title">Unduhan dimulai</p><p class="toast__text">PDF tersimpan di folder Unduhan perangkat Anda.</p></div><a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a></div>
+</div>
+
+<script>
+  // Mushaf reader interactions: word detail, legend highlight, color mode, font size.
+  (function () {
+    // I'rab categories (index = source --k0..--k27): [name, arabic, ruling, description]
+    var IRAB = [
+      ["Mubtada'", "المبتدأ", "marfū'", "Isim yang menjadi pangkal jumlah ismiyyah dan disandari khabar. Umumnya ma'rifah dan terletak di awal kalimat."],
+      ["Inna + isimnya", "إنّ واسمها", "harf + isim manshūb", "Harf nashab إنّ dan saudaranya bersama isimnya. Inna menashabkan isim dan merafa'kan khabar."],
+      ["Khabar", "الخبر", "marfū'", "Bagian yang menyempurnakan makna mubtada'."],
+      ["Khabar inna", "خبر إنّ", "marfū'", "Khabar dari jumlah yang dimasuki إنّ dan saudaranya."],
+      ["Khabar kāna", "خبر كان", "manshūb", "Khabar dari fi'il nāqish (كان dan saudaranya). Kāna merafa'kan isim dan menashabkan khabar."],
+      ["Fā'il / Nā'ib al-fā'il", "الفاعل", "marfū'", "Fā'il: isim setelah fi'il ma'lūm sebagai pelaku. Nā'ib al-fā'il: isim yang menggantikan fā'il setelah fi'il majhūl."],
+      ["Kāna + isimnya", "كان واسمها", "fi'il nāqish + isim marfū'", "Fi'il nāqish bersama isimnya. Isim kāna hukumnya marfū'."],
+      ["Maf'ūl bih", "المفعول به", "manshūb", "Isim yang dikenai perbuatan fā'il, bisa isim zhahir atau dhamir yang bersambung dengan fi'il."],
+      ["Maf'ūl fīh (zharaf)", "الظرف", "manshūb", "Zharaf zaman atau makan yang menerangkan waktu atau tempat perbuatan."],
+      ["Maf'ūl muthlaq", "المفعول المطلق", "manshūb", "Mashdar setelah fi'il dari lafazh yang sama, untuk menguatkan atau menerangkan jenis perbuatan."],
+      ["Maf'ūl li-ajlih", "المفعول لأجله", "manshūb", "Mashdar yang menjelaskan sebab terjadinya perbuatan."],
+      ["Maf'ūl ma'ah", "المفعول معه", "manshūb", "Isim setelah wawu yang bermakna مَعَ."],
+      ["Hāl", "الحال", "manshūb", "Isim nakirah yang menerangkan keadaan ketika perbuatan terjadi."],
+      ["Tamyīz", "التمييز", "manshūb", "Isim nakirah yang menghilangkan kesamaran pada dzat atau nisbah."],
+      ["Munādā", "المنادى", "manshūb / mabnī", "Isim yang dipanggil dengan huruf nidā'."],
+      ["Mustatsnā", "المستثنى", "menurut jenis kalimat", "Isim setelah إلّا atau saudaranya."],
+      ["Mudhāf ilaih", "المضاف إليه", "majrūr", "Isim yang disandarkan kepadanya isim sebelumnya, selalu majrūr. Termasuk dhamir yang bersambung dengan isim."],
+      ["Fi'il + fā'il", "الفعل مع فاعله", "fi'il mabnī / mu'rab", "Kata kerja; bila fā'il-nya dhamir, fā'il itu terkandung di dalamnya."],
+      ["Jar-majrūr", "الجارّ والمجرور", "majrūr", "Huruf jar beserta isim yang dijarkannya (syibh jumlah)."],
+      ["Ma'thūf", "المعطوف", "mengikuti ma'thūf 'alaih", "Kata setelah huruf 'athaf yang mengikuti i'rab kata sebelumnya."],
+      ["Na'at", "النعت", "mengikuti man'ūt", "Tābi' yang menyifati isim sebelumnya dan mengikutinya dalam i'rab."],
+      ["Badal", "البدل", "mengikuti mubdal minhu", "Tābi' yang menjadi maksud hukum tanpa perantara."],
+      ["Taukīd", "التوكيد", "mengikuti mu'akkad", "Tābi' yang menguatkan makna."],
+      ["Lā / mā nafi", "لا وما النافيتان", "harf mabnī", "Harf nafi لَا dan مَا sengaja dibiarkan tanpa warna."],
+      ["Amil nashab mudhāri'", "نواصب المضارع", "harf mabnī", "Harf yang menashabkan fi'il mudhāri', seperti أَنْ، لَنْ، كَيْ، dan lām ta'līl."],
+      ["Amil jazim", "جوازم المضارع", "harf mabnī", "Harf yang menjazmkan fi'il mudhāri', seperti لَمْ dan lām al-amr."],
+      ["Harf 'athaf", "حروف العطف", "harf mabnī", "Huruf yang menghubungkan ma'thūf dengan ma'thūf 'alaih: و، ف، ثُمَّ، أَوْ، أَمْ."],
+      ["Harf lainnya", "حروف المعاني", "harf mabnī", "Huruf ma'ānī lain yang tidak memiliki kedudukan i'rab, seperti qad, lām taukīd, dan huruf muqaththa'ah."]
+    ];
+    var IRAB_CLS = ["mubtada","inna-isim","khabar","khabar-inna","khabar-kana","fail","kana-isim","maful-bih","maful-fih","maful-mutlaq","maful-liajlih","maful-maah","hal","tamyiz","munada","mustatsna","mudhaf-ilaih","fiil-fail","jar-majrur","mathuf","naat","badal","taukid","nafi","nashib","jazim","harf-athaf","harf-lain"];
+    // Sharf categories (index = source --c0..--c16): [name, arabic, description]
+    var SHARF = [
+      ["Jamid", "جامد", "Isim yang tidak diambil dari kata lain."],
+      ["Musytaq lainnya", "مشتق", "Isim yang diambil dari kata lain, di luar kategori khusus."],
+      ["Madhi", "ماضٍ", "Fi'il yang menunjukkan pekerjaan lampau."],
+      ["Mudhari'", "مضارع", "Fi'il yang menunjukkan pekerjaan sekarang atau akan datang."],
+      ["Amr", "أمر", "Fi'il perintah."],
+      ["Nahyi", "نهي", "Larangan: lā nāhiyah + mudhari' majzum."],
+      ["Mabni", "مبني", "Isim mabni: dhamir, isyarah, maushul, dan sejenisnya."],
+      ["Harf", "حرف", "Huruf / partikel; dibaca sesuai kamus dan tidak ditashrif."],
+      ["Mashdar", "مصدر", "Kata yang menunjukkan pekerjaan tanpa terikat waktu."],
+      ["Isim fa'il", "اسم فاعل", "Isim yang menunjukkan pelaku pekerjaan."],
+      ["Isim maf'ul", "اسم مفعول", "Isim yang menunjukkan objek pekerjaan."],
+      ["Isim zaman / makan", "ظرف زمان ومكان", "Isim yang menunjukkan waktu atau tempat pekerjaan."],
+      ["Isim alat", "اسم آلة", "Isim yang menunjukkan alat pekerjaan, wazan مِفْعَل / مِفْعَال."],
+      ["Isim tafdhil", "اسم تفضيل", "Isim yang menunjukkan makna lebih, wazan أَفْعَلُ."],
+      ["Shighah mubalaghah", "صيغة مبالغة", "Bentuk yang menunjukkan makna sangat / sering."],
+      ["Fi'il ta'ajjub", "فعل التعجب", "Bentuk untuk menyatakan kekaguman."],
+      ["Sifat musyabbahah", "صفة مشبهة", "Sifat yang melekat dan tetap."]
+    ];
+    var SHARF_CLS = ["jamid","musytaq","madhi","mudhari","amr","nahyi","mabni","harf","mashdar","isim-fail","isim-maful","zaman-makan","alat","tafdhil","mubalaghah","taajjub","musyabbahah"];
+
+    function $(id) { return document.getElementById(id); }
+    function swapCls(el, prefix, cls) {
+      el.className = el.className.replace(new RegExp("\\b" + prefix + "--\\S+", "g"), "").trim() + " " + prefix + "--" + cls;
+    }
+    function setLegendActive(legend, attr, val) {
+      Array.prototype.forEach.call(legend.children, function (c) { c.classList.toggle("is-active", c.getAttribute(attr) === String(val)); });
+    }
+
+    function showNahwi(w) {
+      var k = +w.getAttribute("data-k"), c = IRAB[k];
+      $("nd-word").textContent = w.textContent;
+      swapCls($("nd-wordbox"), "irab", IRAB_CLS[k]);
+      swapCls($("nd-chip"), "irab", IRAB_CLS[k]);
+      $("nd-cat").textContent = c[0];
+      $("nd-irab").textContent = c[0];
+      $("nd-hukum").textContent = c[2];
+      $("nd-catar").textContent = c[1];
+      $("nd-ayah").textContent = "Yasin: " + w.getAttribute("data-ayah");
+      $("nd-note").textContent = w.getAttribute("data-note") || c[3];
+      $("nd-tanda").textContent = w.getAttribute("data-tanda") || "Lihat penjelasan kategori";
+      $("nd-root").textContent = w.getAttribute("data-root") || "—";
+      $("nd-wazan").textContent = w.getAttribute("data-wazan") || "Buka tab Mushaf Sharfi untuk analisis wazan";
+      setLegendActive($("legend-n"), "data-k", k);
+    }
+    function showSharfi(w) {
+      var c = +w.getAttribute("data-c"), s = SHARF[c];
+      $("sd-word").textContent = w.textContent;
+      swapCls($("sd-wordbox"), "sharf", SHARF_CLS[c]);
+      swapCls($("sd-chip"), "sharf", SHARF_CLS[c]);
+      $("sd-cat").textContent = s[0];
+      $("sd-name").textContent = s[0];
+      $("sd-catar").textContent = s[1];
+      $("sd-ayah").textContent = "As-Sajdah: " + w.getAttribute("data-ayah");
+      $("sd-root").textContent = w.getAttribute("data-root") || "— (tidak ditashrif)";
+      $("sd-wazan").textContent = w.getAttribute("data-wazan") || "—";
+      $("sd-form").textContent = w.getAttribute("data-form") || "—";
+      $("sd-ilal").textContent = w.getAttribute("data-ilal") || "—";
+      $("sd-note").textContent = s[2];
+      setLegendActive($("legend-s"), "data-c", c);
+    }
+
+    function bindReader(reader, legend, attr, show) {
+      reader.addEventListener("click", function (e) {
+        var w = e.target.closest(".mw");
+        if (!w) return;
+        reader.querySelectorAll(".mw.is-selected").forEach(function (x) { x.classList.remove("is-selected"); });
+        w.classList.add("is-selected");
+        show(w);
+      });
+      legend.addEventListener("click", function (e) {
+        var chip = e.target.closest(".legend-chip");
+        if (!chip) return;
+        var val = chip.getAttribute(attr), on = !chip.classList.contains("is-off-focus");
+        Array.prototype.forEach.call(legend.children, function (c) { c.classList.remove("is-off-focus", "is-off"); });
+        if (on) {
+          chip.classList.add("is-off-focus");
+          Array.prototype.forEach.call(legend.children, function (c) { if (c !== chip) c.classList.add("is-off"); });
+        }
+        reader.querySelectorAll(".mw").forEach(function (w) {
+          w.classList.toggle("is-dim", on && w.getAttribute(attr) !== val);
+        });
+      });
+    }
+    // Same-page links like #tab-sharfi do not reload, so switch tabs on hash change.
+    window.addEventListener("hashchange", function () {
+      var t = document.querySelector('[data-tab="' + location.hash.replace(/^#tab-/, "") + '"]');
+      if (t) { t.click(); window.scrollTo(0, 0); }
+      document.querySelectorAll(".surah-pick.is-on").forEach(function (p) { p.classList.remove("is-on"); });
+    });
+
+    bindReader($("reader-n"), $("legend-n"), "data-k", showNahwi);
+    bindReader($("reader-s"), $("legend-s"), "data-c", showSharfi);
+
+    document.addEventListener("click", function (e) {
+      var r = e.target.closest("[data-legend-reset]");
+      if (r) {
+        e.preventDefault();
+        var panel = r.closest("[data-panel]");
+        panel.querySelectorAll(".mw.is-dim").forEach(function (w) { w.classList.remove("is-dim"); });
+        panel.querySelectorAll(".legend .legend-chip").forEach(function (c) { c.classList.remove("is-off", "is-off-focus"); });
+      }
+      var m = e.target.closest("[data-mode]");
+      if (m) {
+        var group = m.parentNode, reader = m.closest("[data-panel]").querySelector(".mushaf-text");
+        Array.prototype.forEach.call(group.querySelectorAll("[data-mode]"), function (t) { t.classList.toggle("tab--active", t === m); });
+        reader.classList.toggle("is-plain", m.getAttribute("data-mode") === "plain");
+      }
+      var s = e.target.closest("[data-size]");
+      if (s) {
+        e.preventDefault();
+        s.closest("[data-panel]").querySelector(".mushaf-text").classList.toggle("is-lg", s.getAttribute("data-size") === "lg");
+      }
+      var k = e.target.closest("[data-goto-kamus]");
+      if (k) { e.preventDefault(); document.querySelector('[data-tab="kamus"]').click(); window.scrollTo(0, 0); }
+    });
+  })();
+</script>
+
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

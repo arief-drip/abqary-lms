@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Al-Abqary · Belajar Membaca Kitab Gundul</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Landing-only styles */
+.hero-demo { width: 480px; background: var(--surface); color: var(--ink); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-4); }
+.hero-demo__label { display: flex; align-items: center; justify-content: space-between; font-size: var(--fs-caption); line-height: var(--lh-caption); font-weight: var(--fw-semibold); letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--muted); }
+.hero-demo__plain { text-align: center; padding: var(--space-3); background: var(--bg); border: 1px dashed var(--line-strong); border-radius: var(--radius-md); color: var(--ink); }
+.hero-demo__arrow { display: flex; align-items: center; justify-content: center; gap: var(--space-2); font-size: var(--fs-small); color: var(--blue); font-weight: var(--fw-medium); }
+.hero-demo__arrow .icon { width: 18px; height: 18px; }
+.hero-demo__words { display: flex; justify-content: center; gap: var(--space-3); }
+.hero-demo__note { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--muted); padding-top: var(--space-4); border-top: 1px solid var(--line); }
+
+.trust { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-6); }
+.trust__item { display: flex; align-items: center; gap: var(--space-4); }
+.trust__num { font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: var(--fw-bold); letter-spacing: var(--ls-tight); }
+.trust__label { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--muted); }
+
+.method-card { position: relative; display: flex; flex-direction: column; gap: var(--space-3); }
+.method-card__num { font-size: var(--fs-display); line-height: var(--lh-display); font-weight: var(--fw-bold); color: var(--gold-line); position: absolute; top: var(--space-5); right: var(--space-6); }
+.method-card__ar { align-self: flex-start; font-family: var(--font-ar); font-size: 22px; line-height: 1.4; color: var(--gold-ink); }
+
+.demo { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 0; overflow: hidden; padding: 0; }
+.demo__stage { padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-6); }
+.demo__verse { background: var(--gold-soft); border: 1px solid var(--gold-line); border-radius: var(--radius-lg); padding: var(--space-6) var(--space-8); text-align: center; }
+.demo__ayah { font-family: var(--font-quran); color: var(--gold-ink); font-size: 26px; }
+.demo__side { background: var(--blue-tint); border-left: 1px solid var(--line); padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-4); }
+.demo__point { display: flex; gap: var(--space-3); font-size: var(--fs-small); line-height: var(--lh-small); }
+.demo__point .icon { width: 20px; height: 20px; color: var(--good); }
+
+.path-card { padding: var(--space-8) var(--space-6); }
+.path-card .stepper { justify-content: center; }
+.path-card .step { width: 150px; }
+
+.feature { display: flex; flex-direction: column; gap: var(--space-3); }
+.feature p { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--muted); }
+
+.teacher { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-3); }
+.teacher__ar { font-family: var(--font-ar); font-size: 20px; line-height: 1.4; color: var(--gold-ink); }
+.teacher__meta { display: flex; gap: var(--space-4); font-size: var(--fs-caption); color: var(--muted); }
+
+.testi { display: flex; flex-direction: column; gap: var(--space-4); }
+.testi__stars { display: flex; gap: 2px; color: var(--gold); }
+.testi__stars .icon { width: 18px; height: 18px; fill: var(--gold); }
+.testi__quote { font-size: var(--fs-body); line-height: 26px; color: var(--ink); flex: 1; }
+</style>
+</head>
+<body>
+
+<!-- SITE HEADER START (public pages) -->
+<header class="topnav site-header">
+  <div class="topnav__inner">
+    <a class="brand" href="01-landing.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+    <nav class="topnav__links">
+      <a class="topnav__link" href="02-katalog.html">Kelas</a>
+      <a class="topnav__link" href="#metode">Metode</a>
+      <a class="topnav__link" href="04-harga.html">Harga</a>
+      <a class="topnav__link" href="#ustadz">Ustadz</a>
+      <a class="topnav__link" href="#faq">FAQ</a>
+    </nav>
+    <div class="topnav__actions">
+      <a class="btn btn--ghost" href="06-auth.html">Masuk</a>
+      <a class="btn btn--primary" href="06-auth.html#tab-daftar">Daftar</a>
+    </div>
+  </div>
+</header>
+<!-- SITE HEADER END -->
+
+<!-- Hero -->
+<section class="hero">
+  <svg class="hero__pattern" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M1180.0 -60.0 L1256.2 16.2 L1363.8 16.2 L1363.8 123.8 L1440.0 200.0 L1363.8 276.2 L1363.8 383.8 L1256.2 383.8 L1180.0 460.0 L1103.8 383.8 L996.2 383.8 L996.2 276.2 L920.0 200.0 L996.2 123.8 L996.2 16.2 L1103.8 16.2Z"/><path d="M1260.4 6.0 L1293.7 86.3 L1374.0 119.6 L1340.7 200.0 L1374.0 280.4 L1293.7 313.7 L1260.4 394.0 L1180.0 360.7 L1099.6 394.0 L1066.3 313.7 L986.0 280.4 L1019.3 200.0 L986.0 119.6 L1066.3 86.3 L1099.6 6.0 L1180.0 39.3Z"/><path d="M1180.0 35.0 L1228.3 83.3 L1296.7 83.3 L1296.7 151.7 L1345.0 200.0 L1296.7 248.3 L1296.7 316.7 L1228.3 316.7 L1180.0 365.0 L1131.7 316.7 L1063.3 316.7 L1063.3 248.3 L1015.0 200.0 L1063.3 151.7 L1063.3 83.3 L1131.7 83.3Z"/><path d="M1226.7 87.3 L1246.0 134.0 L1292.7 153.3 L1273.4 200.0 L1292.7 246.7 L1246.0 266.0 L1226.7 312.7 L1180.0 293.4 L1133.3 312.7 L1114.0 266.0 L1067.3 246.7 L1086.6 200.0 L1067.3 153.3 L1114.0 134.0 L1133.3 87.3 L1180.0 106.6Z"/><path d="M1180.0 118.0 L1204.0 142.0 L1238.0 142.0 L1238.0 176.0 L1262.0 200.0 L1238.0 224.0 L1238.0 258.0 L1204.0 258.0 L1180.0 282.0 L1156.0 258.0 L1122.0 258.0 L1122.0 224.0 L1098.0 200.0 L1122.0 176.0 L1122.0 142.0 L1156.0 142.0Z"/><circle cx="1180" cy="200" r="45.1"/></svg>
+  <div class="hero__inner">
+    <div class="hero__text">
+      <span class="text-overline hero__eyebrow">Ma'had Al-Abqary · Kelas online</span>
+      <h1 class="text-display hero__title">Belajar membaca kitab gundul, <em>dari nol sampai lancar</em></h1>
+      <p class="text-body-lg hero__lead">Pelajari nahwu dan sharf dengan metode Qaidaty: kenali bangunan kata, tentukan bacaan akhirnya, lalu latih langsung pada teks Arab tanpa harakat. Belajar mandiri setiap hari, dibimbing asatidz Al-Abqary.</p>
+      <div class="hero__actions">
+        <a class="btn btn--gold btn--lg" href="06-auth.html#tab-daftar">Mulai Belajar Gratis <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        <a class="btn btn--on-dark btn--lg" href="02-katalog.html">Lihat Katalog</a>
+      </div>
+      <div class="hero__meta">
+        <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg> Jenjang Fondasi gratis</span>
+        <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> 15–20 menit per hari</span>
+        <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg> Bisa dari HP</span>
+      </div>
+    </div>
+    <div class="hero__visual">
+      <div class="hero-demo">
+        <div class="hero-demo__label"><span>Tulisan gundul</span><span class="badge badge--info">Contoh</span></div>
+        <p class="ar ar--lg hero-demo__plain" lang="ar" dir="rtl">ذهب زيد إلى المسجد</p>
+        <div class="hero-demo__arrow"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M19 12l-7 7-7-7"/></svg> Dibaca dengan i'rab</div>
+        <div class="hero-demo__words" dir="rtl">
+          <span class="word irab--fiil-fail"><span class="word__ar" lang="ar" dir="rtl">ذَهَبَ</span><span class="word__label"><i class="word__dot"></i>Fi'il</span></span>
+          <span class="word irab--fail"><span class="word__ar" lang="ar" dir="rtl">زَيْدٌ</span><span class="word__label"><i class="word__dot"></i>Fa'il</span></span>
+          <span class="word irab--jar-majrur"><span class="word__ar" lang="ar" dir="rtl">إِلَى الْمَسْجِدِ</span><span class="word__label"><i class="word__dot"></i>Jar-majrur</span></span>
+        </div>
+        <p class="hero-demo__note">"Zaid pergi ke masjid." Akhir <span class="ar-inline" lang="ar" dir="rtl">زَيْدٌ</span> dibaca dhammah karena ia fa'il, dan <span class="ar-inline" lang="ar" dir="rtl">الْمَسْجِدِ</span> dibaca kasrah karena didahului harf jar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust strip -->
+<section class="section section--alt section--tight">
+  <div class="container">
+    <div class="trust">
+      <div class="trust__item"><span class="icon-tile icon-tile--lg"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><div><div class="trust__num">12.400+</div><div class="trust__label">Santri terdaftar</div></div></div>
+      <div class="trust__item"><span class="icon-tile icon-tile--lg icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg></span><div><div class="trust__num">18</div><div class="trust__label">Kelas tersedia</div></div></div>
+      <div class="trust__item"><span class="icon-tile icon-tile--lg icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5"/></svg></span><div><div class="trust__num">24</div><div class="trust__label">Asatidz pengampu</div></div></div>
+      <div class="trust__item"><span class="icon-tile icon-tile--lg icon-tile--streak"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg></span><div><div class="trust__num">4,8<small class="text-small text-muted">/5</small></div><div class="trust__label">Rata-rata ulasan santri</div></div></div>
+    </div>
+    <p class="text-caption text-muted" style="margin-top:var(--space-4)">Angka di atas adalah data contoh untuk mockup.</p>
+  </div>
+</section>
+
+<!-- Metode -->
+<section class="section" id="metode">
+  <div class="container">
+    <div class="section__head">
+      <span class="text-overline">Metode Al-Abqary</span>
+      <h2 class="section__title">Pahami, petakan, lalu uji</h2>
+      <p class="section__lead">Sharf membaca bangunan kata, nahwu membaca akhirnya. Setiap materi dipelajari dalam tiga langkah yang sama, sehingga santri tahu apa yang harus dikerjakan berikutnya.</p>
+    </div>
+    <div class="grid-3">
+      <div class="card method-card">
+        <span class="method-card__num">01</span>
+        <span class="icon-tile icon-tile--lg"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg></span>
+        <h3 class="text-h3">Pahami</h3>
+        <span class="method-card__ar" lang="ar" dir="rtl">فَهْمٌ</span>
+        <p class="text-small text-muted">Video pendek dan teks ringkas menjelaskan satu kaidah per materi, lengkap dengan rumus dan contoh dari kitab.</p>
+      </div>
+      <div class="card method-card">
+        <span class="method-card__num">02</span>
+        <span class="icon-tile icon-tile--lg icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg></span>
+        <h3 class="text-h3">Petakan</h3>
+        <span class="method-card__ar" lang="ar" dir="rtl">تَحْلِيْلٌ</span>
+        <p class="text-small text-muted">Lihat kaidah itu bekerja di Mushaf Nahwi dan Mushaf Sharfi: setiap kata diberi warna sesuai kedudukan i'rab atau bentuk katanya.</p>
+      </div>
+      <div class="card method-card">
+        <span class="method-card__num">03</span>
+        <span class="icon-tile icon-tile--lg icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span>
+        <h3 class="text-h3">Uji</h3>
+        <span class="method-card__ar" lang="ar" dir="rtl">اِخْتِبَارٌ</span>
+        <p class="text-small text-muted">Kerjakan kuis i'rab, lalu setorkan bacaan teks gundul. Ustadz memberi nilai dan catatan perbaikan.</p>
+      </div>
+    </div>
+
+    <!-- Colored mushaf demo -->
+    <div class="card demo" style="margin-top:var(--space-8)" data-tabs>
+      <div class="demo__stage">
+        <div class="cluster cluster--between">
+          <div class="tabs tabs--segmented">
+            <a class="tab tab--active" href="#" data-tab="nahwi">Mushaf Nahwi</a>
+            <a class="tab" href="#" data-tab="sharfi">Mushaf Sharfi</a>
+          </div>
+          <span class="text-caption text-muted">Coba ganti tab</span>
+        </div>
+
+        <div class="stack" data-panel="nahwi">
+          <div class="demo__verse">
+            <p class="quran" lang="ar" dir="rtl"><span class="word-inline irab--jar-majrur">وَٱلْقُرْءَانِ</span> <span class="word-inline irab--naat">ٱلْحَكِيمِ</span> <span class="demo__ayah">٢</span> <span class="word-inline irab--inna-isim">إِنَّكَ</span> <span class="word-inline irab--khabar-inna">لَمِنَ ٱلْمُرْسَلِينَ</span> <span class="demo__ayah">٣</span></p>
+          </div>
+          <div class="cluster cluster--sm">
+            <span class="legend-chip irab--jar-majrur"><i></i>Jar-majrur</span>
+            <span class="legend-chip irab--naat"><i></i>Na'at</span>
+            <span class="legend-chip irab--inna-isim"><i></i>Inna + isimnya</span>
+            <span class="legend-chip irab--khabar-inna"><i></i>Khabar inna</span>
+          </div>
+          <p class="text-caption text-muted">Surah Yasin ayat 2–3. Warna menunjukkan kedudukan i'rab tiap kata.</p>
+        </div>
+
+        <div class="stack" data-panel="sharfi" hidden>
+          <div class="demo__verse">
+            <p class="ar ar--lg" lang="ar" dir="rtl"><span class="word-inline sharf--madhi">كَتَبَ</span> <span class="word-inline sharf--isim-fail">الطَّالِبُ</span> <span class="word-inline sharf--mashdar">الدَّرْسَ</span> <span class="word-inline sharf--harf">فِي</span> <span class="word-inline sharf--zaman-makan">الْمَكْتَبِ</span></p>
+          </div>
+          <div class="cluster cluster--sm">
+            <span class="legend-chip sharf--madhi"><i></i>Madhi</span>
+            <span class="legend-chip sharf--isim-fail"><i></i>Isim fa'il</span>
+            <span class="legend-chip sharf--mashdar"><i></i>Mashdar</span>
+            <span class="legend-chip sharf--harf"><i></i>Harf</span>
+            <span class="legend-chip sharf--zaman-makan"><i></i>Isim makan</span>
+          </div>
+          <p class="text-caption text-muted">Kalimat latihan: "Pelajar itu menulis pelajaran di maktab (tempat menulis)." Warna menunjukkan bentuk (wazan) tiap kata.</p>
+        </div>
+      </div>
+      <aside class="demo__side">
+        <span class="text-overline">Pembeda utama</span>
+        <h3 class="text-h3">Kaidah terlihat langsung di teks</h3>
+        <div class="demo__point"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>28 warna i'rab dan 17 warna sharf, konsisten di semua materi dan mushaf.</span></div>
+        <div class="demo__point"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Ketuk satu kata untuk melihat kedudukan, tanda i'rab, dan wazannya.</span></div>
+        <div class="demo__point"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Matikan warna dan harakat untuk berlatih membaca gundul.</span></div>
+        <a class="btn btn--secondary" href="16-mushaf.html" style="align-self:flex-start"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg> Lihat Mushaf</a>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- Jenjang -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="section__head">
+      <span class="text-overline">Jenjang belajar</span>
+      <h2 class="section__title">Mulai dari fondasi, naik bertahap</h2>
+      <p class="section__lead">Tes penempatan di awal menentukan jenjang yang paling sesuai. Setiap jenjang ditutup ujian 30 soal dan syahadah.</p>
+    </div>
+    <div class="card card--flat path-card">
+      <div class="stepper">
+        <div class="step step--current"><span class="step__node"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span><span class="step__ar" lang="ar" dir="rtl">تَمْهِيْدٌ</span><span class="step__label">Fondasi</span><span class="step__desc">Kalimah dan jumlah</span></div>
+        <span class="step__connector"></span>
+        <div class="step"><span class="step__node"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg></span><span class="step__ar" lang="ar" dir="rtl">الصَّرْفُ</span><span class="step__label">Membaca Bangunan</span><span class="step__desc">Harf, fi'il, isim jamid dan musytaq</span></div>
+        <span class="step__connector"></span>
+        <div class="step"><span class="step__node"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg></span><span class="step__ar" lang="ar" dir="rtl">النَّحْوُ</span><span class="step__label">Membaca Akhir</span><span class="step__desc">Mabni dan isim mu'rab</span></div>
+        <span class="step__connector"></span>
+        <div class="step"><span class="step__node"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg></span><span class="step__ar" lang="ar" dir="rtl">قِرَاءَةُ الْكُتُبِ</span><span class="step__label">Qiraatul Kutub</span><span class="step__desc">Latihan membaca matan</span></div>
+        <span class="step__connector"></span>
+        <div class="step"><span class="step__node"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg></span><span class="step__ar" lang="ar" dir="rtl">مَاهِرٌ</span><span class="step__label">Mahir</span><span class="step__desc">Membaca mandiri dan syahadah</span></div>
+      </div>
+    </div>
+    <div class="cluster" style="justify-content:center;margin-top:var(--space-6)">
+      <span class="text-small text-muted">Setiap materi memakai Enam Tangga: Su'al, Istima', Fahm, Hifzh, Ta'lim, 'Amal.</span>
+      <a class="link text-small" href="07-onboarding.html">Coba tes penempatan</a>
+    </div>
+  </div>
+</section>
+
+<!-- Featured kelas -->
+<section class="section" id="kelas">
+  <div class="container">
+    <div class="section__head section__head--left cluster cluster--between" style="max-width:none;flex-direction:row;align-items:flex-end;margin-right:0">
+      <div class="stack stack--sm">
+        <span class="text-overline">Kelas pilihan</span>
+        <h2 class="section__title">Kelas yang bisa dimulai hari ini</h2>
+        <p class="section__lead">Kelas gratis untuk memulai, dan kelas premium untuk melanjutkan.</p>
+      </div>
+      <a class="btn btn--secondary" href="02-katalog.html">Lihat semua kelas <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div>
+    <div class="grid-3">
+      <article class="course-card">
+        <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.75-1.4"/></svg> Gratis</span><span class="badge badge--level">Fondasi</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">قَاعِدَتِيْ ١</span></div></div>
+        <div class="course-card__body">
+          <span class="course-card__eyebrow">Fondasi · Nahwu &amp; sharf dasar</span>
+          <h3 class="course-card__title"><a href="03-detail-kelas.html">Qaidaty Jilid 1</a></h3>
+          <p class="course-card__desc">Mengenal kalimah, jumlah, dan cara kerja metode Qaidaty sebelum masuk sharf dan nahwu.</p>
+          <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 23 materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 6 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> 5.210</span></div>
+          <div class="course-card__footer"><span class="course-card__price">Gratis</span><a class="btn btn--secondary btn--sm" href="03-detail-kelas.html">Lihat kelas</a></div>
+        </div>
+      </article>
+      <article class="course-card course-card--gold">
+        <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.75-1.4"/></svg> Gratis</span><span class="badge badge--level">Membaca Bangunan</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">الصَّرْفُ</span></div></div>
+        <div class="course-card__body">
+          <span class="course-card__eyebrow">Sharf · Harf dan fi'il</span>
+          <h3 class="course-card__title"><a href="03-detail-kelas.html">Membaca Bangunan: Harf dan Fi'il</a></h3>
+          <p class="course-card__desc">Wazan fi'il tsulatsi, tashrif madhi–mudhari'–amr, dan cara mengenali harf di teks gundul.</p>
+          <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 16 materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 5 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> 3.870</span></div>
+          <div class="course-card__footer"><span class="course-card__price">Gratis</span><a class="btn btn--secondary btn--sm" href="03-detail-kelas.html">Lihat kelas</a></div>
+        </div>
+      </article>
+      <article class="course-card course-card--blue">
+        <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Premium</span><span class="badge badge--new">Baru</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">النَّحْوُ</span></div></div>
+        <div class="course-card__body">
+          <span class="course-card__eyebrow">Nahwu · Isim mu'rab</span>
+          <h3 class="course-card__title"><a href="03-detail-kelas.html">Membaca Akhir: Isim Mu'rab</a></h3>
+          <p class="course-card__desc">Enam pintu membaca akhir: rafa', nashab, dan jar pada isim beserta tanda-tandanya.</p>
+          <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 21 materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 8 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> 2.140</span></div>
+          <div class="course-card__footer"><span class="course-card__price">Paket Santri</span><a class="btn btn--gold btn--sm" href="03-detail-kelas.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Lihat kelas</a></div>
+        </div>
+      </article>
+      <article class="course-card">
+        <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Premium</span><span class="badge badge--level">Qiraatul Kutub</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">قِرَاءَةُ الْكُتُبِ</span></div></div>
+        <div class="course-card__body">
+          <span class="course-card__eyebrow">Qiraah · Matan Al-Ajurrumiyyah</span>
+          <h3 class="course-card__title"><a href="03-detail-kelas.html">Qiraatul Kutub: Al-Ajurrumiyyah</a></h3>
+          <p class="course-card__desc">Membaca matan Al-Ajurrumiyyah tanpa harakat, kalimat demi kalimat, dengan i'rab lengkap.</p>
+          <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 30 materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg> Live pekanan</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> 980</span></div>
+          <div class="course-card__footer"><span class="course-card__price">Paket Santri</span><a class="btn btn--gold btn--sm" href="03-detail-kelas.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Lihat kelas</a></div>
+        </div>
+      </article>
+      <article class="course-card course-card--blue">
+        <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Premium</span><span class="badge badge--level">Mushaf Nahwi</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">سُوْرَةُ يس</span></div></div>
+        <div class="course-card__body">
+          <span class="course-card__eyebrow">Mushaf Nahwi · Tadabbur i'rab</span>
+          <h3 class="course-card__title"><a href="03-detail-kelas.html">Mushaf Nahwi: Surah Yasin</a></h3>
+          <p class="course-card__desc">Membedah i'rab Surah Yasin ayat demi ayat dengan pewarnaan kedudukan kata.</p>
+          <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 83 ayat</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 10 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> 1.430</span></div>
+          <div class="course-card__footer"><span class="course-card__price">Paket Santri</span><a class="btn btn--gold btn--sm" href="03-detail-kelas.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Lihat kelas</a></div>
+        </div>
+      </article>
+      <article class="course-card course-card--gold">
+        <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Premium</span><span class="badge badge--level">Mushaf Sharfi</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">سُوْرَةُ السَّجْدَةِ</span></div></div>
+        <div class="course-card__body">
+          <span class="course-card__eyebrow">Mushaf Sharfi · Wazan &amp; tashrif</span>
+          <h3 class="course-card__title"><a href="03-detail-kelas.html">Mushaf Sharfi: Surah As-Sajdah</a></h3>
+          <p class="course-card__desc">Mengenali bentuk setiap kata di Surah As-Sajdah: madhi, mudhari', mashdar, isim fa'il, dan lainnya.</p>
+          <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 30 ayat</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 6 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> 860</span></div>
+          <div class="course-card__footer"><span class="course-card__price">Paket Santri</span><a class="btn btn--gold btn--sm" href="03-detail-kelas.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Lihat kelas</a></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Fitur platform -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="section__head">
+      <span class="text-overline">Fitur platform</span>
+      <h2 class="section__title">Yang tersedia di ruang belajar</h2>
+      <p class="section__lead">Semua alat yang dibutuhkan untuk belajar mandiri dan tetap terhubung dengan ustadz.</p>
+    </div>
+    <div class="grid-4">
+      <div class="feature"><span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m16 10 6-3v10l-6-3z"/></svg></span><h3 class="text-h4">Video dan materi</h3><p>Video pendek, teks ringkas, dan audio untuk setiap materi. Bisa diputar ulang kapan saja.</p></div>
+      <div class="feature"><span class="icon-tile icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span><h3 class="text-h4">Kuis interaktif</h3><p>Tentukan i'rab, cocokkan wazan, dan susun tashrif. Jawaban langsung dikoreksi beserta alasannya.</p></div>
+      <div class="feature"><span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></span><h3 class="text-h4">Setoran dan feedback</h3><p>Rekam bacaan teks gundul, kirim ke ustadz, dan terima nilai serta catatan perbaikan.</p></div>
+      <div class="feature"><span class="icon-tile icon-tile--bad"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg></span><h3 class="text-h4">Live halaqah</h3><p>Kelas tatap muka online setiap pekan untuk tanya jawab dan membaca kitab bersama.</p></div>
+      <div class="feature"><span class="icon-tile icon-tile--streak"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span><h3 class="text-h4">Streak, XP, dan peringkat</h3><p>Target harian, hari beruntun, dan level dari Mubtadi' sampai 'Abqari menjaga ritme belajar.</p></div>
+      <div class="feature"><span class="icon-tile icon-tile--deep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg></span><h3 class="text-h4">Sertifikat</h3><p>Syahadah dari Ma'had Al-Abqary di setiap jenjang, dengan kode verifikasi publik.</p></div>
+      <div class="feature"><span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></span><h3 class="text-h4">Akses dari HP</h3><p>Tampilan menyesuaikan layar ponsel. Progres tersimpan di akun dan tersinkron antarperangkat.</p></div>
+      <div class="feature"><span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg></span><h3 class="text-h4">Mushaf berwarna</h3><p>Mushaf Nahwi dan Mushaf Sharfi untuk melihat kaidah bekerja pada ayat Al-Qur'an.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Ustadz -->
+<section class="section" id="ustadz">
+  <div class="container">
+    <div class="section__head">
+      <span class="text-overline">Asatidz</span>
+      <h2 class="section__title">Dibimbing asatidz Al-Abqary</h2>
+      <p class="section__lead">Pengampu kelas adalah asatidz Ma'had Al-Abqary yang mengajar Qaidaty di kelas setiap hari.</p>
+    </div>
+    <div class="grid-4">
+      <div class="card teacher">
+        <span class="avatar avatar--xl avatar--deep avatar--ring">YM</span>
+        <div><h3 class="text-h4">KH. Yasin Muthohar</h3><p class="text-small text-muted">Mudir · Penyusun Qaidaty</p></div>
+        <span class="teacher__ar" lang="ar" dir="rtl">النَّحْوُ وَالصَّرْفُ</span>
+        <div class="teacher__meta"><span>4 kelas</span><span>·</span><span>5.900 santri</span></div>
+      </div>
+      <div class="card teacher">
+        <span class="avatar avatar--xl avatar--gold">AH</span>
+        <div><h3 class="text-h4">Ust. Ahmad Hanafi</h3><p class="text-small text-muted">Nahwu &amp; Qiraatul Kutub</p></div>
+        <span class="teacher__ar" lang="ar" dir="rtl">قِرَاءَةُ الْكُتُبِ</span>
+        <div class="teacher__meta"><span>3 kelas</span><span>·</span><span>2.300 santri</span></div>
+      </div>
+      <div class="card teacher">
+        <span class="avatar avatar--xl avatar--good">MR</span>
+        <div><h3 class="text-h4">Ust. Muhammad Ridwan</h3><p class="text-small text-muted">Sharf &amp; Mushaf Sharfi</p></div>
+        <span class="teacher__ar" lang="ar" dir="rtl">الصَّرْفُ</span>
+        <div class="teacher__meta"><span>3 kelas</span><span>·</span><span>1.750 santri</span></div>
+      </div>
+      <div class="card teacher">
+        <span class="avatar avatar--xl">MS</span>
+        <div><h3 class="text-h4">Ustadzah Maryam Salsabila</h3><p class="text-small text-muted">Kelas santriwati · Mushaf Nahwi</p></div>
+        <span class="teacher__ar" lang="ar" dir="rtl">الْإِعْرَابُ</span>
+        <div class="teacher__meta"><span>2 kelas</span><span>·</span><span>1.120 santri</span></div>
+      </div>
+    </div>
+    <p class="text-caption text-muted text-center" style="margin-top:var(--space-4)">Selain mudir, nama dan angka asatidz adalah contoh.</p>
+  </div>
+</section>
+
+<!-- Testimoni -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="section__head">
+      <span class="text-overline">Testimoni</span>
+      <h2 class="section__title">Cerita santri</h2>
+      <p class="section__lead"><span class="badge badge--locked">Testimoni contoh untuk mockup</span></p>
+    </div>
+    <div class="grid-3">
+      <div class="card testi">
+        <div class="testi__stars"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg></div>
+        <p class="testi__quote">"Dulu saya hafal istilah nahwu tapi tetap bingung saat membuka kitab. Setelah melihat warna di Mushaf Nahwi, saya mulai paham kenapa satu kata dibaca dhammah."</p>
+        <div class="avatar-with-meta"><span class="avatar avatar--gold">RA</span><span><span class="avatar-with-meta__name" style="display:block">Rafi A. (contoh)</span><span class="avatar-with-meta__sub">Mahasiswa · Bandung</span></span></div>
+      </div>
+      <div class="card testi">
+        <div class="testi__stars"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg></div>
+        <p class="testi__quote">"Saya belajar 20 menit setelah Subuh. Setoran audio membuat saya tidak hanya membaca dalam hati, dan catatan ustadz jelas sekali bagian mana yang salah."</p>
+        <div class="avatar-with-meta"><span class="avatar avatar--good">NF</span><span><span class="avatar-with-meta__name" style="display:block">Nadia F. (contoh)</span><span class="avatar-with-meta__sub">Guru TPQ · Serang</span></span></div>
+      </div>
+      <div class="card testi">
+        <div class="testi__stars"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg></div>
+        <p class="testi__quote">"Tes penempatan menaruh saya langsung di jenjang Membaca Akhir, jadi tidak mengulang yang sudah saya kuasai. Live halaqah pekanan membantu saat ada yang belum jelas."</p>
+        <div class="avatar-with-meta"><span class="avatar avatar--deep">HS</span><span><span class="avatar-with-meta__name" style="display:block">Hasan S. (contoh)</span><span class="avatar-with-meta__sub">Karyawan · Jakarta</span></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Harga -->
+<section class="section" id="harga">
+  <div class="container">
+    <div class="section__head">
+      <span class="text-overline">Paket belajar</span>
+      <h2 class="section__title">Mulai gratis, lanjutkan sesuai kebutuhan</h2>
+      <p class="section__lead">Harga di bawah adalah contoh. Paket bisa dihentikan kapan saja dari halaman profil.</p>
+    </div>
+    <div class="grid-3" style="align-items:start">
+      <div class="price">
+        <div class="price__head"><span class="price__name">Gratis</span></div>
+        <p class="price__desc">Untuk mencoba metode dan memulai dari fondasi.</p>
+        <div class="price__amount-row"><span class="price__currency">Rp</span><span class="price__amount">0</span><span class="price__note">Selamanya, cukup daftar akun.</span></div>
+        <a class="btn btn--secondary btn--block" href="04-harga.html">Lihat detail paket</a>
+        <div class="price__features">
+          <span class="price__feature"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Jenjang Fondasi dan Membaca Bangunan dasar</span>
+          <span class="price__feature"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Kuis interaktif, XP, dan streak</span>
+          <span class="price__feature"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Cuplikan Mushaf Nahwi dan Sharfi</span>
+          <span class="price__feature price__feature--off"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg> Setoran dan feedback ustadz</span>
+          <span class="price__feature price__feature--off"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg> Live halaqah</span>
+        </div>
+      </div>
+      <div class="price price--featured">
+        <span class="badge badge--premium price__ribbon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> Paling banyak dipilih</span>
+        <div class="price__head"><span class="price__name">Santri</span></div>
+        <p class="price__desc">Semua kelas dan jenjang, dengan bimbingan ustadz.</p>
+        <div class="price__amount-row"><span class="price__currency">Rp</span><span class="price__amount">99.000</span><span class="text-small text-muted">/bulan</span><span class="price__note">Atau Rp990.000 per tahun.</span></div>
+        <a class="btn btn--gold btn--block" href="04-harga.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Pilih paket Santri</a>
+        <div class="price__features">
+          <span class="price__feature"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Semua kelas nahwu, sharf, dan qiraah</span>
+          <span class="price__feature"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Mushaf Nahwi dan Sharfi lengkap</span>
+          <span class="price__feature"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> 4 setoran per bulan dengan feedback</span>
+          <span class="price__feature"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Live halaqah umum 2 kali sepekan</span>
+          <span class="price__feature"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Syahadah setiap jenjang</span>
+        </div>
+      </div>
+      <div class="price">
+        <div class="price__head"><span class="price__name">Halaqah Plus</span></div>
+        <p class="price__desc">Untuk yang ingin dibimbing lebih dekat dalam kelompok kecil.</p>
+        <div class="price__amount-row"><span class="price__currency">Rp</span><span class="price__amount">249.000</span><span class="text-small text-muted">/bulan</span><span class="price__note">Kuota terbatas per kohort.</span></div>
+        <a class="btn btn--primary btn--block" href="04-harga.html">Lihat detail paket</a>
+        <div class="price__features">
+          <span class="price__feature"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Semua isi paket Santri</span>
+          <span class="price__feature"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Halaqah kelompok kecil, maksimal 10 santri</span>
+          <span class="price__feature"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Setoran tanpa batas</span>
+          <span class="price__feature"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Laporan perkembangan bulanan</span>
+        </div>
+      </div>
+    </div>
+    <p class="text-center" style="margin-top:var(--space-6)"><a class="link" href="04-harga.html">Bandingkan semua paket</a></p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section section--alt" id="faq">
+  <div class="container" style="width:880px">
+    <div class="section__head">
+      <span class="text-overline">Tanya jawab</span>
+      <h2 class="section__title">Pertanyaan yang sering muncul</h2>
+    </div>
+    <div class="accordion">
+      <details class="accordion__item" open>
+        <summary class="accordion__summary">Apakah saya harus bisa bahasa Arab dulu? <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="accordion__body">Tidak. Cukup bisa membaca huruf hijaiyah berharakat. Jenjang Fondasi dimulai dari pengertian kalimah dan jumlah, tanpa mengandaikan bekal nahwu atau sharf.</div>
+      </details>
+      <details class="accordion__item">
+        <summary class="accordion__summary">Berapa lama sampai bisa membaca kitab gundul? <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="accordion__body">Tergantung waktu belajar dan bekal awal. Dengan target 15–20 menit per hari, perkiraan untuk menuntaskan Fondasi sampai Membaca Akhir adalah 6–9 bulan. Kecepatan tiap santri berbeda.</div>
+      </details>
+      <details class="accordion__item">
+        <summary class="accordion__summary">Apa itu Mushaf Nahwi dan Mushaf Sharfi? <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="accordion__body">Mushaf Al-Qur'an yang setiap katanya diberi warna. Mushaf Nahwi mewarnai kedudukan i'rab (mubtada', fa'il, maf'ul bih, dan lainnya). Mushaf Sharfi mewarnai bentuk kata (madhi, mudhari', mashdar, isim fa'il, dan lainnya).</div>
+      </details>
+      <details class="accordion__item">
+        <summary class="accordion__summary">Bagaimana cara setoran ke ustadz? <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="accordion__body">Buka tugas setoran, rekam bacaan teks yang diberikan langsung dari aplikasi, lalu kirim. Ustadz memberi nilai dan catatan perbaikan, biasanya dalam 2×24 jam.</div>
+      </details>
+      <details class="accordion__item">
+        <summary class="accordion__summary">Apakah ada sertifikat? <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="accordion__body">Ada. Setelah lulus ujian akhir jenjang, santri menerima syahadah digital dari Ma'had Al-Abqary dengan kode verifikasi yang bisa dicek siapa saja.</div>
+      </details>
+      <details class="accordion__item">
+        <summary class="accordion__summary">Bisakah belajar lewat HP? <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="accordion__body">Bisa. Semua materi, kuis, setoran audio, dan live halaqah dapat diakses dari browser ponsel.</div>
+      </details>
+      <details class="accordion__item">
+        <summary class="accordion__summary">Bagaimana cara menghentikan langganan? <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
+        <div class="accordion__body">Dari Profil &amp; Pengaturan, buka tab Langganan lalu pilih "Hentikan". Akses premium tetap berjalan sampai akhir periode yang sudah dibayar.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="section">
+  <div class="container">
+    <div class="cta-band">
+      <svg class="hero__pattern" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M1180.0 -60.0 L1256.2 16.2 L1363.8 16.2 L1363.8 123.8 L1440.0 200.0 L1363.8 276.2 L1363.8 383.8 L1256.2 383.8 L1180.0 460.0 L1103.8 383.8 L996.2 383.8 L996.2 276.2 L920.0 200.0 L996.2 123.8 L996.2 16.2 L1103.8 16.2Z"/><path d="M1260.4 6.0 L1293.7 86.3 L1374.0 119.6 L1340.7 200.0 L1374.0 280.4 L1293.7 313.7 L1260.4 394.0 L1180.0 360.7 L1099.6 394.0 L1066.3 313.7 L986.0 280.4 L1019.3 200.0 L986.0 119.6 L1066.3 86.3 L1099.6 6.0 L1180.0 39.3Z"/><path d="M1180.0 35.0 L1228.3 83.3 L1296.7 83.3 L1296.7 151.7 L1345.0 200.0 L1296.7 248.3 L1296.7 316.7 L1228.3 316.7 L1180.0 365.0 L1131.7 316.7 L1063.3 316.7 L1063.3 248.3 L1015.0 200.0 L1063.3 151.7 L1063.3 83.3 L1131.7 83.3Z"/><path d="M1226.7 87.3 L1246.0 134.0 L1292.7 153.3 L1273.4 200.0 L1292.7 246.7 L1246.0 266.0 L1226.7 312.7 L1180.0 293.4 L1133.3 312.7 L1114.0 266.0 L1067.3 246.7 L1086.6 200.0 L1067.3 153.3 L1114.0 134.0 L1133.3 87.3 L1180.0 106.6Z"/><path d="M1180.0 118.0 L1204.0 142.0 L1238.0 142.0 L1238.0 176.0 L1262.0 200.0 L1238.0 224.0 L1238.0 258.0 L1204.0 258.0 L1180.0 282.0 L1156.0 258.0 L1122.0 258.0 L1122.0 224.0 L1098.0 200.0 L1122.0 176.0 L1122.0 142.0 L1156.0 142.0Z"/><circle cx="1180" cy="200" r="45.1"/></svg>
+      <div class="cta-band__inner">
+        <div class="stack stack--sm" style="max-width:560px">
+          <span class="text-overline" style="color:var(--gold-bright)">Mulai hari ini</span>
+          <h2 class="text-h1" style="color:var(--on-blue)">Mulai dari materi pertama, gratis</h2>
+          <p class="text-body-lg">Daftar dengan email atau nomor WhatsApp, ikuti tes penempatan singkat, lalu kerjakan materi pertama dalam 15 menit.</p>
+        </div>
+        <div class="cluster cluster--nowrap">
+          <a class="btn btn--gold btn--lg" href="06-auth.html#tab-daftar">Mulai Belajar Gratis <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          <a class="btn btn--on-dark btn--lg" href="02-katalog.html">Lihat Katalog</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SITE FOOTER START -->
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__grid">
+      <div class="site-footer__about">
+        <a class="brand brand--on-dark" href="01-landing.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--gold)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--blue-deep);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--blue-deep)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+        <p>Platform belajar membaca kitab gundul dengan metode Qaidaty karya KH. Yasin Muthohar.</p>
+        <p>Ma'had Al-Abqary, Kota Serang, Banten</p>
+      </div>
+      <div><p class="site-footer__title">Belajar</p><div class="site-footer__links"><a href="02-katalog.html">Katalog kelas</a><a href="01-landing.html#metode">Metode</a><a href="16-mushaf.html">Mushaf Nahwi &amp; Sharfi</a><a href="07-onboarding.html">Tes penempatan</a></div></div>
+      <div><p class="site-footer__title">Platform</p><div class="site-footer__links"><a href="04-harga.html">Paket &amp; harga</a><a href="06-auth.html">Masuk</a><a href="06-auth.html#tab-daftar">Daftar</a><a href="19-sertifikat.html">Verifikasi sertifikat</a></div></div>
+      <div><p class="site-footer__title">Ma'had</p><div class="site-footer__links"><a href="01-landing.html#ustadz">Asatidz</a><a href="#">Tentang Al-Abqary</a><a href="#">Penerimaan santri</a><a href="#">Kontak</a></div></div>
+      <div><p class="site-footer__title">Bantuan</p><div class="site-footer__links"><a href="01-landing.html#faq">FAQ</a><a href="#">Syarat layanan</a><a href="#">Kebijakan privasi</a><a href="40-states.html">Status layanan</a></div></div>
+    </div>
+    <div class="site-footer__bottom">
+      <span>© 2026 Ma'had Al-Abqary · Mockup, bukan produk final</span>
+      <span class="ar-inline" lang="ar" dir="rtl">مَعْهَدُ الْعَبْقَرِيِّ</span>
+    </div>
+  </div>
+</footer>
+<!-- SITE FOOTER END -->
+
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

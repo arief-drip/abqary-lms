@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Profil &amp; Pengaturan · Al-Abqary LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Profil-only styles */
+.settings-tabs { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl); padding: 0 var(--space-6); }
+.settings-tabs .tabs { border-bottom: 0; gap: var(--space-8); }
+.settings-tabs .tab { padding: var(--space-4) 0; }
+.settings-tabs .tab .icon { width: 18px; height: 18px; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); }
+.form-grid .span-2 { grid-column: 1 / -1; }
+.textarea { min-height: 104px; padding: var(--space-3) var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--radius-md); background: var(--surface); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--ink); }
+.avatar-edit { display: flex; align-items: center; gap: var(--space-5); }
+.avatar-edit__pic { position: relative; }
+.avatar-edit__cam { position: absolute; right: -4px; bottom: -4px; width: 32px; height: 32px; border-radius: var(--radius-full); background: var(--blue); color: var(--on-blue); display: flex; align-items: center; justify-content: center; border: 2px solid var(--surface); }
+.avatar-edit__cam .icon { width: 16px; height: 16px; }
+.form-actions { display: flex; justify-content: flex-end; gap: var(--space-3); }
+
+/* Public profile card */
+.pub { overflow: hidden; }
+.pub__cover { height: 88px; background: var(--blue-deep); display: grid; overflow: hidden; }
+.pub__cover > * { grid-area: 1 / 1; }
+.pub__body { padding: 0 var(--space-6) var(--space-6); display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-2); }
+.pub__body .avatar--xl { margin-top: -44px; border-width: 4px; }
+.pub__stats { width: 100%; display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: var(--radius-lg); margin-top: var(--space-3); }
+.pub__stats div { padding: var(--space-3) var(--space-1); display: flex; flex-direction: column; gap: 2px; }
+.pub__stats div + div { border-left: 1px solid var(--line); }
+.pub__stats b { font-size: var(--fs-body); line-height: var(--lh-body); }
+.pub__stats span { font-size: 11px; line-height: 14px; color: var(--muted); }
+
+/* Rows of settings */
+.set-row { display: flex; align-items: center; gap: var(--space-4); }
+.set-row__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.set-row__title { font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-semibold); }
+.set-row__sub { font-size: var(--fs-caption); line-height: 18px; color: var(--muted); }
+.badge--good { background: var(--good-soft); color: var(--good); border-color: var(--good-line); }
+.badge--warn { background: var(--warn-soft); color: var(--warn); }
+.danger { border-color: var(--bad-line); }
+.danger .panel__head { background: var(--bad-soft); border-radius: var(--radius-xl) var(--radius-xl) 0 0; border-bottom-color: var(--bad-line); }
+.danger .panel__title, .danger .panel__title .icon { color: var(--bad); }
+.btn--danger-outline { background: var(--surface); color: var(--bad); border-color: var(--bad-line); }
+.btn--danger-outline:hover { background: var(--bad-soft); }
+.switch { cursor: pointer; }
+
+/* Notification matrix */
+.matrix th:not(:first-child), .matrix td:not(:first-child) { text-align: center; width: 120px; }
+.matrix .switch__track { margin: 0 auto; }
+.matrix__group td { background: var(--bg); font-size: var(--fs-caption); line-height: var(--lh-caption); font-weight: var(--fw-semibold); letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--subtle); padding-top: var(--space-2); padding-bottom: var(--space-2); }
+.matrix td small { display: block; font-size: var(--fs-caption); color: var(--muted); }
+.switch.is-locked { opacity: 0.5; cursor: not-allowed; }
+
+/* Subscription */
+.plan { background: var(--blue-deep); color: var(--on-blue); border-radius: var(--radius-xl); display: grid; overflow: hidden; }
+.plan > * { grid-area: 1 / 1; }
+.plan__inner { position: relative; padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-4); }
+.plan__price { display: flex; align-items: baseline; gap: var(--space-2); }
+.plan__price b { font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: var(--fw-bold); letter-spacing: var(--ls-tight); }
+.plan__price span { color: var(--blue-on-deep); font-size: var(--fs-small); }
+.plan__feats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2) var(--space-4); font-size: var(--fs-small); line-height: var(--lh-small); color: var(--blue-on-deep); }
+.plan__feats span { display: flex; gap: var(--space-2); }
+.plan__feats .icon { width: 18px; height: 18px; color: var(--gold-bright); }
+.plan__meta { display: flex; gap: var(--space-8); padding-top: var(--space-4); border-top: 1px solid rgba(255, 255, 255, 0.14); font-size: var(--fs-caption); color: var(--blue-on-deep); }
+.plan__meta b { display: block; font-size: var(--fs-small); color: var(--on-blue); }
+.upsell { background: var(--gold-soft); border: 1px solid var(--gold-line); border-radius: var(--radius-xl); padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
+.pay-logo { width: 56px; height: 36px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: var(--fw-bold); color: var(--blue-deep); letter-spacing: 0.02em; flex: none; }
+
+/* Preferences */
+.range { width: 100%; accent-color: var(--blue); height: 24px; cursor: pointer; }
+.range-scale { display: flex; justify-content: space-between; font-size: var(--fs-caption); color: var(--muted); }
+.ar-preview { border: 1px dashed var(--line-strong); border-radius: var(--radius-lg); background: var(--blue-tint); padding: var(--space-5); text-align: center; }
+.ar-preview p { font-family: var(--font-quran); font-size: 30px; line-height: 1.9; direction: rtl; }
+.mode-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); }
+.mode-card { border: 1.5px solid var(--line-strong); border-radius: var(--radius-lg); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); cursor: pointer; background: var(--surface); }
+.mode-card.is-active { border-color: var(--blue); background: var(--blue-tint); box-shadow: var(--shadow-focus); }
+.mode-card__ar { font-family: var(--font-ar); font-size: 17px; white-space: nowrap; line-height: 1.6; direction: rtl; text-align: center; padding: var(--space-2); border-radius: var(--radius-md); background: var(--surface); border: 1px solid var(--line); }
+.mode-card b { font-size: var(--fs-small); }
+.mode-card > span { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.target-chips .chip { height: 40px; }
+
+/* Wali santri */
+.wa-preview { background: var(--good-soft); border-radius: var(--radius-lg); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
+.wa-bubble { background: var(--surface); border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md); padding: var(--space-3) var(--space-4); font-size: var(--fs-small); line-height: 21px; box-shadow: var(--shadow-sm); max-width: 92%; }
+.wa-bubble small { display: block; text-align: right; font-size: 11px; color: var(--muted); margin-top: var(--space-1); }
+.perm { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) 0; }
+.perm + .perm { border-top: 1px solid var(--line); }
+.modal__body .radio { font-size: var(--fs-small); }
+.mono-sm { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12px; white-space: nowrap; }
+.modal__reasons { display: flex; flex-direction: column; gap: var(--space-2); }
+.loss { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); border-radius: var(--radius-md); background: var(--bad-soft); color: var(--ink); }
+.loss li { display: flex; gap: var(--space-2); }
+.loss .icon { width: 16px; height: 16px; color: var(--bad); margin-top: 2px; }
+.upsell .plan__price span { color: var(--muted); }
+[data-panel="langganan"] .table td:nth-child(2) { white-space: nowrap; }
+.matrix th { white-space: nowrap; }
+.matrix th .icon { vertical-align: -3px; margin-right: var(--space-1); }
+</style>
+</head>
+<body class="app">
+
+<!-- APP TOPNAV START (santri) — copy as-is to every santri page -->
+<header class="topnav app__topnav">
+  <div class="topnav__inner">
+    <a class="brand" href="10-dashboard.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+    <div class="input topnav__search"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari kelas, materi, atau kata…</span><span class="kbd">/</span></div>
+    <div class="topnav__actions">
+      <a class="pill pill--streak" href="18-pencapaian.html" title="Hari beruntun"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>12 <span class="pill__label">hari</span></a>
+      <a class="pill pill--xp" href="18-pencapaian.html" title="Total XP"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>1.120 <span class="pill__label">XP</span></a>
+      <span class="topnav__divider"></span>
+      <a class="btn btn--ghost btn--icon topnav__icon-btn" href="21-notifikasi.html" aria-label="Notifikasi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="notif-dot"></span></a>
+      <a class="avatar-with-meta" href="20-profil.html"><span class="avatar avatar--ring">MF</span><span><span class="avatar-with-meta__name" style="display:block">Muhammad Fauzan</span><span class="avatar-with-meta__sub">Level 4 · Mutqin</span></span></a>
+    </div>
+  </div>
+</header>
+<!-- APP TOPNAV END -->
+
+<div class="app__body">
+
+<!-- SANTRI SIDEBAR START — copy as-is; move .sidebar__item--active to the current page's item -->
+<aside class="sidebar app__sidebar">
+  <div class="sidebar__section">
+    <span class="sidebar__title">Belajar</span>
+    <a class="sidebar__item" href="10-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9.5 9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> Beranda</a>
+    <a class="sidebar__item" href="11-kelas-saya.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Kelas Saya<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="02-katalog.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6z"/></svg> Jelajah Kelas</a>
+    <a class="sidebar__item" href="15-jadwal.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg> Jadwal Live<span class="sidebar__count">2</span></a>
+    <a class="sidebar__item" href="14-tugas.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9zM9 12h6M9 16h4"/></svg> Tugas &amp; Setoran<span class="sidebar__count">2</span></a>
+    <a class="sidebar__item" href="16-mushaf.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg> Mushaf &amp; Pustaka</a>
+    <a class="sidebar__item" href="17-diskusi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Diskusi</a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Prestasi</span>
+    <a class="sidebar__item" href="18-pencapaian.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0z"/></svg> Pencapaian</a>
+    <a class="sidebar__item" href="19-sertifikat.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg> Sertifikat<span class="sidebar__count">1</span></a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Akun</span>
+    <a class="sidebar__item" href="21-notifikasi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Notifikasi<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item sidebar__item--active" href="20-profil.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profil &amp; Pengaturan</a>
+  </div>
+  <div class="sidebar__promo">
+    <span class="badge badge--on-dark" style="align-self:flex-start"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Paket Santri aktif</span>
+    <span class="sidebar__promo-title">Naik ke Halaqah Plus</span>
+    <span class="sidebar__promo-text">Halaqah kelompok kecil maksimal 10 santri, setoran tanpa batas, dan laporan perkembangan bulanan.</span>
+    <a class="btn btn--gold btn--sm btn--block" href="04-harga.html">Lihat paket</a>
+  </div>
+</aside>
+<!-- SANTRI SIDEBAR END -->
+
+<main class="app__main">
+
+  <!-- Page head -->
+  <div class="page-head">
+    <nav class="breadcrumb"><a class="breadcrumb__item" href="10-dashboard.html">Beranda</a><span class="breadcrumb__sep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span><span class="breadcrumb__current">Profil &amp; Pengaturan</span></nav>
+    <div class="page-head__row">
+      <div>
+        <h1 class="page-head__title">Profil &amp; Pengaturan</h1>
+        <p class="page-head__sub">Atur data diri, keamanan akun, notifikasi, langganan, dan cara Anda belajar.</p>
+      </div>
+      <div class="page-head__actions">
+        <a class="btn btn--ghost" href="06-auth.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg> Keluar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="stack stack--lg" data-tabs data-tab-default="profil">
+    <div class="settings-tabs">
+      <div class="tabs" role="tablist">
+        <a class="tab tab--active" href="#tab-profil" data-tab="profil"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profil</a>
+        <a class="tab" href="#tab-akun" data-tab="akun"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Akun &amp; Keamanan</a>
+        <a class="tab" href="#tab-notifikasi" data-tab="notifikasi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Notifikasi</a>
+        <a class="tab" href="#tab-langganan" data-tab="langganan"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg> Langganan &amp; Tagihan</a>
+        <a class="tab" href="#tab-preferensi" data-tab="preferensi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg> Preferensi Belajar</a>
+        <a class="tab" href="#tab-wali" data-tab="wali"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> Wali Santri</a>
+      </div>
+    </div>
+
+    <!-- ===================== PROFIL ===================== -->
+    <div class="grid-2-1" data-panel="profil">
+      <section class="panel">
+        <div class="panel__head"><div><span class="panel__title">Data diri</span><span class="panel__sub">Nama lengkap dipakai di syahadah. Periksa ejaannya.</span></div></div>
+        <div class="panel__body" style="gap:var(--space-6)">
+          <div class="avatar-edit">
+            <span class="avatar-edit__pic"><span class="avatar avatar--xl avatar--ring">MF</span><span class="avatar-edit__cam"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span></span>
+            <div class="stack stack--sm">
+              <div class="cluster cluster--sm"><a class="btn btn--secondary btn--sm" href="#">Unggah foto</a><a class="btn btn--ghost btn--sm" href="#">Hapus</a></div>
+              <span class="field__hint">JPG atau PNG, maksimal 2 MB. Foto tampil di forum dan papan peringkat.</span>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="field"><label class="field__label">Nama lengkap</label><div class="input"><span class="input__text">Muhammad Fauzan</span></div><span class="field__hint">Tertulis di syahadah.</span></div>
+            <div class="field"><label class="field__label">Nama tampilan</label><div class="input"><span class="input__text">Fauzan</span></div><span class="field__hint">Dipakai di forum diskusi.</span></div>
+            <div class="field"><label class="field__label">Nama dalam huruf Arab <span class="text-muted">(opsional)</span></label><div class="input input--ar"><span class="input__text" lang="ar" dir="rtl">مُحَمَّد فَوْزَان</span></div></div>
+            <div class="field"><label class="field__label">Kota</label><div class="input select"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg><span class="input__text">Serang, Banten</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div></div>
+            <div class="field span-2"><label class="field__label">Bio</label><div class="textarea">Santri Al-Abqary sejak Juli 2026. Sedang belajar membaca kitab gundul, mulai dari Al-Ajurrumiyyah.</div><span class="field__hint">96 / 160 karakter</span></div>
+            <div class="field"><label class="field__label">Pendidikan saat ini</label><div class="input select"><span class="input__text">Mahasiswa</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div></div>
+            <div class="field"><label class="field__label">Bergabung</label><div class="input is-disabled"><span class="input__text">14 Juli 2026</span></div></div>
+          </div>
+        </div>
+        <div class="panel__foot form-actions"><a class="btn btn--ghost btn--sm" href="#">Batal</a><a class="btn btn--primary btn--sm" href="#" data-toast="toast-saved">Simpan perubahan</a></div>
+      </section>
+
+      <div class="stack">
+        <section class="panel pub">
+          <div class="pub__cover"><svg class="hero__pattern" viewBox="0 0 340 88" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M170.0 -40.0 L203.0 -7.0 L250.0 -7.0 L250.0 40.0 L283.0 73.0 L250.0 106.0 L250.0 153.0 L203.0 153.0 L170.0 186.0 L137.0 153.0 L90.0 153.0 L90.0 106.0 L57.0 73.0 L90.0 40.0 L90.0 -7.0 L137.0 -7.0Z"/><circle cx="170" cy="73" r="34"/></svg></div>
+          <div class="pub__body">
+            <span class="avatar avatar--xl avatar--ring">MF</span>
+            <b class="text-h4">Muhammad Fauzan</b>
+            <span class="badge badge--level"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> Level 4 · Mutqin</span>
+            <span class="text-caption text-muted"><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg> Serang, Banten · bergabung Juli 2026</span>
+            <p class="text-small text-muted">Santri Al-Abqary sejak Juli 2026. Sedang belajar membaca kitab gundul, mulai dari Al-Ajurrumiyyah.</p>
+            <div class="pub__stats">
+              <div><b>1.120</b><span>XP</span></div>
+              <div><b>12</b><span>Hari beruntun</span></div>
+              <div><b>6</b><span>Lencana</span></div>
+              <div><b>2</b><span>Syahadah</span></div>
+            </div>
+          </div>
+          <div class="panel__foot cluster cluster--between"><span class="text-caption text-muted">Pratinjau profil publik</span><a class="panel__link" href="#">Lihat <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></div>
+        </section>
+        <section class="panel">
+          <div class="panel__body">
+            <div class="set-row"><div class="set-row__main"><span class="set-row__title">Profil publik</span><span class="set-row__sub">Santri lain bisa melihat profil, lencana, dan syahadah Anda.</span></div><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></div>
+            <div class="set-row"><div class="set-row__main"><span class="set-row__title">Tampil di papan peringkat</span><span class="set-row__sub">Jika dimatikan, nama Anda disamarkan.</span></div><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ===================== AKUN & KEAMANAN ===================== -->
+    <div class="stack stack--lg" data-panel="akun" hidden>
+      <div class="grid-2">
+        <section class="panel">
+          <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> Kontak &amp; login</span></div>
+          <div class="panel__body" style="gap:var(--space-5)">
+            <div class="field"><label class="field__label">Email</label><div class="cluster cluster--nowrap"><div class="input"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg><span class="input__text">fauzan@contoh.id</span><span class="badge badge--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Terverifikasi</span></div><a class="btn btn--secondary" href="#">Ubah</a></div></div>
+            <div class="field"><label class="field__label">Nomor WhatsApp</label><div class="cluster cluster--nowrap"><div class="input"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span class="input__text">+62 812-xxxx-4471</span><span class="badge badge--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Terverifikasi</span></div><a class="btn btn--secondary" href="#">Ubah</a></div><span class="field__hint">Dipakai untuk pengingat halaqah dan kode masuk.</span></div>
+            <div class="divider"></div>
+            <div class="set-row"><span class="icon-tile icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><div class="set-row__main"><span class="set-row__title">Verifikasi dua langkah (2FA)</span><span class="set-row__sub">Saat masuk dari perangkat baru, kami kirim kode 6 digit ke WhatsApp Anda.</span></div><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></div>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="panel__head"><div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></svg> Ganti kata sandi</span><span class="panel__sub">Terakhir diubah 3 bulan lalu</span></div></div>
+          <div class="panel__body">
+            <div class="field"><label class="field__label">Kata sandi saat ini</label><div class="input"><span class="input__text">••••••••••</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div></div>
+            <div class="field"><label class="field__label">Kata sandi baru</label><div class="input is-focus"><span class="input__text">••••••••••••</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div>
+              <div class="progress progress--sm progress--good"><div class="progress__bar" style="width:75%"></div></div><span class="field__hint">Kuat. Minimal 8 karakter, campuran huruf dan angka.</span></div>
+            <div class="field"><label class="field__label">Ulangi kata sandi baru</label><div class="input"><span class="input__text">••••••••••••</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></div></div>
+          </div>
+          <div class="panel__foot form-actions"><a class="btn btn--primary btn--sm" href="#" data-toast="toast-saved">Perbarui kata sandi</a></div>
+        </section>
+      </div>
+
+      <section class="panel">
+        <div class="panel__head"><div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> Perangkat yang masuk</span><span class="panel__sub">Keluarkan perangkat yang tidak Anda kenali.</span></div><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-logout-all">Keluar dari semua perangkat lain</a></div>
+        <div class="panel__body panel__body--flush">
+          <table class="table">
+            <thead><tr><th>Perangkat</th><th>Lokasi</th><th>Terakhir aktif</th><th class="table__num">Aksi</th></tr></thead>
+            <tbody>
+              <tr><td><span class="media"><span class="icon-tile icon-tile--sm"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><span class="media__body"><span class="media__title">Chrome · macOS</span><span class="media__sub">MacBook Air</span></span></span></td><td>Serang, Banten</td><td><span class="badge badge--good"><i class="dot dot--good"></i> Perangkat ini</span></td><td class="table__num text-muted">—</td></tr>
+              <tr><td><span class="media"><span class="icon-tile icon-tile--sm"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></span><span class="media__body"><span class="media__title">Aplikasi Al-Abqary · Android</span><span class="media__sub">Samsung Galaxy A54</span></span></span></td><td>Serang, Banten</td><td>Hari ini, 06.12</td><td class="table__num"><a class="btn btn--ghost btn--sm" href="#">Keluarkan</a></td></tr>
+              <tr><td><span class="media"><span class="icon-tile icon-tile--sm icon-tile--bad"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span><span class="media__body"><span class="media__title">Firefox · Windows</span><span class="media__sub">Belum pernah dipakai sebelumnya</span></span></span></td><td>Jakarta Selatan</td><td>9 Nov 2026, 22.40</td><td class="table__num"><a class="btn btn--danger-outline btn--sm" href="#">Keluarkan</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel danger">
+        <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m10.29 3.86-8.47 14.14A2 2 0 0 0 3.53 21h16.94a2 2 0 0 0 1.71-3l-8.47-14.14a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg> Zona berbahaya</span></div>
+        <div class="panel__body">
+          <div class="set-row"><div class="set-row__main"><span class="set-row__title">Unduh data saya</span><span class="set-row__sub">Salinan progres, nilai, syahadah, dan riwayat diskusi dalam format ZIP.</span></div><a class="btn btn--secondary btn--sm" href="#">Minta unduhan</a></div>
+          <div class="divider"></div>
+          <div class="set-row"><div class="set-row__main"><span class="set-row__title">Hapus akun</span><span class="set-row__sub">Semua progres, XP, dan riwayat dihapus permanen setelah 14 hari. Syahadah yang sudah terbit tetap bisa diverifikasi.</span></div><a class="btn btn--danger btn--sm" href="#" data-open="modal-hapus"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Hapus akun</a></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===================== NOTIFIKASI ===================== -->
+    <div class="stack stack--lg" data-panel="notifikasi" hidden>
+      <section class="panel">
+        <div class="panel__head"><div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Saluran notifikasi</span><span class="panel__sub">Pilih lewat mana Anda ingin diberi tahu untuk tiap kejadian.</span></div><a class="btn btn--ghost btn--sm" href="#">Kembalikan bawaan</a></div>
+        <div class="panel__body panel__body--flush">
+          <table class="table matrix">
+            <thead><tr><th>Kejadian</th><th><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> Email</th><th><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> WhatsApp</th><th><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg> Push</th></tr></thead>
+            <tbody>
+              <tr class="matrix__group"><td colspan="4">Belajar</td></tr>
+              <tr><td><b>Pengingat target harian</b><small>Jika target XP belum tercapai pukul 19.30</small></td><td><span class="switch" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td></tr>
+              <tr><td><b>Halaqah live akan dimulai</b><small>30 menit sebelum sesi</small></td><td><span class="switch" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td></tr>
+              <tr><td><b>Rekaman halaqah tersedia</b></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td></tr>
+              <tr class="matrix__group"><td colspan="4">Tugas &amp; penilaian</td></tr>
+              <tr><td><b>Tenggat tugas dan setoran</b><small>H-1 dan 3 jam sebelum batas</small></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td></tr>
+              <tr><td><b>Penilaian selesai</b><small>Nilai dan catatan ustadz untuk setoran Anda</small></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td></tr>
+              <tr class="matrix__group"><td colspan="4">Komunitas</td></tr>
+              <tr><td><b>Balasan di diskusi saya</b></td><td><span class="switch" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td></tr>
+              <tr><td><b>Pesan dari ustadz</b></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td></tr>
+              <tr class="matrix__group"><td colspan="4">Prestasi</td></tr>
+              <tr><td><b>Lencana dan naik level</b></td><td><span class="switch" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td></tr>
+              <tr><td><b>Ringkasan pekanan</b><small>Setiap Ahad pagi</small></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td></tr>
+              <tr class="matrix__group"><td colspan="4">Akun</td></tr>
+              <tr><td><b>Tagihan dan pembayaran</b><small>Wajib untuk email</small></td><td><span class="switch is-on is-locked"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td></tr>
+              <tr><td><b>Keamanan dan login baru</b><small>Wajib untuk email</small></td><td><span class="switch is-on is-locked"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td><td><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="panel__body">
+          <div class="set-row"><span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div class="set-row__main"><span class="set-row__title">Jam tenang</span><span class="set-row__sub">Tidak ada WhatsApp dan push pukul 22.00–04.30 WIB, kecuali pengingat halaqah Subuh.</span></div><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===================== LANGGANAN & TAGIHAN ===================== -->
+    <div class="stack stack--lg" data-panel="langganan" hidden>
+      <div class="grid-2-1">
+        <section class="plan">
+          <svg class="hero__pattern" viewBox="0 0 680 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M560.0 -50.0 L622.0 12.0 L710.0 12.0 L710.0 100.0 L772.0 162.0 L710.0 224.0 L710.0 312.0 L622.0 312.0 L560.0 374.0 L498.0 312.0 L410.0 312.0 L410.0 224.0 L348.0 162.0 L410.0 100.0 L410.0 12.0 L498.0 12.0Z"/><path d="M560.0 40.0 L596.0 76.0 L646.0 76.0 L646.0 126.0 L682.0 162.0 L646.0 198.0 L646.0 248.0 L596.0 248.0 L560.0 284.0 L524.0 248.0 L474.0 248.0 L474.0 198.0 L438.0 162.0 L474.0 126.0 L474.0 76.0 L524.0 76.0Z"/><circle cx="560" cy="162" r="40"/></svg>
+          <div class="plan__inner">
+            <div class="cluster cluster--between"><span class="badge badge--on-dark"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Paket aktif</span><span class="badge badge--good"><i class="dot dot--good"></i> Aktif</span></div>
+            <div><h2 class="text-h2">Paket Santri</h2><div class="plan__price"><b>Rp99.000</b><span>/ bulan · ditagih bulanan</span></div></div>
+            <div class="plan__feats">
+              <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Semua kelas Nahwu dan Sharf</span>
+              <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Mushaf Nahwi &amp; Sharfi berwarna</span>
+              <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Halaqah live pekanan + rekaman</span>
+              <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> 4 setoran dinilai ustadz / bulan</span>
+              <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Syahadah dengan verifikasi</span>
+              <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Forum diskusi dan Tanya Ustadz</span>
+            </div>
+            <div class="plan__meta">
+              <span>Diperpanjang otomatis<b>2 Desember 2026</b></span>
+              <span>Mulai berlangganan<b>2 Agustus 2026</b></span>
+              <span>Setoran bulan ini<b>2 dari 4 terpakai</b></span>
+            </div>
+            <div class="cluster">
+              <a class="btn btn--gold" href="04-harga.html">Ganti ke tahunan · Rp990.000</a>
+              <a class="btn btn--on-dark" href="#" data-open="modal-batal">Batalkan langganan</a>
+            </div>
+          </div>
+        </section>
+        <div class="stack">
+          <section class="upsell">
+            <span class="text-overline">Naik paket</span>
+            <h3 class="text-h3">Halaqah Plus</h3>
+            <div class="plan__price"><b class="text-h2">Rp249.000</b><span class="text-muted">/ bulan</span></div>
+            <p class="text-small text-muted">Halaqah kelompok kecil maksimal 10 santri, setoran tanpa batas, dan laporan perkembangan bulanan.</p>
+            <a class="btn btn--primary" href="04-harga.html">Bandingkan paket</a>
+            <span class="text-caption text-muted">Selisih dihitung prorata untuk sisa 19 hari.</span>
+          </section>
+          <section class="panel">
+            <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg> Metode pembayaran</span><a class="panel__link" href="#">Ubah</a></div>
+            <div class="panel__body">
+              <div class="media"><span class="pay-logo">GoPay</span><span class="media__body"><span class="media__title">GoPay · 0812-xxxx-4471</span><span class="media__sub">Penagihan otomatis tiap tanggal 2</span></span></div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <section class="panel">
+        <div class="panel__head"><div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg> Riwayat tagihan</span><span class="panel__sub">Invoice dikirim juga ke fauzan@contoh.id</span></div><div class="cluster cluster--sm" data-chips><span class="chip chip--active">Semua</span><span class="chip">2026</span></div></div>
+        <div class="panel__body panel__body--flush">
+          <table class="table">
+            <thead><tr><th>No. invoice</th><th>Tanggal</th><th>Keterangan</th><th>Metode</th><th class="table__num">Jumlah</th><th>Status</th><th class="table__num">Unduh</th></tr></thead>
+            <tbody>
+              <tr><td class="mono-sm">INV-2026-11-08714</td><td>2 Nov 2026</td><td>Paket Santri · Nov 2026</td><td>GoPay</td><td class="table__num">Rp99.000</td><td><span class="badge badge--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Lunas</span></td><td class="table__num"><a class="btn btn--ghost btn--sm btn--icon" href="#" aria-label="Unduh invoice PDF"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></a></td></tr>
+              <tr><td class="mono-sm">INV-2026-10-06233</td><td>2 Okt 2026</td><td>Paket Santri · Okt 2026</td><td>GoPay</td><td class="table__num">Rp99.000</td><td><span class="badge badge--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Lunas</span></td><td class="table__num"><a class="btn btn--ghost btn--sm btn--icon" href="#" aria-label="Unduh invoice PDF"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></a></td></tr>
+              <tr><td class="mono-sm">INV-2026-09-04190</td><td>4 Sep 2026</td><td>Paket Santri · Sep 2026 (pembayaran ulang)</td><td>GoPay</td><td class="table__num">Rp99.000</td><td><span class="badge badge--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Lunas</span></td><td class="table__num"><a class="btn btn--ghost btn--sm btn--icon" href="#" aria-label="Unduh invoice PDF"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></a></td></tr>
+              <tr><td class="mono-sm">INV-2026-09-03877</td><td>2 Sep 2026</td><td>Paket Santri · Sep 2026</td><td>GoPay</td><td class="table__num">Rp99.000</td><td><span class="badge badge--danger"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg> Gagal</span></td><td class="table__num text-muted">—</td></tr>
+              <tr><td class="mono-sm">INV-2026-08-01542</td><td>2 Agu 2026</td><td>Paket Santri · Agu 2026</td><td>BCA VA</td><td class="table__num">Rp99.000</td><td><span class="badge badge--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Lunas</span></td><td class="table__num"><a class="btn btn--ghost btn--sm btn--icon" href="#" aria-label="Unduh invoice PDF"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel__foot text-caption text-muted">Sebelum 2 Agustus 2026 Anda memakai paket Gratis (Rp0).</div>
+      </section>
+    </div>
+
+    <!-- ===================== PREFERENSI BELAJAR ===================== -->
+    <div class="grid-2" data-panel="preferensi" hidden>
+      <section class="panel">
+        <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg> Target &amp; jadwal</span></div>
+        <div class="panel__body" style="gap:var(--space-6)">
+          <div class="field"><label class="field__label">Target harian</label>
+            <div class="cluster cluster--sm target-chips" data-chips><span class="chip">20 XP · santai</span><span class="chip chip--active">50 XP · rutin</span><span class="chip">100 XP · serius</span><span class="chip">150 XP · intensif</span></div>
+            <span class="field__hint">Kira-kira 15 menit per hari untuk 50 XP.</span></div>
+          <div class="form-grid">
+            <div class="field"><label class="field__label">Waktu pengingat</label><div class="input select"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="input__text">19.30</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div></div>
+            <div class="field"><label class="field__label">Zona waktu</label><div class="input select"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span class="input__text">WIB (UTC+7)</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div></div>
+            <div class="field span-2"><label class="field__label">Bahasa antarmuka</label><div class="input select"><span class="input__text">Bahasa Indonesia</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div><span class="field__hint">Tersedia juga English dan <span class="ar-inline" lang="ar" dir="rtl">العربية</span>.</span></div>
+          </div>
+          <div class="divider"></div>
+          <div class="set-row"><div class="set-row__main"><span class="set-row__title">Putar audio otomatis</span><span class="set-row__sub">Bacaan ustadz diputar saat membuka materi.</span></div><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></div>
+          <div class="set-row"><div class="set-row__main"><span class="set-row__title">Mode fokus</span><span class="set-row__sub">Sembunyikan XP dan notifikasi saat di ruang belajar.</span></div><span class="switch" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg> Tampilan teks Arab</span></div>
+        <div class="panel__body" style="gap:var(--space-6)">
+          <div class="field"><label class="field__label">Ukuran huruf Arab <span class="text-muted" style="font-weight:var(--fw-regular)">· 30 px</span></label>
+            <input class="range" type="range" min="22" max="44" value="30" aria-label="Ukuran huruf Arab" oninput="document.getElementById('ar-prev').style.fontSize=this.value+'px'">
+            <div class="range-scale"><span>Kecil</span><span>Sedang</span><span>Besar</span></div>
+            <div class="ar-preview"><p id="ar-prev" lang="ar" dir="rtl">إِنَّكَ لَمِنَ الْمُرْسَلِيْنَ</p></div>
+          </div>
+          <div class="field"><label class="field__label">Harakat bawaan</label>
+            <div class="tabs tabs--segmented" data-chips data-active-class="tab--active"><span class="tab tab--active" data-chip>Lengkap</span><span class="tab" data-chip>Akhir kata saja</span><span class="tab" data-chip>Gundul</span></div>
+            <span class="field__hint">Bisa diubah kapan saja di ruang belajar. Mode gundul cocok untuk latihan membaca kitab.</span></div>
+          <div class="field"><label class="field__label">Mode warna mushaf bawaan</label>
+            <div class="mode-cards" data-chips data-active-class="is-active">
+              <div class="mode-card is-active" data-chip><p class="mode-card__ar" lang="ar" dir="rtl"><span class="word-inline irab--inna-isim">إِنَّكَ</span> <span class="word-inline irab--khabar-inna">لَمِنَ الْمُرْسَلِيْنَ</span></p><b>Mushaf Nahwi</b><span>Warna menurut i'rab</span></div>
+              <div class="mode-card" data-chip><p class="mode-card__ar" lang="ar" dir="rtl"><span class="word-inline sharf--harf">إِنَّكَ</span> <span class="word-inline sharf--harf">لَمِنَ</span> <span class="word-inline sharf--isim-maful">الْمُرْسَلِيْنَ</span></p><b>Mushaf Sharfi</b><span>Warna menurut wazan</span></div>
+              <div class="mode-card" data-chip><p class="mode-card__ar" lang="ar" dir="rtl">إِنَّكَ لَمِنَ الْمُرْسَلِيْنَ</p><b>Tanpa warna</b><span>Teks polos</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel__foot form-actions"><a class="btn btn--primary btn--sm" href="#" data-toast="toast-saved">Simpan preferensi</a></div>
+      </section>
+    </div>
+
+    <!-- ===================== WALI SANTRI ===================== -->
+    <div class="grid-2-1" data-panel="wali" hidden>
+      <div class="stack stack--lg">
+        <section class="panel">
+          <div class="panel__head"><div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> Wali santri terhubung</span><span class="panel__sub">Orang tua atau wali bisa memantau progres tanpa masuk ke akun Anda.</span></div></div>
+          <div class="panel__body">
+            <div class="media"><span class="avatar avatar--lg avatar--gold">HK</span><span class="media__body"><span class="cluster cluster--sm"><span class="media__title">Bapak Hakim</span><span class="badge badge--warn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Menunggu persetujuan</span></span><span class="media__sub">Ayah · +62 813-xxxx-2290 · undangan dikirim 10 Nov 2026</span></span><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-invite">Kirim ulang</a><a class="btn btn--ghost btn--sm" href="#">Batalkan</a></div>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg> Undang wali lain</span></div>
+          <div class="panel__body">
+            <div class="form-grid">
+              <div class="field"><label class="field__label">Nama wali</label><div class="input"><span class="input__placeholder">Contoh: Ibu Aminah</span></div></div>
+              <div class="field"><label class="field__label">Hubungan</label><div class="input select"><span class="input__text">Ibu</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div></div>
+              <div class="field span-2"><label class="field__label">Nomor WhatsApp wali</label><div class="input"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg><span class="input__text" style="flex:none">+62</span><span class="input__placeholder">812 3456 7890</span></div><span class="field__hint">Wali menerima tautan undangan. Akun wali gratis dan terpisah dari akun Anda.</span></div>
+            </div>
+          </div>
+          <div class="panel__foot form-actions"><a class="btn btn--primary btn--sm" href="#" data-toast="toast-invite"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> Kirim undangan via WhatsApp</a></div>
+        </section>
+        <section class="panel">
+          <div class="panel__head"><div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg> Yang bisa dilihat wali</span><span class="panel__sub">Berlaku untuk semua wali yang terhubung.</span></div></div>
+          <div class="panel__body" style="gap:0">
+            <div class="perm"><div class="set-row__main"><span class="set-row__title">Progres kelas dan materi</span><span class="set-row__sub">Persentase dan materi yang sedang dipelajari</span></div><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></div>
+            <div class="perm"><div class="set-row__main"><span class="set-row__title">Nilai kuis dan setoran</span><span class="set-row__sub">Termasuk catatan ustadz</span></div><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></div>
+            <div class="perm"><div class="set-row__main"><span class="set-row__title">Kehadiran halaqah live</span></div><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></div>
+            <div class="perm"><div class="set-row__main"><span class="set-row__title">Laporan pekanan via WhatsApp</span><span class="set-row__sub">Setiap Ahad pukul 08.00</span></div><span class="switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></div>
+            <div class="perm"><div class="set-row__main"><span class="set-row__title">Pesan dengan ustadz pengampu</span><span class="set-row__sub">Wali bisa menghubungi ustadz lewat menu Pesan</span></div><span class="switch" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></div>
+            <div class="perm"><div class="set-row__main"><span class="set-row__title">Tagihan dan pembayaran</span><span class="set-row__sub">Wali bisa membayar langganan untuk Anda</span></div><span class="switch" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span></span></div>
+          </div>
+        </section>
+      </div>
+      <section class="panel">
+        <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg> Contoh laporan untuk wali</span></div>
+        <div class="panel__body">
+          <div class="wa-preview">
+            <div class="wa-bubble"><b>Al-Abqary · Laporan pekanan</b><br>Assalamu'alaikum, Bapak Hakim. Perkembangan Muhammad Fauzan pekan 9–15 Nov:<br>• 6 hari belajar, 340 XP<br>• Kuis Fi'il madhi: 90 (Mumtaz)<br>• Hadir 2 dari 2 halaqah live<br>• Setoran isim isyarah: 88<small>Ahad 08.00</small></div>
+            <div class="wa-bubble">Catatan Ust. Muhammad Ridwan: "Bacaan sudah lancar. Perlu latihan membedakan fi'il madhi dan mashdar."<small>Ahad 08.00</small></div>
+          </div>
+          <p class="text-caption text-muted">Contoh tampilan. Isi laporan mengikuti izin di samping.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- Modal: cancel subscription -->
+<div class="modal-scrim overlay" id="modal-batal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="batal-title">
+    <div class="modal__header">
+      <span class="modal__icon" style="background:var(--bad-soft);color:var(--bad)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m10.29 3.86-8.47 14.14A2 2 0 0 0 3.53 21h16.94a2 2 0 0 0 1.71-3l-8.47-14.14a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>
+      <div><h3 class="modal__title" id="batal-title">Batalkan Paket Santri?</h3><p class="modal__subtitle">Akses tetap aktif sampai 2 Desember 2026. Setelah itu akun kembali ke paket Gratis.</p></div>
+      <a class="modal__close" href="#" data-close aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+    </div>
+    <div class="modal__body">
+      <ul class="loss">
+        <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg> Kelas Nahwu dan Sharf lanjutan terkunci kembali</li>
+        <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg> Halaqah live, rekaman, dan setoran dinilai ustadz berhenti</li>
+        <li><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Progres, XP, dan 2 syahadah Anda tetap tersimpan</li>
+      </ul>
+      <div class="field"><label class="field__label">Alasan membatalkan (opsional)</label>
+        <div class="modal__reasons">
+          <span class="radio is-checked"><span class="radio__dot"><span></span></span>Sedang sibuk, ingin jeda dulu</span>
+          <span class="radio"><span class="radio__dot"><span></span></span>Harga terlalu mahal</span>
+          <span class="radio"><span class="radio__dot"><span></span></span>Materi terlalu sulit atau terlalu mudah</span>
+          <span class="radio"><span class="radio__dot"><span></span></span>Lainnya</span>
+        </div>
+      </div>
+      <p class="text-caption">Ingin jeda saja? Anda bisa <a class="link" href="#">menunda langganan 1 bulan</a> tanpa kehilangan harga saat ini.</p>
+    </div>
+    <div class="modal__footer">
+      <a class="btn btn--secondary" href="#" data-close>Tetap berlangganan</a>
+      <a class="btn btn--danger" href="#" data-close data-toast="toast-cancel">Ya, batalkan</a>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: delete account -->
+<div class="modal-scrim overlay" id="modal-hapus">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="hapus-title">
+    <div class="modal__header">
+      <span class="modal__icon" style="background:var(--bad-soft);color:var(--bad)"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
+      <div><h3 class="modal__title" id="hapus-title">Hapus akun permanen?</h3><p class="modal__subtitle">Akun dinonaktifkan sekarang dan dihapus permanen pada 27 November 2026.</p></div>
+      <a class="modal__close" href="#" data-close aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+    </div>
+    <div class="modal__body">
+      <p>Langganan Paket Santri akan dihentikan tanpa pengembalian dana untuk sisa periode. Masuk kembali sebelum 27 November untuk membatalkan penghapusan.</p>
+      <div class="field"><label class="field__label">Ketik <b>HAPUS</b> untuk konfirmasi</label><div class="input input--error"><span class="input__placeholder">HAPUS</span></div></div>
+    </div>
+    <div class="modal__footer">
+      <a class="btn btn--secondary" href="#" data-close>Batal</a>
+      <a class="btn btn--danger is-disabled" href="#">Hapus akun</a>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div class="toast-stack">
+  <div class="toast toast--success" id="toast-saved" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Perubahan disimpan</p><p class="toast__text">Pengaturan Anda sudah diperbarui.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--success" id="toast-invite" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Undangan terkirim</p><p class="toast__text">Wali menerima tautan undangan lewat WhatsApp. Tautan berlaku 7 hari.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--info" id="toast-logout-all" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></span>
+    <div class="toast__main"><p class="toast__title">2 perangkat lain dikeluarkan</p><p class="toast__text">Hanya perangkat ini yang masih masuk ke akun Anda.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--error" id="toast-cancel" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Langganan dibatalkan</p><p class="toast__text">Paket Santri tetap aktif sampai 2 Desember 2026.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+</div>
+
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

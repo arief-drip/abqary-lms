@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Jadwal Live · Al-Abqary LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Jadwal-only styles */
+.jadwal { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: var(--space-6); align-items: start; }
+.cal-toolbar { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--line); }
+.cal-toolbar__range { font-size: var(--fs-body); line-height: var(--lh-body); font-weight: var(--fw-semibold); min-width: 200px; text-align: center; }
+.cal-filters { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-5); border-bottom: 1px solid var(--line); background: var(--blue-tint); }
+.cal-filters .chip { height: 30px; padding: 0 var(--space-3); font-size: var(--fs-caption); }
+.swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; background: var(--blue); }
+.swatch--tugas { background: var(--warn); }
+.swatch--kuis { background: var(--gold); }
+.swatch--plus { background: var(--line-strong); }
+
+/* Week grid: 05.00–22.00, 40px per hour */
+.week-cal { --hr: 52px; display: grid; grid-template-columns: 52px repeat(7, minmax(0, 1fr)); }
+.week-cal__dow { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: var(--space-3) 0; border-bottom: 1px solid var(--line); border-left: 1px solid var(--line); background: var(--surface); }
+.week-cal__dow span { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); font-weight: var(--fw-medium); }
+.week-cal__dow b { width: 32px; height: 32px; border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center; font-size: var(--fs-body); font-weight: var(--fw-semibold); }
+.week-cal__dow--today span { color: var(--blue); font-weight: var(--fw-semibold); }
+.week-cal__dow--today b { background: var(--blue); color: var(--on-blue); }
+.week-cal__corner { border-bottom: 1px solid var(--line); }
+.week-cal__gutter { display: flex; flex-direction: column; }
+.week-cal__gutter span { height: var(--hr); font-size: 11px; line-height: 14px; color: var(--subtle); text-align: right; padding-right: var(--space-2); transform: translateY(-7px); }
+.week-cal__gutter span:first-child { visibility: hidden; }
+.week-cal__col { position: relative; height: calc(17 * var(--hr)); border-left: 1px solid var(--line); background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--hr) - 1px), var(--line) calc(var(--hr) - 1px), var(--line) var(--hr)); }
+.week-cal__col--today { background-color: var(--blue-tint); }
+.week-cal__col--weekend { background-color: var(--bg); }
+.ev { position: absolute; left: 4px; right: 4px; top: calc((var(--s) - 5) * var(--hr) + 1px); height: calc(var(--d) * var(--hr) - 3px); border-radius: var(--radius-sm); padding: 2px 5px; overflow: hidden; display: flex; flex-direction: column; gap: 1px; font-size: 12px; line-height: 14px; background: var(--blue-soft); color: var(--blue-deep); border-left: 3px solid var(--blue); cursor: pointer; }
+.ev b { font-weight: var(--fw-semibold); }
+.ev span { color: var(--muted); }
+.ev--tugas { background: var(--warn-soft); border-left-color: var(--warn); color: var(--ink); }
+.ev--kuis { background: var(--gold-soft); border-left-color: var(--gold); color: var(--ink); }
+.ev--plus { background: var(--surface); border: 1px dashed var(--line-strong); border-left: 3px solid var(--line-strong); color: var(--subtle); }
+.ev--plus span { color: var(--subtle); }
+.ev--past { opacity: 0.55; }
+.ev--now { background: var(--blue); color: var(--on-blue); border-left-color: var(--gold); box-shadow: var(--shadow); z-index: 1; }
+.ev--now span { color: var(--blue-on-deep); }
+.ev--short { flex-direction: row; align-items: center; gap: var(--space-1); white-space: nowrap; }
+.now-line { position: absolute; left: -1px; right: 0; top: calc((var(--s) - 5) * var(--hr)); height: 2px; background: var(--bad); z-index: 2; }
+.now-line::before { content: ""; position: absolute; left: -5px; top: -4px; width: 10px; height: 10px; border-radius: var(--radius-full); background: var(--bad); }
+.cal-foot { display: flex; align-items: center; gap: var(--space-5); padding: var(--space-3) var(--space-5); border-top: 1px solid var(--line); font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.cal-foot span { display: inline-flex; align-items: center; gap: var(--space-2); }
+.cal-foot .icon { width: 16px; height: 16px; }
+
+/* Month grid */
+.month-cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.month-cal__dow { padding: var(--space-2) var(--space-3); font-size: var(--fs-caption); line-height: var(--lh-caption); font-weight: var(--fw-semibold); color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--line); }
+.month-cal__day { min-height: 104px; padding: var(--space-2); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 3px; }
+.month-cal__day:nth-child(7n) { border-right: 0; }
+.month-cal__num { font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-semibold); margin-bottom: 2px; }
+.month-cal__day--out .month-cal__num { color: var(--subtle); font-weight: var(--fw-regular); }
+.month-cal__day--today { background: var(--blue-tint); }
+.month-cal__day--today .month-cal__num { display: inline-flex; align-self: flex-start; align-items: center; justify-content: center; min-width: 26px; height: 26px; border-radius: var(--radius-full); background: var(--blue); color: var(--on-blue); }
+.mev { display: block; font-size: 11px; line-height: 16px; padding: 1px 6px; border-radius: 4px; background: var(--blue-soft); color: var(--blue-deep); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mev--tugas { background: var(--warn-soft); color: var(--warn); }
+.mev--kuis { background: var(--gold-soft); color: var(--gold-ink); }
+.mev--more { background: transparent; color: var(--muted); padding-left: 2px; }
+
+/* Agenda list */
+.agenda-day { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: var(--space-5); padding: var(--space-5); border-bottom: 1px solid var(--line); }
+.agenda-day:last-child { border-bottom: 0; }
+.agenda-day__date b { display: block; font-size: var(--fs-h3); line-height: var(--lh-h3); }
+.agenda-day__date span { font-size: var(--fs-caption); color: var(--muted); }
+.agenda-day--today .agenda-day__date b { color: var(--blue); }
+.agenda-item { display: grid; grid-template-columns: 96px 10px minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); padding: var(--space-2) 0; }
+.agenda-item__time { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Right column */
+.live-now { background: var(--blue-deep); color: var(--on-blue); border-radius: var(--radius-xl); display: grid; overflow: hidden; box-shadow: var(--shadow); }
+.live-now > * { grid-area: 1 / 1; }
+.live-now__inner { position: relative; padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-4); }
+.live-now__title { font-size: var(--fs-h4); line-height: var(--lh-h4); font-weight: var(--fw-semibold); }
+.live-now__meta { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--blue-on-deep); display: flex; flex-direction: column; gap: var(--space-1); }
+.live-now__meta span { display: inline-flex; align-items: center; gap: var(--space-2); }
+.live-now__meta .icon { width: 16px; height: 16px; color: var(--gold-bright); }
+.live-now__ar { font-family: var(--font-ar); font-size: 26px; line-height: 1.5; color: var(--gold-bright); text-align: right; }
+.live-badge { align-self: flex-start; display: inline-flex; align-items: center; gap: var(--space-2); height: 26px; padding: 0 var(--space-3); border-radius: var(--radius-full); background: var(--bad); color: var(--on-blue); font-size: var(--fs-caption); font-weight: var(--fw-bold); letter-spacing: var(--ls-wide); text-transform: uppercase; }
+.pulse { position: relative; width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--on-blue); flex: none; }
+.pulse::after { content: ""; position: absolute; inset: -4px; border-radius: var(--radius-full); border: 2px solid var(--on-blue); animation: pulse 1.6s ease-out infinite; }
+@keyframes pulse { from { transform: scale(0.6); opacity: 1; } to { transform: scale(1.8); opacity: 0; } }
+.upcoming { display: flex; flex-direction: column; gap: var(--space-3); }
+.upcoming__top { display: flex; gap: var(--space-3); align-items: flex-start; }
+.upcoming__ustadz { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.quota { display: flex; flex-direction: column; gap: var(--space-1); }
+.quota__row { display: flex; justify-content: space-between; font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.quota__row b { color: var(--ink); font-weight: var(--fw-semibold); }
+.wa-switch { font-size: var(--fs-small); line-height: var(--lh-small); cursor: pointer; }
+.wa-switch .switch__track { width: 36px; height: 20px; }
+.wa-switch .switch__thumb { width: 14px; height: 14px; }
+
+/* Recordings */
+.rec { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); }
+.rec__thumb { height: 150px; background: var(--blue-deep); display: grid; overflow: hidden; color: var(--on-blue); }
+.rec__thumb > * { grid-area: 1 / 1; }
+.rec__thumb-inner { position: relative; padding: var(--space-4); display: flex; flex-direction: column; justify-content: space-between; }
+.rec__thumb-ar { font-family: var(--font-ar); font-size: 28px; line-height: 1.4; color: var(--gold-bright); text-align: right; }
+.rec__play { width: 48px; height: 48px; border-radius: var(--radius-full); background: var(--gold); color: var(--blue-deep); display: flex; align-items: center; justify-content: center; }
+.rec__play .icon { width: 22px; height: 22px; fill: currentColor; }
+.rec__dur { font-size: var(--fs-caption); font-weight: var(--fw-semibold); padding: 2px var(--space-2); border-radius: var(--radius-sm); background: rgba(0, 0, 0, 0.4); color: var(--on-blue); }
+.rec__body { padding: var(--space-4) var(--space-5) var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); flex: 1; }
+.rec__title { font-size: var(--fs-body); line-height: var(--lh-body); font-weight: var(--fw-semibold); }
+.rec__meta { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.rec__foot { display: flex; align-items: center; gap: var(--space-2); margin-top: auto; padding-top: var(--space-3); }
+.rec .progress { margin-top: var(--space-1); }
+.ev b { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex: none; }
+.ev span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ev--short b { -webkit-line-clamp: 1; white-space: nowrap; text-overflow: ellipsis; display: block; }
+.ev--compact span { display: none; }
+</style>
+</head>
+<body class="app">
+
+<!-- APP TOPNAV START (santri) — copy as-is to every santri page -->
+<header class="topnav app__topnav">
+  <div class="topnav__inner">
+    <a class="brand" href="10-dashboard.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+    <div class="input topnav__search"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari kelas, materi, atau kata…</span><span class="kbd">/</span></div>
+    <div class="topnav__actions">
+      <a class="pill pill--streak" href="18-pencapaian.html" title="Hari beruntun"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>12 <span class="pill__label">hari</span></a>
+      <a class="pill pill--xp" href="18-pencapaian.html" title="Total XP"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>1.120 <span class="pill__label">XP</span></a>
+      <span class="topnav__divider"></span>
+      <a class="btn btn--ghost btn--icon topnav__icon-btn" href="21-notifikasi.html" aria-label="Notifikasi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="notif-dot"></span></a>
+      <a class="avatar-with-meta" href="20-profil.html"><span class="avatar avatar--ring">MF</span><span><span class="avatar-with-meta__name" style="display:block">Muhammad Fauzan</span><span class="avatar-with-meta__sub">Level 4 · Mutqin</span></span></a>
+    </div>
+  </div>
+</header>
+<!-- APP TOPNAV END -->
+
+<div class="app__body">
+
+<!-- SANTRI SIDEBAR START — copy as-is; move .sidebar__item--active to the current page's item -->
+<aside class="sidebar app__sidebar">
+  <div class="sidebar__section">
+    <span class="sidebar__title">Belajar</span>
+    <a class="sidebar__item" href="10-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9.5 9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> Beranda</a>
+    <a class="sidebar__item" href="11-kelas-saya.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Kelas Saya<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="02-katalog.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6z"/></svg> Jelajah Kelas</a>
+    <a class="sidebar__item sidebar__item--active" href="15-jadwal.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg> Jadwal Live<span class="sidebar__count">2</span></a>
+    <a class="sidebar__item" href="14-tugas.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9zM9 12h6M9 16h4"/></svg> Tugas &amp; Setoran<span class="sidebar__count">2</span></a>
+    <a class="sidebar__item" href="16-mushaf.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg> Mushaf &amp; Pustaka</a>
+    <a class="sidebar__item" href="17-diskusi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Diskusi</a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Prestasi</span>
+    <a class="sidebar__item" href="18-pencapaian.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0z"/></svg> Pencapaian</a>
+    <a class="sidebar__item" href="19-sertifikat.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg> Sertifikat<span class="sidebar__count">1</span></a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Akun</span>
+    <a class="sidebar__item" href="21-notifikasi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Notifikasi<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="20-profil.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profil &amp; Pengaturan</a>
+  </div>
+  <div class="sidebar__promo">
+    <span class="badge badge--on-dark" style="align-self:flex-start"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Paket Santri aktif</span>
+    <span class="sidebar__promo-title">Naik ke Halaqah Plus</span>
+    <span class="sidebar__promo-text">Halaqah kelompok kecil maksimal 10 santri, setoran tanpa batas, dan laporan perkembangan bulanan.</span>
+    <a class="btn btn--gold btn--sm btn--block" href="04-harga.html">Lihat paket</a>
+  </div>
+</aside>
+<!-- SANTRI SIDEBAR END -->
+
+<main class="app__main">
+
+  <!-- Page head -->
+  <div class="page-head">
+    <nav class="breadcrumb"><a class="breadcrumb__item" href="10-dashboard.html">Beranda</a><span class="breadcrumb__sep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span><span class="breadcrumb__current">Jadwal Live</span></nav>
+    <div class="page-head__row">
+      <div>
+        <h1 class="page-head__title">Jadwal Live Halaqah</h1>
+        <p class="page-head__sub">Halaqah live, tenggat tugas, dan kuis dari 3 kelas yang Anda ikuti.</p>
+      </div>
+      <div class="page-head__actions">
+        <a class="btn btn--secondary" href="#" data-toast="toast-sync"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg> Sinkronkan ke Google Calendar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="jadwal">
+    <!-- Calendar (tabs: Minggu / Bulan / Daftar) -->
+    <section class="panel" data-tabs data-tab-default="minggu">
+      <div class="cal-toolbar">
+        <div class="tabs tabs--segmented" role="tablist">
+          <a class="tab tab--active" href="#tab-minggu" data-tab="minggu">Minggu</a>
+          <a class="tab" href="#tab-bulan" data-tab="bulan">Bulan</a>
+          <a class="tab" href="#tab-daftar" data-tab="daftar">Daftar</a>
+        </div>
+        <div class="cluster cluster--sm cluster--nowrap ml-auto">
+          <a class="btn btn--ghost btn--sm btn--icon" href="#" aria-label="Pekan sebelumnya"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></a>
+          <span class="cal-toolbar__range" data-panel="minggu">9–15 November 2026</span><span class="cal-toolbar__range" data-panel="bulan" hidden>November 2026</span><span class="cal-toolbar__range" data-panel="daftar" hidden>13–16 November 2026</span>
+          <a class="btn btn--ghost btn--sm btn--icon" href="#" aria-label="Pekan berikutnya"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+          <a class="btn btn--secondary btn--sm" href="#">Hari ini</a>
+        </div>
+      </div>
+      <div class="cal-filters" data-chips="multi">
+        <span class="text-caption text-muted" style="margin-right:var(--space-1)">Tampilkan:</span>
+        <span class="chip chip--active"><i class="swatch"></i> Live halaqah</span>
+        <span class="chip chip--active"><i class="swatch swatch--tugas"></i> Tenggat tugas</span>
+        <span class="chip chip--active"><i class="swatch swatch--kuis"></i> Kuis</span>
+        <span class="chip chip--active"><i class="swatch swatch--plus"></i> Halaqah Plus</span>
+      </div>
+
+      <!-- WEEK VIEW -->
+      <div data-panel="minggu">
+        <div class="week-cal">
+          <span class="week-cal__corner"></span>
+          <div class="week-cal__dow"><span>Sen</span><b>9</b></div>
+          <div class="week-cal__dow"><span>Sel</span><b>10</b></div>
+          <div class="week-cal__dow"><span>Rab</span><b>11</b></div>
+          <div class="week-cal__dow"><span>Kam</span><b>12</b></div>
+          <div class="week-cal__dow week-cal__dow--today"><span>Jum</span><b>13</b></div>
+          <div class="week-cal__dow"><span>Sab</span><b>14</b></div>
+          <div class="week-cal__dow"><span>Ahad</span><b>15</b></div>
+
+          <div class="week-cal__gutter"><span>05.00</span><span>06.00</span><span>07.00</span><span>08.00</span><span>09.00</span><span>10.00</span><span>11.00</span><span>12.00</span><span>13.00</span><span>14.00</span><span>15.00</span><span>16.00</span><span>17.00</span><span>18.00</span><span>19.00</span><span>20.00</span><span>21.00</span></div>
+
+          <!-- Senin 9 -->
+          <div class="week-cal__col">
+            <div class="ev ev--past ev--compact" style="--s:5.5;--d:0.75"><b>Tanya jawab</b><span>05.30–06.15</span></div>
+            <div class="ev ev--past" style="--s:20;--d:1"><b>Bab Harf</b><span>20.00–21.00</span></div>
+          </div>
+          <!-- Selasa 10 -->
+          <div class="week-cal__col">
+            <div class="ev ev--tugas ev--past ev--short" style="--s:21;--d:0.6"><b>Tenggat</b></div>
+          </div>
+          <!-- Rabu 11 -->
+          <div class="week-cal__col">
+            <div class="ev ev--past" style="--s:20;--d:1"><b>Tanda i'rab asli</b><span>20.00–21.00</span></div>
+          </div>
+          <!-- Kamis 12 -->
+          <div class="week-cal__col">
+            <div class="ev ev--kuis ev--past ev--compact" style="--s:16;--d:0.75"><b>Kuis: Fi'il madhi</b><span>Nilai 90</span></div>
+          </div>
+          <!-- Jumat 13 (today) -->
+          <div class="week-cal__col week-cal__col--today">
+            <div class="ev ev--now" style="--s:20;--d:1"><b>Murajaah pekanan</b><span>Sedang live</span></div>
+            <span class="now-line" style="--s:20.13" aria-label="Sekarang 20.08"></span>
+          </div>
+          <!-- Sabtu 14 -->
+          <div class="week-cal__col week-cal__col--weekend">
+            <div class="ev ev--plus" style="--s:9;--d:1"><b>Halaqah kecil</b><span>Halaqah Plus</span></div>
+            <div class="ev" style="--s:19.5;--d:1"><b>Qiraatul Kutub</b><span>19.30–20.30</span></div>
+            <div class="ev ev--tugas ev--short" style="--s:21;--d:0.6"><b>Tenggat</b></div>
+          </div>
+          <!-- Ahad 15 -->
+          <div class="week-cal__col week-cal__col--weekend">
+            <div class="ev" style="--s:8;--d:1"><b>Mushaf Nahwi: Yasin</b><span>08.00–09.00</span></div>
+            <div class="ev ev--kuis ev--compact" style="--s:20.5;--d:0.75"><b>Kuis Yasin 1–12</b><span>s.d. 23.59</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MONTH VIEW -->
+      <div data-panel="bulan" hidden>
+        <div class="month-cal">
+<span class="month-cal__dow">Sen</span>
+<span class="month-cal__dow">Sel</span>
+<span class="month-cal__dow">Rab</span>
+<span class="month-cal__dow">Kam</span>
+<span class="month-cal__dow">Jum</span>
+<span class="month-cal__dow">Sab</span>
+<span class="month-cal__dow">Ahad</span>
+<div class="month-cal__day month-cal__day--out"><span class="month-cal__num">26</span></div>
+<div class="month-cal__day month-cal__day--out"><span class="month-cal__num">27</span></div>
+<div class="month-cal__day month-cal__day--out"><span class="month-cal__num">28</span></div>
+<div class="month-cal__day month-cal__day--out"><span class="month-cal__num">29</span></div>
+<div class="month-cal__day month-cal__day--out"><span class="month-cal__num">30</span></div>
+<div class="month-cal__day month-cal__day--out"><span class="month-cal__num">31</span></div>
+<div class="month-cal__day"><span class="month-cal__num">1</span></div>
+<div class="month-cal__day"><span class="month-cal__num">2</span><span class="mev">Halaqah Bab Harf</span></div>
+<div class="month-cal__day"><span class="month-cal__num">3</span></div>
+<div class="month-cal__day"><span class="month-cal__num">4</span><span class="mev">Isim Mu'rab: pengantar</span></div>
+<div class="month-cal__day"><span class="month-cal__num">5</span></div>
+<div class="month-cal__day"><span class="month-cal__num">6</span><span class="mev mev--kuis">Kuis: Harf jar</span></div>
+<div class="month-cal__day"><span class="month-cal__num">7</span><span class="mev">Qiraatul Kutub</span></div>
+<div class="month-cal__day"><span class="month-cal__num">8</span></div>
+<div class="month-cal__day"><span class="month-cal__num">9</span><span class="mev">Tanya jawab</span><span class="mev">Halaqah Bab Harf</span></div>
+<div class="month-cal__day"><span class="month-cal__num">10</span><span class="mev mev--tugas">Setoran isim isyarah</span></div>
+<div class="month-cal__day"><span class="month-cal__num">11</span><span class="mev">Tanda i'rab asli</span></div>
+<div class="month-cal__day"><span class="month-cal__num">12</span><span class="mev mev--kuis">Kuis: Fi'il madhi</span></div>
+<div class="month-cal__day month-cal__day--today"><span class="month-cal__num">13</span><span class="mev">Murajaah pekanan</span></div>
+<div class="month-cal__day"><span class="month-cal__num">14</span><span class="mev">Qiraatul Kutub</span><span class="mev mev--tugas">Setoran teks gundul</span><span class="mev mev--more">+1 lainnya</span></div>
+<div class="month-cal__day"><span class="month-cal__num">15</span><span class="mev">Mushaf Nahwi</span><span class="mev mev--kuis">Kuis Yasin 1–12</span></div>
+<div class="month-cal__day"><span class="month-cal__num">16</span><span class="mev">Wazan tsulatsi</span><span class="mev mev--tugas">Tashrif <span lang="ar" dir="rtl">فَتَحَ</span></span></div>
+<div class="month-cal__day"><span class="month-cal__num">17</span></div>
+<div class="month-cal__day"><span class="month-cal__num">18</span><span class="mev">Isim Mu'rab</span></div>
+<div class="month-cal__day"><span class="month-cal__num">19</span></div>
+<div class="month-cal__day"><span class="month-cal__num">20</span><span class="mev mev--kuis">Ujian akhir dibuka</span><span class="mev">Murajaah pekanan</span></div>
+<div class="month-cal__day"><span class="month-cal__num">21</span><span class="mev">Qiraatul Kutub</span></div>
+<div class="month-cal__day"><span class="month-cal__num">22</span></div>
+<div class="month-cal__day"><span class="month-cal__num">23</span><span class="mev">Halaqah Bab Fi'il</span></div>
+<div class="month-cal__day"><span class="month-cal__num">24</span></div>
+<div class="month-cal__day"><span class="month-cal__num">25</span><span class="mev">Isim Mu'rab</span></div>
+<div class="month-cal__day"><span class="month-cal__num">26</span></div>
+<div class="month-cal__day"><span class="month-cal__num">27</span><span class="mev">Murajaah pekanan</span></div>
+<div class="month-cal__day"><span class="month-cal__num">28</span><span class="mev">Qiraatul Kutub</span></div>
+<div class="month-cal__day"><span class="month-cal__num">29</span></div>
+<div class="month-cal__day"><span class="month-cal__num">30</span><span class="mev mev--tugas">Batas ujian akhir</span></div>
+<div class="month-cal__day month-cal__day--out"><span class="month-cal__num">1</span></div>
+<div class="month-cal__day month-cal__day--out"><span class="month-cal__num">2</span></div>
+<div class="month-cal__day month-cal__day--out"><span class="month-cal__num">3</span></div>
+<div class="month-cal__day month-cal__day--out"><span class="month-cal__num">4</span></div>
+<div class="month-cal__day month-cal__day--out"><span class="month-cal__num">5</span></div>
+<div class="month-cal__day month-cal__day--out"><span class="month-cal__num">6</span></div>
+        </div>
+      </div>
+
+      <!-- AGENDA VIEW -->
+      <div data-panel="daftar" hidden>
+        <div class="agenda-day agenda-day--today">
+          <div class="agenda-day__date"><b>13 Nov</b><span>Jumat · Hari ini</span></div>
+          <div>
+            <div class="agenda-item"><span class="agenda-item__time">20.00–21.00</span><i class="swatch"></i><span class="media__body"><span class="media__title">Murajaah pekanan: Fi'il mudhari'</span><span class="media__sub">Ust. Muhammad Ridwan · Membaca Bangunan: Harf dan Fi'il</span></span><a class="btn btn--primary btn--sm" href="#">Gabung</a></div>
+          </div>
+        </div>
+        <div class="agenda-day">
+          <div class="agenda-day__date"><b>14 Nov</b><span>Sabtu</span></div>
+          <div>
+            <div class="agenda-item"><span class="agenda-item__time">09.00–10.00</span><i class="swatch swatch--plus"></i><span class="media__body"><span class="media__title" style="color:var(--muted)">Halaqah kecil (maks. 10 santri)</span><span class="media__sub">Khusus Halaqah Plus</span></span><span class="badge badge--locked"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Terkunci</span></div>
+            <div class="agenda-item"><span class="agenda-item__time">19.30–20.30</span><i class="swatch"></i><span class="media__body"><span class="media__title">Qiraatul Kutub: Bab Al-Kalam</span><span class="media__sub">Ust. Ahmad Hanafi · 38 dari 100 kursi terisi</span></span><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-reminder"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Ingatkan</a></div>
+            <div class="agenda-item"><span class="agenda-item__time">Batas 21.00</span><i class="swatch swatch--tugas"></i><span class="media__body"><span class="media__title">Setoran: baca teks gundul Bab Fi'il</span><span class="media__sub">Tugas · Membaca Bangunan: Harf dan Fi'il</span></span><a class="btn btn--secondary btn--sm" href="14-tugas.html">Kerjakan</a></div>
+          </div>
+        </div>
+        <div class="agenda-day">
+          <div class="agenda-day__date"><b>15 Nov</b><span>Ahad</span></div>
+          <div>
+            <div class="agenda-item"><span class="agenda-item__time">08.00–09.00</span><i class="swatch"></i><span class="media__body"><span class="media__title">Mushaf Nahwi: Yasin ayat 1–12</span><span class="media__sub">Ust. Abdurrahman Hakim · Mushaf Nahwi: Surah Yasin</span></span><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-reminder"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Ingatkan</a></div>
+            <div class="agenda-item"><span class="agenda-item__time">s.d. 23.59</span><i class="swatch swatch--kuis"></i><span class="media__body"><span class="media__title">Kuis: i'rab Yasin ayat 1–12</span><span class="media__sub">10 soal · ± 15 menit</span></span><a class="btn btn--secondary btn--sm" href="13-kuis.html">Mulai kuis</a></div>
+          </div>
+        </div>
+        <div class="agenda-day">
+          <div class="agenda-day__date"><b>16 Nov</b><span>Senin</span></div>
+          <div>
+            <div class="agenda-item"><span class="agenda-item__time">05.30–06.15</span><i class="swatch"></i><span class="media__body"><span class="media__title">Tanya jawab: wazan fi'il tsulatsi</span><span class="media__sub">Ust. Muhammad Ridwan</span></span><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-reminder"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Ingatkan</a></div>
+            <div class="agenda-item"><span class="agenda-item__time">Batas 23.59</span><i class="swatch swatch--tugas"></i><span class="media__body"><span class="media__title">Tashrif istilahi <span class="ar-inline" lang="ar" dir="rtl">فَتَحَ يَفْتَحُ</span></span><span class="media__sub">Tugas · Membaca Bangunan: Harf dan Fi'il</span></span><a class="btn btn--secondary btn--sm" href="14-tugas.html">Kerjakan</a></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cal-foot">
+        <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg> Zona waktu: WIB (UTC+7)</span>
+        <a class="link" href="20-profil.html#tab-preferensi">Ubah zona waktu</a>
+        <span class="ml-auto"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg> Klik sesi untuk detail dan tautan bergabung</span>
+      </div>
+    </section>
+
+    <!-- Right column: Berikutnya -->
+    <aside class="stack stack--lg">
+      <section class="live-now">
+        <svg class="hero__pattern" viewBox="0 0 340 320" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M300.0 -40.0 L346.0 6.0 L411.0 6.0 L411.0 71.0 L457.0 117.0 L411.0 163.0 L411.0 228.0 L346.0 228.0 L300.0 274.0 L254.0 228.0 L189.0 228.0 L189.0 163.0 L143.0 117.0 L189.0 71.0 L189.0 6.0 L254.0 6.0Z"/><path d="M300.0 18.0 L329.2 47.8 L370.8 47.8 L370.8 88.8 L400.0 117.0 L370.8 145.2 L370.8 186.2 L329.2 186.2 L300.0 216.0 L270.8 186.2 L229.2 186.2 L229.2 145.2 L200.0 117.0 L229.2 88.8 L229.2 47.8 L270.8 47.8Z"/><circle cx="300" cy="117" r="38"/></svg>
+        <div class="live-now__inner">
+          <span class="live-badge"><span class="pulse"></span> Live sekarang</span>
+          <div class="stack stack--xs">
+            <span class="text-caption" style="color:var(--blue-on-deep)">Membaca Bangunan: Harf dan Fi'il</span>
+            <h2 class="live-now__title">Murajaah pekanan: Fi'il mudhari'</h2>
+          </div>
+          <p class="live-now__ar" lang="ar" dir="rtl">يَكْتُبُ · يَقْرَأُ · يَفْهَمُ</p>
+          <div class="live-now__meta">
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Ust. Muhammad Ridwan</span>
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> 20.00–21.00 WIB · berjalan 8 menit</span>
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> 58 dari 64 santri sudah bergabung</span>
+          </div>
+          <a class="btn btn--gold btn--block" href="#" data-toast="toast-join"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m22 8-6 4 6 4V8z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg> Gabung Sekarang</a>
+          <span class="text-caption" style="color:var(--blue-on-deep)">Kehadiran tercatat otomatis dan memberi +15 XP.</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Berikutnya</span><span class="panel__sub">3 sesi</span></div>
+        <div class="panel__body panel__body--flush list-divided">
+          <div class="upcoming">
+            <div class="upcoming__top">
+              <span class="date-tile"><span class="date-tile__day">14</span><span class="date-tile__mon">Nov</span></span>
+              <span class="media__body"><span class="media__title">Qiraatul Kutub: Bab Al-Kalam</span><span class="media__sub">Sabtu · 19.30–20.30 WIB</span><span class="upcoming__ustadz"><span class="avatar avatar--sm avatar--gold">AH</span> Ust. Ahmad Hanafi</span></span>
+            </div>
+            <p class="text-small text-muted">Topik: membaca definisi <span class="ar-inline" lang="ar" dir="rtl">الْكَلَامُ</span> dalam Al-Ajurrumiyyah dan i'rab tiap katanya.</p>
+            <div class="quota"><div class="quota__row"><span>Kuota</span><span><b>38</b> / 100 kursi</span></div><div class="progress progress--sm"><div class="progress__bar" style="width:38%"></div></div></div>
+            <div class="cluster cluster--between">
+              <span class="switch wa-switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span>Ingatkan via WhatsApp</span>
+              <a class="btn btn--secondary btn--sm" href="#" data-toast="toast-cal" title="Tambah ke kalender"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg> Kalender</a>
+            </div>
+          </div>
+          <div class="upcoming">
+            <div class="upcoming__top">
+              <span class="date-tile"><span class="date-tile__day">15</span><span class="date-tile__mon">Nov</span></span>
+              <span class="media__body"><span class="media__title">Mushaf Nahwi: Yasin ayat 1–12</span><span class="media__sub">Ahad · 08.00–09.00 WIB</span><span class="upcoming__ustadz"><span class="avatar avatar--sm avatar--good">AH</span> Ust. Abdurrahman Hakim</span></span>
+            </div>
+            <p class="text-small text-muted">Topik: warna i'rab pada <span class="ar-inline" lang="ar" dir="rtl">إِنَّكَ لَمِنَ الْمُرْسَلِيْنَ</span></p>
+            <div class="quota"><div class="quota__row"><span>Kuota</span><span><b>71</b> / 80 kursi</span></div><div class="progress progress--sm progress--gold"><div class="progress__bar" style="width:89%"></div></div></div>
+            <div class="cluster cluster--between">
+              <span class="switch wa-switch" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span>Ingatkan via WhatsApp</span>
+              <a class="btn btn--secondary btn--sm" href="#" data-toast="toast-cal" title="Tambah ke kalender"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg> Kalender</a>
+            </div>
+          </div>
+          <div class="upcoming">
+            <div class="upcoming__top">
+              <span class="date-tile"><span class="date-tile__day">16</span><span class="date-tile__mon">Nov</span></span>
+              <span class="media__body"><span class="media__title">Tanya jawab: wazan fi'il tsulatsi</span><span class="media__sub">Senin · 05.30–06.15 WIB</span><span class="upcoming__ustadz"><span class="avatar avatar--sm">MR</span> Ust. Muhammad Ridwan</span></span>
+            </div>
+            <div class="quota"><div class="quota__row"><span>Kuota</span><span><b>22</b> / 100 kursi</span></div><div class="progress progress--sm"><div class="progress__bar" style="width:22%"></div></div></div>
+            <div class="cluster cluster--between">
+              <span class="switch wa-switch is-on" data-toggle="is-on"><span class="switch__track"><span class="switch__thumb"></span></span>Ingatkan via WhatsApp</span>
+              <a class="btn btn--secondary btn--sm" href="#" data-toast="toast-cal" title="Tambah ke kalender"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg> Kalender</a>
+            </div>
+          </div>
+        </div>
+        <div class="panel__foot text-caption text-muted">Pengingat WhatsApp dikirim 30 menit sebelum sesi ke 0812-xxxx-4471.</div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- Recordings -->
+  <section class="stack">
+    <div class="cluster cluster--between">
+      <div><h2 class="text-h3">Rekaman sesi</h2><p class="text-small text-muted">Tonton ulang halaqah yang sudah lewat.</p></div>
+      <div class="cluster">
+        <div class="tabs tabs--segmented" data-chips data-active-class="tab--active"><span class="tab tab--active" data-chip>Semua kelas</span><span class="tab" data-chip>Sharf</span><span class="tab" data-chip>Nahwu</span><span class="tab" data-chip>Mushaf</span></div>
+        <a class="panel__link" href="#">Semua rekaman (24) <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a>
+      </div>
+    </div>
+    <div class="grid-3">
+      <article class="rec">
+        <div class="rec__thumb">
+          <svg class="course-card__pattern" viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><circle cx="330" cy="84" r="23.1"/></svg>
+          <div class="rec__thumb-inner"><p class="rec__thumb-ar" lang="ar" dir="rtl">الْإِعْرَابُ الْأَصْلِيُّ</p><div class="cluster cluster--between"><span class="rec__play"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></span><span class="rec__dur">58:12</span></div></div>
+        </div>
+        <div class="rec__body">
+          <span class="course-card__eyebrow">Nahwu · Rabu, 11 Nov</span>
+          <h3 class="rec__title">Tanda i'rab asli: dhammah, fathah, kasrah, sukun</h3>
+          <span class="rec__meta">Ust. Ahmad Hanafi · 61 santri hadir</span>
+          <div class="progress progress--sm"><div class="progress__bar" style="width:100%"></div></div>
+          <div class="rec__foot"><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Sudah ditonton</span><a class="btn btn--ghost btn--sm ml-auto" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Catatan PDF</a></div>
+        </div>
+      </article>
+      <article class="rec">
+        <div class="rec__thumb">
+          <svg class="course-card__pattern" viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><circle cx="330" cy="84" r="23.1"/></svg>
+          <div class="rec__thumb-inner"><p class="rec__thumb-ar" lang="ar" dir="rtl">حُرُوْفُ الْجَرِّ</p><div class="cluster cluster--between"><span class="rec__play"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></span><span class="rec__dur">1:02:40</span></div></div>
+        </div>
+        <div class="rec__body">
+          <span class="course-card__eyebrow">Sharf · Senin, 9 Nov</span>
+          <h3 class="rec__title">Halaqah Bab Harf: huruf jar dan pengaruhnya</h3>
+          <span class="rec__meta">Ust. Muhammad Ridwan · 64 santri hadir</span>
+          <div class="progress progress--sm"><div class="progress__bar" style="width:42%"></div></div>
+          <div class="rec__foot"><span class="text-caption text-muted">Lanjut dari 26:15</span><a class="btn btn--ghost btn--sm ml-auto" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Catatan PDF</a></div>
+        </div>
+      </article>
+      <article class="rec">
+        <div class="rec__thumb">
+          <svg class="course-card__pattern" viewBox="0 0 400 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><circle cx="330" cy="84" r="23.1"/></svg>
+          <div class="rec__thumb-inner"><p class="rec__thumb-ar" lang="ar" dir="rtl">اسْمُ الْإِشَارَةِ</p><div class="cluster cluster--between"><span class="rec__play"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></span><span class="rec__dur">44:05</span></div></div>
+        </div>
+        <div class="rec__body">
+          <span class="course-card__eyebrow">Tanya jawab · Senin, 9 Nov</span>
+          <h3 class="rec__title">Tanya jawab: isim isyarah dan contohnya dalam ayat</h3>
+          <span class="rec__meta">Ust. Ahmad Hanafi · 37 santri hadir</span>
+          <div class="progress progress--sm"><div class="progress__bar" style="width:0%"></div></div>
+          <div class="rec__foot"><span class="badge badge--new">Belum ditonton</span><a class="btn btn--ghost btn--sm ml-auto" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Catatan PDF</a></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<!-- Toasts (shown via data-toast) -->
+<div class="toast-stack">
+  <div class="toast toast--success" id="toast-reminder" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Pengingat dipasang</p><p class="toast__text">Kami kirim notifikasi dan pesan WhatsApp 30 menit sebelum halaqah dimulai.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--success" id="toast-cal" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg></span>
+    <div class="toast__main"><p class="toast__title">File kalender (.ics) diunduh</p><p class="toast__text">Buka file untuk menambahkan sesi ke Google Calendar, Outlook, atau Kalender iPhone.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--info" id="toast-sync" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Sinkronisasi diaktifkan</p><p class="toast__text">Jadwal live dan tenggat tugas akan muncul otomatis di Google Calendar Anda.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--info" id="toast-join" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m22 8-6 4 6 4V8z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Membuka ruang halaqah…</p><p class="toast__text">Mockup: di aplikasi asli tombol ini membuka ruang live di tab baru.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+</div>
+
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

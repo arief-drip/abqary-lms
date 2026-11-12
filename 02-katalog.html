@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Katalog Kelas · Al-Abqary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Katalog-only styles */
+.breadcrumb--dark, .breadcrumb--dark .breadcrumb__item { color: var(--blue-on-deep); }
+.breadcrumb--dark .breadcrumb__current { color: var(--on-blue); }
+.breadcrumb--dark .breadcrumb__item:hover { color: var(--gold-bright); }
+
+/* Rating line inside course-card footer */
+.card-rating { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); white-space: nowrap; }
+.card-rating b { color: var(--ink); font-weight: var(--fw-semibold); }
+.card-rating__star { width: 16px; height: 16px; fill: var(--gold); stroke: var(--gold); }
+.course-card__title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.course-card__desc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.course-card__meta { gap: var(--space-3); flex-wrap: wrap; }
+/* Keep cover badges legible on deep/blue covers */
+.course-card:not(.course-card--gold) .course-card__cover .badge--level { background: color-mix(in srgb, var(--on-blue) 16%, transparent); color: var(--on-blue); }
+.course-card__cover .badge--new { background: var(--surface); color: var(--blue); }
+.course-card--gold .course-card__cover .badge--new { background: var(--blue); color: var(--on-blue); }
+/* Star row */
+.stars { display: inline-flex; gap: 2px; color: var(--gold); }
+.stars .icon { width: 16px; height: 16px; fill: var(--gold); stroke: var(--gold); }
+.stars .icon.is-empty { fill: none; stroke: var(--line-strong); }
+
+/* Hero search */
+.hero-search { display: flex; align-items: center; gap: var(--space-2); width: 640px; padding: var(--space-2); background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); }
+.hero-search .input { border: 0; height: 48px; box-shadow: none; }
+.hero-search .input .icon { color: var(--muted); }
+.hero-search .input__placeholder { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hero-popular { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); font-size: var(--fs-small); color: var(--blue-on-deep); }
+.chip--on-dark { background: transparent; color: var(--on-blue); border-color: color-mix(in srgb, var(--on-blue) 28%, transparent); height: 32px; }
+.chip--on-dark:hover { border-color: var(--gold-bright); }
+.hero-aside { width: 360px; background: color-mix(in srgb, var(--on-blue) 8%, transparent); border: 1px solid color-mix(in srgb, var(--on-blue) 16%, transparent); border-radius: var(--radius-xl); padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-4); }
+.hero-aside__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+.hero-aside__stats b { display: block; font-size: var(--fs-h3); line-height: var(--lh-h3); color: var(--on-blue); }
+.hero-aside__stats span { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--blue-on-deep); }
+.hero-aside p { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--blue-on-deep); }
+
+/* Learning paths */
+.path { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-6); }
+.path__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
+.path__steps { display: flex; flex-direction: column; gap: 0; padding: var(--space-3) var(--space-4); background: var(--blue-tint); border-radius: var(--radius-md); }
+.path__step { display: flex; align-items: center; gap: var(--space-3); font-size: var(--fs-small); line-height: var(--lh-small); padding: var(--space-2) 0; position: relative; }
+.path__num { width: 24px; height: 24px; border-radius: var(--radius-full); background: var(--surface); border: 1.5px solid var(--blue-line); color: var(--blue); font-size: var(--fs-caption); font-weight: var(--fw-semibold); display: inline-flex; align-items: center; justify-content: center; flex: none; position: relative; z-index: 1; }
+.path__step + .path__step::before { content: ""; position: absolute; left: 11px; top: -12px; height: 24px; width: 2px; background: var(--blue-line); }
+.path__step .badge { margin-left: auto; }
+.path__meta { display: flex; flex-wrap: wrap; gap: var(--space-4); font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.path__meta span { display: inline-flex; align-items: center; gap: var(--space-1); }
+.path__meta .icon { width: 16px; height: 16px; }
+.path--featured { border-color: var(--gold); box-shadow: var(--shadow); }
+
+/* Catalog layout */
+.catalog { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: var(--space-8); align-items: start; }
+.filter { position: sticky; top: calc(var(--nav-height) + var(--space-6)); }
+.filter__group { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5) var(--space-6); border-bottom: 1px solid var(--line); }
+.filter__group:last-of-type { border-bottom: 0; }
+.filter__title { display: flex; align-items: center; justify-content: space-between; font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-semibold); }
+.filter__title .icon { width: 18px; height: 18px; color: var(--muted); }
+.filter__options { display: flex; flex-direction: column; gap: var(--space-3); }
+.filter .checkbox, .filter .radio { font-size: var(--fs-small); line-height: var(--lh-small); width: 100%; user-select: none; }
+.filter .checkbox__box, .filter .radio__dot { width: 20px; height: 20px; }
+.filter .checkbox:not(.is-checked) .checkbox__box .icon { display: none; }
+.filter .checkbox:hover .checkbox__box, .filter .radio:hover .radio__dot { border-color: var(--blue); }
+.filter__count { margin-left: auto; font-size: var(--fs-caption); color: var(--subtle); }
+.filter .chip { height: 32px; padding: 0 var(--space-3); font-size: var(--fs-caption); }
+.filter__ar { font-family: var(--font-ar); font-size: 18px; line-height: 1; color: var(--gold-ink); }
+
+/* Results toolbar */
+.results__bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); }
+.results__count { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--muted); }
+.results__count b { color: var(--ink); }
+.active-filters { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.active-filters .chip { height: 32px; padding: 0 var(--space-2) 0 var(--space-3); font-size: var(--fs-caption); }
+.active-filters .chip .icon { width: 14px; height: 14px; }
+.dropdown { position: relative; }
+.dropdown .input { height: 40px; width: 240px; font-size: var(--fs-small); cursor: pointer; }
+.dropdown .input__text b { font-weight: var(--fw-semibold); }
+.dropdown__menu { display: none; position: absolute; right: 0; top: calc(100% + var(--space-2)); z-index: 20; width: 240px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); padding: var(--space-2); }
+.dropdown.is-open .dropdown__menu { display: block; }
+.dropdown__item { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); font-size: var(--fs-small); line-height: var(--lh-small); cursor: pointer; }
+.dropdown__item:hover { background: var(--bg-subtle); }
+.dropdown__item .icon { width: 16px; height: 16px; color: var(--blue); visibility: hidden; }
+.dropdown__item.is-selected { color: var(--blue); font-weight: var(--fw-semibold); }
+.dropdown__item.is-selected .icon { visibility: visible; }
+.state-switch { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-3) var(--space-4); border: 1px dashed var(--line-strong); border-radius: var(--radius-lg); font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.state-switch .icon { width: 16px; height: 16px; }
+
+/* Pagination */
+.pagination { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding-top: var(--space-6); border-top: 1px solid var(--line); }
+.pagination__pages { display: flex; align-items: center; gap: var(--space-2); }
+.page-btn { min-width: 40px; height: 40px; padding: 0 var(--space-3); border-radius: var(--radius-md); border: 1px solid var(--line-strong); background: var(--surface); display: inline-flex; align-items: center; justify-content: center; gap: var(--space-1); font-size: var(--fs-small); font-weight: var(--fw-medium); color: var(--ink); cursor: pointer; }
+.page-btn .icon { width: 18px; height: 18px; }
+.page-btn:hover { border-color: var(--blue-line); background: var(--blue-tint); }
+.page-btn.is-active { background: var(--blue); border-color: var(--blue); color: var(--on-blue); }
+.page-btn.is-disabled { color: var(--subtle); background: var(--disabled-bg); border-color: var(--line); cursor: not-allowed; }
+.page-gap { color: var(--subtle); padding: 0 var(--space-1); }
+
+.empty-suggest { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); margin-top: var(--space-2); }
+</style>
+</head>
+<body>
+
+<!-- SITE HEADER START (public pages) -->
+<header class="topnav site-header">
+  <div class="topnav__inner">
+    <a class="brand" href="01-landing.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+    <nav class="topnav__links">
+      <a class="topnav__link topnav__link--active" href="02-katalog.html">Kelas</a>
+      <a class="topnav__link" href="01-landing.html#metode">Metode</a>
+      <a class="topnav__link" href="04-harga.html">Harga</a>
+      <a class="topnav__link" href="01-landing.html#ustadz">Ustadz</a>
+      <a class="topnav__link" href="01-landing.html#faq">FAQ</a>
+    </nav>
+    <div class="topnav__actions">
+      <a class="btn btn--ghost" href="06-auth.html">Masuk</a>
+      <a class="btn btn--primary" href="06-auth.html#tab-daftar">Daftar</a>
+    </div>
+  </div>
+</header>
+<!-- SITE HEADER END -->
+<!-- Hero: search -->
+<section class="hero hero--compact">
+  <svg class="hero__pattern" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M1180.0 -60.0 L1256.2 16.2 L1363.8 16.2 L1363.8 123.8 L1440.0 200.0 L1363.8 276.2 L1363.8 383.8 L1256.2 383.8 L1180.0 460.0 L1103.8 383.8 L996.2 383.8 L996.2 276.2 L920.0 200.0 L996.2 123.8 L996.2 16.2 L1103.8 16.2Z"/><path d="M1260.4 6.0 L1293.7 86.3 L1374.0 119.6 L1340.7 200.0 L1374.0 280.4 L1293.7 313.7 L1260.4 394.0 L1180.0 360.7 L1099.6 394.0 L1066.3 313.7 L986.0 280.4 L1019.3 200.0 L986.0 119.6 L1066.3 86.3 L1099.6 6.0 L1180.0 39.3Z"/><path d="M1180.0 35.0 L1228.3 83.3 L1296.7 83.3 L1296.7 151.7 L1345.0 200.0 L1296.7 248.3 L1296.7 316.7 L1228.3 316.7 L1180.0 365.0 L1131.7 316.7 L1063.3 316.7 L1063.3 248.3 L1015.0 200.0 L1063.3 151.7 L1063.3 83.3 L1131.7 83.3Z"/><path d="M1226.7 87.3 L1246.0 134.0 L1292.7 153.3 L1273.4 200.0 L1292.7 246.7 L1246.0 266.0 L1226.7 312.7 L1180.0 293.4 L1133.3 312.7 L1114.0 266.0 L1067.3 246.7 L1086.6 200.0 L1067.3 153.3 L1114.0 134.0 L1133.3 87.3 L1180.0 106.6Z"/><path d="M1180.0 118.0 L1204.0 142.0 L1238.0 142.0 L1238.0 176.0 L1262.0 200.0 L1238.0 224.0 L1238.0 258.0 L1204.0 258.0 L1180.0 282.0 L1156.0 258.0 L1122.0 258.0 L1122.0 224.0 L1098.0 200.0 L1122.0 176.0 L1122.0 142.0 L1156.0 142.0Z"/><circle cx="1180" cy="200" r="45.1"/></svg>
+  <div class="hero__inner">
+    <div class="hero__text" style="max-width:660px">
+      <nav class="breadcrumb breadcrumb--dark" aria-label="Breadcrumb"><a class="breadcrumb__item" href="01-landing.html"><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9.5 9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> Beranda</a><span class="breadcrumb__sep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span><span class="breadcrumb__current">Katalog kelas</span></nav>
+      <h1 class="text-h1 hero__title">Katalog kelas <em>Al-Abqary</em></h1>
+      <p class="text-body-lg hero__lead">18 kelas nahwu, sharf, qiraatul kutub, dan mushaf berwarna. Saring berdasarkan bidang, jenjang, dan format belajar.</p>
+      <form class="hero-search" action="02-katalog.html" onsubmit="return false">
+        <div class="input"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari kelas, kaidah, atau kitab, misalnya "i'rab"</span></div>
+        <button class="btn btn--primary" type="button">Cari</button>
+      </form>
+      <div class="hero-popular" data-chips="multi">
+        <span>Sering dicari:</span>
+        <span class="chip chip--on-dark">I'rab</span>
+        <span class="chip chip--on-dark">Tashrif</span>
+        <span class="chip chip--on-dark">Al-Ajurrumiyyah</span>
+        <span class="chip chip--on-dark">Surah Yasin</span>
+        <span class="chip chip--on-dark">Kelas gratis</span>
+      </div>
+    </div>
+    <aside class="hero-aside">
+      <span class="text-overline hero__eyebrow">Belum tahu mulai dari mana?</span>
+      <h2 class="text-h3" style="color:var(--on-blue)">Ikuti tes penempatan</h2>
+      <p>20 soal singkat, sekitar 10 menit. Hasilnya menentukan jenjang awal dan kelas yang disarankan.</p>
+      <div class="hero-aside__stats">
+        <div><b>18</b><span>Kelas</span></div>
+        <div><b>6</b><span>Jenjang</span></div>
+        <div><b>3</b><span>Jalur belajar</span></div>
+      </div>
+      <a class="btn btn--gold" href="07-onboarding.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg> Mulai tes penempatan</a>
+    </aside>
+  </div>
+</section>
+
+<!-- Learning paths -->
+<section class="section section--tight">
+  <div class="container">
+    <div class="cluster cluster--between" style="margin-bottom:var(--space-6);align-items:flex-end">
+      <div class="stack stack--xs">
+        <span class="text-overline">Jalur belajar</span>
+        <h2 class="text-h2">Ikuti urutan kelas yang sudah disusun</h2>
+        <p class="text-small text-muted">Setiap jalur berisi beberapa kelas yang dipelajari berurutan. Progres di satu kelas tetap tercatat di jalur.</p>
+      </div>
+    </div>
+    <div class="grid-3">
+      <a class="card card--flat path path--featured" href="03-detail-kelas.html">
+        <div class="path__head"><span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="19" r="3"/><circle cx="18" cy="5" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/></svg></span><span class="badge badge--premium">Disarankan untuk pemula</span></div>
+        <div class="stack stack--xs"><h3 class="text-h4">Jalur Pemula Kitab Gundul</h3><p class="text-small text-muted">Dari mengenal kalimah sampai bisa menentukan i'rab kalimat sederhana.</p></div>
+        <div class="path__steps"><div class="path__step"><span class="path__num">1</span><span>Qaidaty Jilid 1</span><span class="badge badge--free">Gratis</span></div><div class="path__step"><span class="path__num">2</span><span>Membaca Bangunan: Harf dan Fi'il</span><span class="badge badge--free">Gratis</span></div><div class="path__step"><span class="path__num">3</span><span>Nahwu Dasar: Membaca Akhir Kata</span><span class="badge badge--premium">Premium</span></div><div class="path__step"><span class="path__num">4</span><span>Membaca Akhir: Isim Mu'rab</span><span class="badge badge--premium">Premium</span></div></div>
+        <div class="path__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 4 kelas</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> ± 6 bulan</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 20h.01M7 20v-4M12 20v-8M17 20V8M22 4v16"/></svg> Mubtadi' – Mujtahid</span></div>
+        <span class="panel__link">Lihat jalur <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </a>
+      <a class="card card--flat path" href="03-detail-kelas.html">
+        <div class="path__head"><span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg></span></div>
+        <div class="stack stack--xs"><h3 class="text-h4">Jalur Qiraatul Kutub</h3><p class="text-small text-muted">Latihan membaca matan tanpa harakat, dari nahwu sampai kitab fiqih.</p></div>
+        <div class="path__steps"><div class="path__step"><span class="path__num">1</span><span>Qiraatul Kutub: Al-Ajurrumiyyah</span><span class="badge badge--premium">Premium</span></div><div class="path__step"><span class="path__num">2</span><span>I'rab Lanjutan: Tawabi'</span><span class="badge badge--premium">Premium</span></div><div class="path__step"><span class="path__num">3</span><span>Al-Arba'in An-Nawawiyyah</span><span class="badge badge--premium">Premium</span></div><div class="path__step"><span class="path__num">4</span><span>Halaqah Kitab: Fathul Qarib</span><span class="badge badge--premium">Halaqah Plus</span></div></div>
+        <div class="path__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 4 kelas</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> ± 9 bulan</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 20h.01M7 20v-4M12 20v-8M17 20V8M22 4v16"/></svg> Mutqin – 'Abqari</span></div>
+        <span class="panel__link">Lihat jalur <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </a>
+      <a class="card card--flat path" href="03-detail-kelas.html">
+        <div class="path__head"><span class="icon-tile icon-tile--deep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg></span></div>
+        <div class="stack stack--xs"><h3 class="text-h4">Jalur Mushaf Berwarna</h3><p class="text-small text-muted">Melihat kaidah nahwu dan sharf bekerja langsung pada ayat Al-Qur'an.</p></div>
+        <div class="path__steps"><div class="path__step"><span class="path__num">1</span><span>Mushaf Sharfi: Surah As-Sajdah</span><span class="badge badge--premium">Premium</span></div><div class="path__step"><span class="path__num">2</span><span>Mushaf Nahwi: Surah Yasin</span><span class="badge badge--premium">Premium</span></div></div>
+        <div class="path__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 2 kelas</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> ± 3 bulan</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 20h.01M7 20v-4M12 20v-8M17 20V8M22 4v16"/></svg> Mujtahid – Mutqin</span></div>
+        <span class="panel__link">Lihat jalur <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Catalog: filters + results -->
+<section class="section section--alt" style="padding-top:var(--space-12)">
+  <div class="container catalog">
+    <aside class="panel filter" aria-label="Filter kelas">
+      <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg> Filter</span><a class="panel__link" href="#">Reset</a></div>
+      <div class="filter__group"><div class="filter__title">Bidang<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div><div class="filter__options" data-chips="multi" data-active-class="is-checked"><span class="checkbox" data-chip><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Nahwu<span class="filter__count">5</span></span><span class="checkbox" data-chip><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Sharf<span class="filter__count">4</span></span><span class="checkbox" data-chip><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Qiraatul Kutub<span class="filter__count">4</span></span><span class="checkbox" data-chip><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Mushaf Nahwi / Sharfi<span class="filter__count">3</span></span><span class="checkbox" data-chip><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Bahasa Arab Dasar<span class="filter__count">2</span></span></div></div>
+      <div class="filter__group"><div class="filter__title">Jenjang<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div><div class="cluster cluster--sm" data-chips="multi"><span class="chip">Mubtadi'</span><span class="chip">Thalib</span><span class="chip">Mujtahid</span><span class="chip">Mutqin</span><span class="chip">Mahir</span><span class="chip">'Abqari</span></div><a class="link text-caption" href="07-onboarding.html">Tidak tahu jenjangmu? Ikuti tes penempatan</a></div>
+      <div class="filter__group"><div class="filter__title">Harga<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div><div class="cluster cluster--sm" data-chips><span class="chip chip--active">Semua</span><span class="chip">Gratis <span class="chip__count">3</span></span><span class="chip">Premium <span class="chip__count">15</span></span></div></div>
+      <div class="filter__group"><div class="filter__title">Format<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div><div class="filter__options" data-chips="multi" data-active-class="is-checked"><span class="checkbox" data-chip><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Mandiri<span class="filter__count">9</span></span><span class="checkbox" data-chip><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Live Halaqah<span class="filter__count">5</span></span><span class="checkbox" data-chip><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Hybrid<span class="filter__count">4</span></span></div></div>
+      <div class="filter__group"><div class="filter__title">Durasi<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div><div class="cluster cluster--sm" data-chips><span class="chip chip--active">Semua</span><span class="chip">&lt; 5 jam</span><span class="chip">5–10 jam</span><span class="chip">&gt; 10 jam</span></div></div>
+      <div class="filter__group"><div class="filter__title">Rating<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div><div class="filter__options" data-chips data-active-class="is-checked"><span class="radio is-checked" data-chip><span class="radio__dot"><span></span></span>Semua rating</span><span class="radio" data-chip><span class="radio__dot"><span></span></span>4,5 ke atas<span class="filter__count">11</span></span><span class="radio" data-chip><span class="radio__dot"><span></span></span>4,0 ke atas<span class="filter__count">17</span></span><span class="radio" data-chip><span class="radio__dot"><span></span></span>3,5 ke atas<span class="filter__count">18</span></span></div></div>
+      <div class="panel__foot"><p class="text-caption text-muted">Hasil diperbarui otomatis setiap filter diubah.</p></div>
+    </aside>
+
+    <div class="stack stack--lg" data-tabs>
+      <div class="state-switch">
+        <span class="cluster cluster--sm"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg> Pratinjau state mockup</span>
+        <div class="tabs tabs--segmented">
+          <a class="tab tab--active" href="#" data-tab="hasil">Ada hasil</a>
+          <a class="tab" href="#" data-tab="kosong">Tidak ditemukan</a>
+        </div>
+      </div>
+
+      <div class="results__bar">
+        <div class="stack stack--xs">
+          <h2 class="text-h3">Semua kelas</h2>
+          <p class="results__count" data-panel="hasil">Menampilkan <b>1–12</b> dari <b>18</b> kelas</p>
+          <p class="results__count" data-panel="kosong" hidden><b>0</b> kelas untuk "balaghah"</p>
+        </div>
+        <div class="dropdown" data-toggle="is-open">
+          <div class="input select" role="button" aria-haspopup="listbox"><span class="input__text">Urutkan: <b>Paling sesuai</b></span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div>
+          <div class="dropdown__menu" role="listbox" data-chips data-active-class="is-selected">
+            <span class="dropdown__item is-selected" data-chip>Paling sesuai <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span class="dropdown__item" data-chip>Paling banyak santri <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span class="dropdown__item" data-chip>Rating tertinggi <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span class="dropdown__item" data-chip>Terbaru <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <span class="dropdown__item" data-chip>Durasi terpendek <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="active-filters" data-panel="kosong" hidden>
+        <span class="text-caption text-muted">Filter aktif:</span>
+        <span class="chip chip--active">Gratis <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+        <span class="chip chip--active">Mahir <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></span>
+        <a class="link text-caption" href="02-katalog.html">Hapus semua</a>
+      </div>
+
+      <div class="grid-3" data-panel="hasil">
+      <a class="course-card" href="03-detail-kelas.html">
+  <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="cluster cluster--sm"><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.75-1.4"/></svg> Gratis</span></span><span class="badge badge--level">Mubtadi'</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">قَاعِدَتِيْ ١</span></div></div>
+  <div class="course-card__body">
+    <span class="course-card__eyebrow">Bahasa Arab Dasar · Fondasi</span>
+    <h3 class="course-card__title">Qaidaty Jilid 1</h3>
+    <p class="course-card__desc">Mengenal kalimah, jumlah, dan cara kerja metode Qaidaty sebelum masuk sharf dan nahwu.</p>
+    <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 23 materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 6 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg> Mandiri</span></div>
+    <div class="course-card__footer"><span class="course-card__price">Gratis</span><span class="card-rating"><svg class="icon card-rating__star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> <b>4,9</b> <span>(2.310)</span></span></div>
+  </div>
+</a>
+      <a class="course-card course-card--blue" href="03-detail-kelas.html">
+  <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="cluster cluster--sm"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Premium</span><span class="badge badge--new">Terlaris</span></span><span class="badge badge--level">Thalib</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">الْإِعْرَابُ</span></div></div>
+  <div class="course-card__body">
+    <span class="course-card__eyebrow">Nahwu · I'rab dasar</span>
+    <h3 class="course-card__title">Nahwu Dasar: Membaca Akhir Kata</h3>
+    <p class="course-card__desc">Empat macam i'rab dan tanda-tandanya, dilatih langsung pada kalimat tanpa harakat.</p>
+    <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 46 materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 9 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg> Hybrid</span></div>
+    <div class="course-card__footer"><span class="course-card__price">Paket Santri</span><span class="card-rating"><svg class="icon card-rating__star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> <b>4,8</b> <span>(1.240)</span></span></div>
+  </div>
+</a>
+      <a class="course-card course-card--gold" href="03-detail-kelas.html">
+  <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="cluster cluster--sm"><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.75-1.4"/></svg> Gratis</span></span><span class="badge badge--level">Thalib</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">الصَّرْفُ</span></div></div>
+  <div class="course-card__body">
+    <span class="course-card__eyebrow">Sharf · Harf dan fi'il</span>
+    <h3 class="course-card__title">Membaca Bangunan: Harf dan Fi'il</h3>
+    <p class="course-card__desc">Wazan fi'il tsulatsi, tashrif madhi, mudhari', dan amr, serta cara mengenali harf.</p>
+    <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 16 materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 5 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg> Mandiri</span></div>
+    <div class="course-card__footer"><span class="course-card__price">Gratis</span><span class="card-rating"><svg class="icon card-rating__star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> <b>4,8</b> <span>(1.870)</span></span></div>
+  </div>
+</a>
+      <a class="course-card" href="03-detail-kelas.html">
+  <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="cluster cluster--sm"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Premium</span><span class="badge badge--new">Baru</span></span><span class="badge badge--level">Mujtahid</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">الثُّلَاثِيُّ الْمَزِيْدُ</span></div></div>
+  <div class="course-card__body">
+    <span class="course-card__eyebrow">Sharf · Tashrif lanjutan</span>
+    <h3 class="course-card__title">Tashrif Fi'il Tsulatsi Mazid</h3>
+    <p class="course-card__desc">Dua belas wazan mazid beserta makna tambahannya, dari أَفْعَلَ sampai اِسْتَفْعَلَ.</p>
+    <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 28 materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 7 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg> Mandiri</span></div>
+    <div class="course-card__footer"><span class="course-card__price">Paket Santri</span><span class="card-rating"><svg class="icon card-rating__star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> <b>4,7</b> <span>(356)</span></span></div>
+  </div>
+</a>
+      <a class="course-card course-card--blue" href="03-detail-kelas.html">
+  <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="cluster cluster--sm"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Premium</span></span><span class="badge badge--level">Mujtahid</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">الِاسْمُ الْمُعْرَبُ</span></div></div>
+  <div class="course-card__body">
+    <span class="course-card__eyebrow">Nahwu · Isim mu'rab</span>
+    <h3 class="course-card__title">Membaca Akhir: Isim Mu'rab</h3>
+    <p class="course-card__desc">Isim yang dibaca rafa', nashab, dan jar beserta tanda asli dan tanda penggantinya.</p>
+    <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 21 materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 8 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg> Hybrid</span></div>
+    <div class="course-card__footer"><span class="course-card__price">Paket Santri</span><span class="card-rating"><svg class="icon card-rating__star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> <b>4,8</b> <span>(642)</span></span></div>
+  </div>
+</a>
+      <a class="course-card" href="03-detail-kelas.html">
+  <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="cluster cluster--sm"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Premium</span></span><span class="badge badge--level">Mutqin</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">الْآجُرُّوْمِيَّةُ</span></div></div>
+  <div class="course-card__body">
+    <span class="course-card__eyebrow">Qiraatul Kutub · Matan</span>
+    <h3 class="course-card__title">Qiraatul Kutub: Al-Ajurrumiyyah</h3>
+    <p class="course-card__desc">Membaca matan Al-Ajurrumiyyah tanpa harakat, kalimat demi kalimat, dengan i'rab lengkap.</p>
+    <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 30 materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 12 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg> Live Halaqah</span></div>
+    <div class="course-card__footer"><span class="course-card__price">Paket Santri</span><span class="card-rating"><svg class="icon card-rating__star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> <b>4,9</b> <span>(418)</span></span></div>
+  </div>
+</a>
+      <a class="course-card course-card--blue" href="03-detail-kelas.html">
+  <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="cluster cluster--sm"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Premium</span></span><span class="badge badge--level">Mutqin</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">سُوْرَةُ يس</span></div></div>
+  <div class="course-card__body">
+    <span class="course-card__eyebrow">Mushaf Nahwi · Tadabbur i'rab</span>
+    <h3 class="course-card__title">Mushaf Nahwi: Surah Yasin</h3>
+    <p class="course-card__desc">Membedah i'rab Surah Yasin ayat demi ayat dengan pewarnaan kedudukan kata.</p>
+    <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 83 ayat</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 10 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg> Mandiri</span></div>
+    <div class="course-card__footer"><span class="course-card__price">Paket Santri</span><span class="card-rating"><svg class="icon card-rating__star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> <b>4,9</b> <span>(530)</span></span></div>
+  </div>
+</a>
+      <a class="course-card course-card--gold" href="03-detail-kelas.html">
+  <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="cluster cluster--sm"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Premium</span></span><span class="badge badge--level">Mujtahid</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">سُوْرَةُ السَّجْدَةِ</span></div></div>
+  <div class="course-card__body">
+    <span class="course-card__eyebrow">Mushaf Sharfi · Wazan</span>
+    <h3 class="course-card__title">Mushaf Sharfi: Surah As-Sajdah</h3>
+    <p class="course-card__desc">Mengenali bentuk setiap kata: madhi, mudhari', mashdar, isim fa'il, dan lainnya.</p>
+    <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 30 ayat</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 6 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg> Mandiri</span></div>
+    <div class="course-card__footer"><span class="course-card__price">Paket Santri</span><span class="card-rating"><svg class="icon card-rating__star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> <b>4,8</b> <span>(301)</span></span></div>
+  </div>
+</a>
+      <a class="course-card course-card--gold" href="03-detail-kelas.html">
+  <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="cluster cluster--sm"><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.75-1.4"/></svg> Gratis</span></span><span class="badge badge--level">Mubtadi'</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">الْمُفْرَدَاتُ</span></div></div>
+  <div class="course-card__body">
+    <span class="course-card__eyebrow">Bahasa Arab Dasar · Kosakata</span>
+    <h3 class="course-card__title">Mufradat Kitab: 500 Kata Pertama</h3>
+    <p class="course-card__desc">Kosakata yang paling sering muncul di kitab pemula, lengkap dengan wazan dan contoh kalimat.</p>
+    <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 20 materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 4 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg> Mandiri</span></div>
+    <div class="course-card__footer"><span class="course-card__price">Gratis</span><span class="card-rating"><svg class="icon card-rating__star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> <b>4,6</b> <span>(980)</span></span></div>
+  </div>
+</a>
+      <a class="course-card" href="03-detail-kelas.html">
+  <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="cluster cluster--sm"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Premium</span></span><span class="badge badge--level">Mahir</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">الْأَرْبَعُوْنَ النَّوَوِيَّةُ</span></div></div>
+  <div class="course-card__body">
+    <span class="course-card__eyebrow">Qiraatul Kutub · Hadits</span>
+    <h3 class="course-card__title">Qiraatul Kutub: Al-Arba'in An-Nawawiyyah</h3>
+    <p class="course-card__desc">Membaca matan hadits Arba'in tanpa harakat dan menjelaskan i'rab kata-kata kuncinya.</p>
+    <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 42 materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 14 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg> Live Halaqah</span></div>
+    <div class="course-card__footer"><span class="course-card__price">Paket Santri</span><span class="card-rating"><svg class="icon card-rating__star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> <b>4,9</b> <span>(212)</span></span></div>
+  </div>
+</a>
+      <a class="course-card course-card--blue" href="03-detail-kelas.html">
+  <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="cluster cluster--sm"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Premium</span><span class="badge badge--new">Baru</span></span><span class="badge badge--level">Mahir</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">التَّوَابِعُ</span></div></div>
+  <div class="course-card__body">
+    <span class="course-card__eyebrow">Nahwu · Tawabi'</span>
+    <h3 class="course-card__title">I'rab Lanjutan: Na'at, 'Athaf, Taukid, Badal</h3>
+    <p class="course-card__desc">Kata yang mengikuti i'rab kata sebelumnya, dan cara melacaknya di kalimat panjang.</p>
+    <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 24 materi</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 7 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg> Hybrid</span></div>
+    <div class="course-card__footer"><span class="course-card__price">Paket Santri</span><span class="card-rating"><svg class="icon card-rating__star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> <b>4,7</b> <span>(189)</span></span></div>
+  </div>
+</a>
+      <a class="course-card course-card--gold" href="03-detail-kelas.html">
+  <div class="course-card__cover"><svg class="course-card__pattern" viewBox="0 0 400 168" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M330.0 -36.0 L365.1 -0.9 L414.9 -0.9 L414.9 48.9 L450.0 84.0 L414.9 119.1 L414.9 168.9 L365.1 168.9 L330.0 204.0 L294.9 168.9 L245.1 168.9 L245.1 119.1 L210.0 84.0 L245.1 48.9 L245.1 -0.9 L294.9 -0.9Z"/><path d="M365.2 -1.0 L379.8 34.2 L415.0 48.8 L400.4 84.0 L415.0 119.2 L379.8 133.8 L365.2 169.0 L330.0 154.4 L294.8 169.0 L280.2 133.8 L245.0 119.2 L259.6 84.0 L245.0 48.8 L280.2 34.2 L294.8 -1.0 L330.0 13.6Z"/><path d="M330.0 18.0 L349.3 37.3 L376.7 37.3 L376.7 64.7 L396.0 84.0 L376.7 103.3 L376.7 130.7 L349.3 130.7 L330.0 150.0 L310.7 130.7 L283.3 130.7 L283.3 103.3 L264.0 84.0 L283.3 64.7 L283.3 37.3 L310.7 37.3Z"/><path d="M346.1 45.2 L352.7 61.3 L368.8 67.9 L362.1 84.0 L368.8 100.1 L352.7 106.7 L346.1 122.8 L330.0 116.1 L313.9 122.8 L307.3 106.7 L291.2 100.1 L297.9 84.0 L291.2 67.9 L307.3 61.3 L313.9 45.2 L330.0 51.9Z"/><circle cx="330" cy="84" r="23.1"/></svg><div class="course-card__cover-content"><div class="course-card__cover-top"><span class="cluster cluster--sm"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Halaqah Plus</span></span><span class="badge badge--level">'Abqari</span></div><span class="course-card__cover-ar" lang="ar" dir="rtl">فَتْحُ الْقَرِيْبِ</span></div></div>
+  <div class="course-card__body">
+    <span class="course-card__eyebrow">Qiraatul Kutub · Fiqih</span>
+    <h3 class="course-card__title">Halaqah Kitab: Fathul Qarib</h3>
+    <p class="course-card__desc">Halaqah kelompok kecil membaca Fathul Qarib bab thaharah dan shalat bersama ustadz.</p>
+    <div class="course-card__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> 36 pertemuan</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ± 18 jam</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg> Live Halaqah</span></div>
+    <div class="course-card__footer"><span class="course-card__price">Halaqah Plus</span><span class="card-rating"><svg class="icon card-rating__star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg> <b>5,0</b> <span>(64)</span></span></div>
+  </div>
+</a>
+      </div>
+
+      <div data-panel="kosong" hidden>
+        <div class="empty-state">
+          <span class="empty-state__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+          <h3 class="empty-state__title">Kelas tidak ditemukan</h3>
+          <p class="empty-state__text">Belum ada kelas untuk kata kunci "balaghah" dengan filter <b>Gratis</b> dan <b>Mahir</b>. Coba kurangi filter atau gunakan kata kunci lain.</p>
+          <div class="cluster" style="justify-content:center;margin-top:var(--space-2)">
+            <a class="btn btn--secondary" href="02-katalog.html">Hapus semua filter</a>
+            <a class="btn btn--primary" href="07-onboarding.html">Ikuti tes penempatan</a>
+          </div>
+          <div class="empty-suggest"><span class="text-caption text-muted">Coba cari:</span><span class="chip">I'rab</span><span class="chip">Tashrif</span><span class="chip">Qiraatul Kutub</span></div>
+        </div>
+      </div>
+
+      <nav class="pagination" aria-label="Halaman" data-panel="hasil">
+        <span class="text-small text-muted">Halaman 1 dari 2</span>
+        <div class="pagination__pages" data-chips data-active-class="is-active">
+          <span class="page-btn is-disabled"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg> Sebelumnya</span>
+          <span class="page-btn is-active" data-chip>1</span>
+          <span class="page-btn" data-chip>2</span>
+          <span class="page-btn">Berikutnya <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span>
+        </div>
+      </nav>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section">
+  <div class="container">
+    <div class="cta-band">
+      <svg class="hero__pattern" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M1180.0 -60.0 L1256.2 16.2 L1363.8 16.2 L1363.8 123.8 L1440.0 200.0 L1363.8 276.2 L1363.8 383.8 L1256.2 383.8 L1180.0 460.0 L1103.8 383.8 L996.2 383.8 L996.2 276.2 L920.0 200.0 L996.2 123.8 L996.2 16.2 L1103.8 16.2Z"/><path d="M1260.4 6.0 L1293.7 86.3 L1374.0 119.6 L1340.7 200.0 L1374.0 280.4 L1293.7 313.7 L1260.4 394.0 L1180.0 360.7 L1099.6 394.0 L1066.3 313.7 L986.0 280.4 L1019.3 200.0 L986.0 119.6 L1066.3 86.3 L1099.6 6.0 L1180.0 39.3Z"/><path d="M1180.0 35.0 L1228.3 83.3 L1296.7 83.3 L1296.7 151.7 L1345.0 200.0 L1296.7 248.3 L1296.7 316.7 L1228.3 316.7 L1180.0 365.0 L1131.7 316.7 L1063.3 316.7 L1063.3 248.3 L1015.0 200.0 L1063.3 151.7 L1063.3 83.3 L1131.7 83.3Z"/><path d="M1226.7 87.3 L1246.0 134.0 L1292.7 153.3 L1273.4 200.0 L1292.7 246.7 L1246.0 266.0 L1226.7 312.7 L1180.0 293.4 L1133.3 312.7 L1114.0 266.0 L1067.3 246.7 L1086.6 200.0 L1067.3 153.3 L1114.0 134.0 L1133.3 87.3 L1180.0 106.6Z"/><path d="M1180.0 118.0 L1204.0 142.0 L1238.0 142.0 L1238.0 176.0 L1262.0 200.0 L1238.0 224.0 L1238.0 258.0 L1204.0 258.0 L1180.0 282.0 L1156.0 258.0 L1122.0 258.0 L1122.0 224.0 L1098.0 200.0 L1122.0 176.0 L1122.0 142.0 L1156.0 142.0Z"/><circle cx="1180" cy="200" r="45.1"/></svg>
+      <div class="cta-band__inner">
+        <div class="stack stack--sm" style="max-width:600px">
+          <span class="text-overline" style="color:var(--gold-bright)">Satu langganan, semua kelas</span>
+          <h2 class="text-h2" style="color:var(--on-blue)">Kelas premium terbuka dengan Paket Santri</h2>
+          <p class="text-body">Rp99.000 per bulan untuk semua kelas premium, setoran ke ustadz, dan live halaqah umum. Kelas gratis tetap bisa diikuti tanpa langganan.</p>
+        </div>
+        <div class="cluster cluster--nowrap">
+          <a class="btn btn--gold btn--lg" href="04-harga.html">Lihat paket</a>
+          <a class="btn btn--on-dark btn--lg" href="06-auth.html#tab-daftar">Daftar gratis</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SITE FOOTER START -->
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__grid">
+      <div class="site-footer__about">
+        <a class="brand brand--on-dark" href="01-landing.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--gold)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--blue-deep);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--blue-deep)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+        <p>Platform belajar membaca kitab gundul dengan metode Qaidaty karya KH. Yasin Muthohar.</p>
+        <p>Ma'had Al-Abqary, Kota Serang, Banten</p>
+      </div>
+      <div><p class="site-footer__title">Belajar</p><div class="site-footer__links"><a href="02-katalog.html">Katalog kelas</a><a href="01-landing.html#metode">Metode</a><a href="16-mushaf.html">Mushaf Nahwi &amp; Sharfi</a><a href="07-onboarding.html">Tes penempatan</a></div></div>
+      <div><p class="site-footer__title">Platform</p><div class="site-footer__links"><a href="04-harga.html">Paket &amp; harga</a><a href="06-auth.html">Masuk</a><a href="06-auth.html#tab-daftar">Daftar</a><a href="19-sertifikat.html">Verifikasi sertifikat</a></div></div>
+      <div><p class="site-footer__title">Ma'had</p><div class="site-footer__links"><a href="01-landing.html#ustadz">Asatidz</a><a href="#">Tentang Al-Abqary</a><a href="#">Penerimaan santri</a><a href="#">Kontak</a></div></div>
+      <div><p class="site-footer__title">Bantuan</p><div class="site-footer__links"><a href="01-landing.html#faq">FAQ</a><a href="#">Syarat layanan</a><a href="#">Kebijakan privasi</a><a href="40-states.html">Status layanan</a></div></div>
+    </div>
+    <div class="site-footer__bottom">
+      <span>© 2026 Ma'had Al-Abqary · Mockup, bukan produk final</span>
+      <span class="ar-inline" lang="ar" dir="rtl">مَعْهَدُ الْعَبْقَرِيِّ</span>
+    </div>
+  </div>
+</footer>
+<!-- SITE FOOTER END -->
+
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Pencapaian · Al-Abqary LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Pencapaian-only styles */
+.level-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl); box-shadow: var(--shadow); overflow: hidden; }
+.level-hero { background: var(--blue-deep); color: var(--on-blue); display: grid; overflow: hidden; }
+.level-hero > * { grid-area: 1 / 1; }
+.level-hero__inner { position: relative; padding: var(--space-8); display: flex; align-items: center; gap: var(--space-8); }
+.level-emblem { width: 120px; height: 120px; flex: none; display: grid; place-items: center; }
+.level-emblem > * { grid-area: 1 / 1; }
+.level-emblem svg { width: 120px; height: 120px; }
+.level-emblem b { font-size: 44px; line-height: 1; font-weight: var(--fw-bold); color: var(--blue-deep); }
+.level-hero__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.level-hero__title { display: flex; align-items: baseline; gap: var(--space-4); }
+.level-hero__title h2 { font-size: var(--fs-h1); line-height: var(--lh-h1); font-weight: var(--fw-bold); letter-spacing: var(--ls-tight); }
+.level-hero__title .ar { color: var(--gold-bright); font-size: var(--fs-ar-lg); line-height: 1.2; }
+.level-hero__sub { color: var(--blue-on-deep); font-size: var(--fs-small); line-height: var(--lh-small); }
+.xp-row { display: flex; justify-content: space-between; font-size: var(--fs-small); line-height: var(--lh-small); color: var(--blue-on-deep); }
+.xp-row b { color: var(--on-blue); }
+.level-hero__next { flex: none; width: 240px; padding: var(--space-5); border-radius: var(--radius-lg); background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); display: flex; flex-direction: column; gap: var(--space-2); }
+.level-hero__next small { font-size: var(--fs-caption); color: var(--blue-on-deep); }
+.level-hero__next b { font-size: var(--fs-h4); line-height: var(--lh-h4); }
+.level-hero__next .ar { color: var(--gold-bright); font-size: 26px; line-height: 1.4; text-align: left; }
+.level-path { padding: var(--space-6) var(--space-8) var(--space-8); }
+.level-path .step { width: 132px; }
+.level-path .step__desc { font-variant-numeric: tabular-nums; }
+
+/* Heatmap */
+.heat { display: flex; flex-direction: column; gap: var(--space-2); }
+.heat__wrap { display: flex; gap: var(--space-3); }
+.heat__days { display: grid; grid-template-rows: repeat(7, 26px); gap: 4px; padding-top: 23px; font-size: 11px; line-height: 26px; color: var(--muted); }
+.heat__months { display: grid; grid-template-columns: repeat(12, 26px); gap: 4px; height: 19px; font-size: 11px; line-height: 14px; color: var(--muted); }
+.heat__grid { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 26px); grid-template-columns: repeat(12, 26px); gap: 4px; }
+.heat__cell { display: block; border-radius: 6px; background: var(--bg-subtle); }
+.heat__cell--1 { background: var(--streak-soft); box-shadow: inset 0 0 0 1px var(--line); }
+.heat__cell--2 { background: var(--gold-line); }
+.heat__cell--3 { background: var(--gold); }
+.heat__cell--4 { background: var(--streak); }
+.heat__cell--future { background: transparent; border: 1.5px dashed var(--line); }
+.heat__cell--today { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--blue); }
+.heat__legend { display: flex; align-items: center; gap: 5px; font-size: var(--fs-caption); color: var(--muted); }
+.heat__legend .heat__cell { width: 14px; height: 14px; border-radius: 4px; }
+.heat-side { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-4); padding-left: var(--space-6); border-left: 1px solid var(--line); }
+.heat-fact { display: flex; flex-direction: column; gap: 2px; }
+.heat-fact b { font-size: var(--fs-h3); line-height: var(--lh-h3); }
+.heat-fact span { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.freeze { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-radius: var(--radius-md); background: var(--blue-tint); border: 1px solid var(--blue-line); font-size: var(--fs-caption); line-height: 18px; }
+
+/* Leaderboard */
+.lb-toolbar { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--line); }
+.table__rank--2 { background: var(--line-strong); color: var(--ink); }
+.table__rank--3 { background: var(--streak-soft); color: var(--streak); box-shadow: inset 0 0 0 1px var(--streak); }
+.table__row--me td:first-child { box-shadow: inset 3px 0 0 var(--gold); }
+.table__gap td { text-align: center; color: var(--subtle); padding: var(--space-1); letter-spacing: 0.3em; }
+.trend { display: inline-flex; align-items: center; gap: 2px; font-size: var(--fs-caption); font-weight: var(--fw-semibold); color: var(--good); }
+.trend .icon { width: 14px; height: 14px; stroke-width: 2.2; }
+.trend--down { color: var(--bad); }
+.trend--flat { color: var(--subtle); }
+
+/* Medals */
+.medals { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6) var(--space-4); justify-items: center; }
+
+/* Quests */
+.quest { display: flex; align-items: center; gap: var(--space-3); }
+.quest__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.quest__row { display: flex; justify-content: space-between; gap: var(--space-2); font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-medium); }
+.quest__row span:last-child { font-size: var(--fs-caption); color: var(--muted); font-weight: var(--fw-regular); white-space: nowrap; }
+.quest__xp { flex: none; min-width: 56px; height: 28px; padding: 0 var(--space-2); border-radius: var(--radius-full); background: var(--gold-soft); border: 1px solid var(--gold-line); color: var(--gold-ink); font-size: var(--fs-caption); font-weight: var(--fw-semibold); display: inline-flex; align-items: center; justify-content: center; gap: 2px; }
+.quest__xp .icon { width: 12px; height: 12px; stroke-width: 2.2; }
+.quest--done .quest__row span:first-child { color: var(--muted); text-decoration: line-through; }
+.quest--done .quest__xp { background: var(--good-soft); border-color: var(--good-line); color: var(--good); }
+.quest-group { font-size: var(--fs-caption); line-height: var(--lh-caption); font-weight: var(--fw-semibold); letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--subtle); display: flex; justify-content: space-between; }
+.quest-group span:last-child { text-transform: none; letter-spacing: 0; font-weight: var(--fw-regular); }
+.lb-scope .chip { height: 32px; padding: 0 var(--space-3); }
+</style>
+</head>
+<body class="app">
+
+<!-- APP TOPNAV START (santri) — copy as-is to every santri page -->
+<header class="topnav app__topnav">
+  <div class="topnav__inner">
+    <a class="brand" href="10-dashboard.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+    <div class="input topnav__search"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari kelas, materi, atau kata…</span><span class="kbd">/</span></div>
+    <div class="topnav__actions">
+      <a class="pill pill--streak" href="18-pencapaian.html" title="Hari beruntun"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>12 <span class="pill__label">hari</span></a>
+      <a class="pill pill--xp" href="18-pencapaian.html" title="Total XP"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>1.120 <span class="pill__label">XP</span></a>
+      <span class="topnav__divider"></span>
+      <a class="btn btn--ghost btn--icon topnav__icon-btn" href="21-notifikasi.html" aria-label="Notifikasi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="notif-dot"></span></a>
+      <a class="avatar-with-meta" href="20-profil.html"><span class="avatar avatar--ring">MF</span><span><span class="avatar-with-meta__name" style="display:block">Muhammad Fauzan</span><span class="avatar-with-meta__sub">Level 4 · Mutqin</span></span></a>
+    </div>
+  </div>
+</header>
+<!-- APP TOPNAV END -->
+
+<div class="app__body">
+
+<!-- SANTRI SIDEBAR START — copy as-is; move .sidebar__item--active to the current page's item -->
+<aside class="sidebar app__sidebar">
+  <div class="sidebar__section">
+    <span class="sidebar__title">Belajar</span>
+    <a class="sidebar__item" href="10-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9.5 9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> Beranda</a>
+    <a class="sidebar__item" href="11-kelas-saya.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Kelas Saya<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="02-katalog.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6z"/></svg> Jelajah Kelas</a>
+    <a class="sidebar__item" href="15-jadwal.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg> Jadwal Live<span class="sidebar__count">2</span></a>
+    <a class="sidebar__item" href="14-tugas.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9zM9 12h6M9 16h4"/></svg> Tugas &amp; Setoran<span class="sidebar__count">2</span></a>
+    <a class="sidebar__item" href="16-mushaf.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg> Mushaf &amp; Pustaka</a>
+    <a class="sidebar__item" href="17-diskusi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Diskusi</a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Prestasi</span>
+    <a class="sidebar__item sidebar__item--active" href="18-pencapaian.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0z"/></svg> Pencapaian</a>
+    <a class="sidebar__item" href="19-sertifikat.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg> Sertifikat<span class="sidebar__count">1</span></a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Akun</span>
+    <a class="sidebar__item" href="21-notifikasi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Notifikasi<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="20-profil.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profil &amp; Pengaturan</a>
+  </div>
+  <div class="sidebar__promo">
+    <span class="badge badge--on-dark" style="align-self:flex-start"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Paket Santri aktif</span>
+    <span class="sidebar__promo-title">Naik ke Halaqah Plus</span>
+    <span class="sidebar__promo-text">Halaqah kelompok kecil maksimal 10 santri, setoran tanpa batas, dan laporan perkembangan bulanan.</span>
+    <a class="btn btn--gold btn--sm btn--block" href="04-harga.html">Lihat paket</a>
+  </div>
+</aside>
+<!-- SANTRI SIDEBAR END -->
+
+<main class="app__main">
+
+  <!-- Page head -->
+  <div class="page-head">
+    <nav class="breadcrumb"><a class="breadcrumb__item" href="10-dashboard.html">Beranda</a><span class="breadcrumb__sep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span><span class="breadcrumb__current">Pencapaian</span></nav>
+    <div class="page-head__row">
+      <div>
+        <h1 class="page-head__title">Pencapaian</h1>
+        <p class="page-head__sub">XP didapat dari materi, kuis, setoran, dan kehadiran halaqah.</p>
+      </div>
+      <div class="page-head__actions">
+        <a class="btn btn--secondary" href="#" data-toast="toast-medal"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg> Contoh notifikasi lencana</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Level hero + path -->
+  <section class="level-card">
+    <div class="level-hero">
+      <svg class="hero__pattern" viewBox="0 0 1048 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M880.0 -60.0 L948.0 8.0 L1044.0 8.0 L1044.0 104.0 L1112.0 172.0 L1044.0 240.0 L1044.0 336.0 L948.0 336.0 L880.0 404.0 L812.0 336.0 L716.0 336.0 L716.0 240.0 L648.0 172.0 L716.0 104.0 L716.0 8.0 L812.0 8.0Z"/><path d="M880.0 26.0 L923.0 69.0 L983.0 69.0 L983.0 129.0 L1026.0 172.0 L983.0 215.0 L983.0 275.0 L923.0 275.0 L880.0 318.0 L837.0 275.0 L777.0 275.0 L777.0 215.0 L734.0 172.0 L777.0 129.0 L777.0 69.0 L837.0 69.0Z"/><circle cx="880" cy="172" r="56"/></svg>
+      <div class="level-hero__inner">
+        <div class="level-emblem">
+          <svg viewBox="0 0 80 80" aria-hidden="true"><path d="M40.0 2.0 L51.1 13.1 L66.9 13.1 L66.9 28.9 L78.0 40.0 L66.9 51.1 L66.9 66.9 L51.1 66.9 L40.0 78.0 L28.9 66.9 L13.1 66.9 L13.1 51.1 L2.0 40.0 L13.1 28.9 L13.1 13.1 L28.9 13.1Z" style="fill:var(--gold);stroke:var(--gold-bright);stroke-width:1.5"/><circle cx="40" cy="40" r="25" style="fill:var(--gold-soft);stroke:var(--gold-ink);stroke-width:1"/></svg>
+          <b>4</b>
+        </div>
+        <div class="level-hero__main">
+          <span class="text-overline" style="color:var(--gold-bright)">Level Anda saat ini</span>
+          <div class="level-hero__title"><h2>Mutqin</h2><span class="ar" lang="ar" dir="rtl">مُتْقِنٌ</span></div>
+          <p class="level-hero__sub">Santri yang teliti dan mantap bacaannya. Naik level membuka lencana dan bingkai profil baru.</p>
+          <div class="stack stack--sm" style="margin-top:var(--space-2)">
+            <div class="xp-row"><span><b>1.120</b> / 1.300 XP</span><span>180 XP lagi menuju Mahir</span></div>
+            <div class="progress progress--lg progress--on-dark"><div class="progress__bar" style="width:55%"></div></div>
+          </div>
+        </div>
+        <div class="level-hero__next">
+          <small>Level berikutnya</small>
+          <b>Level 5 · Mahir</b>
+          <p class="ar" lang="ar" dir="rtl">مَاهِرٌ</p>
+          <small>Perkiraan tercapai ± 4 hari lagi dengan rata-rata 48 XP per hari.</small>
+        </div>
+      </div>
+    </div>
+    <div class="level-path">
+      <div class="stepper">
+        <div class="step step--done"><span class="step__node"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="step__ar" lang="ar" dir="rtl">مُبْتَدِئٌ</span><span class="step__label">1 · Mubtadi'</span><span class="step__desc">0 XP</span></div>
+        <span class="step__connector step__connector--done"></span>
+        <div class="step step--done"><span class="step__node"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="step__ar" lang="ar" dir="rtl">طَالِبٌ</span><span class="step__label">2 · Thalib</span><span class="step__desc">200 XP</span></div>
+        <span class="step__connector step__connector--done"></span>
+        <div class="step step--done"><span class="step__node"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="step__ar" lang="ar" dir="rtl">مُجْتَهِدٌ</span><span class="step__label">3 · Mujtahid</span><span class="step__desc">500 XP</span></div>
+        <span class="step__connector step__connector--done"></span>
+        <div class="step step--current"><span class="step__node"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg></span><span class="step__ar" lang="ar" dir="rtl">مُتْقِنٌ</span><span class="step__label">4 · Mutqin</span><span class="step__desc">900 XP · sekarang</span></div>
+        <span class="step__connector"></span>
+        <div class="step step--locked"><span class="step__node"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="step__ar" lang="ar" dir="rtl">مَاهِرٌ</span><span class="step__label">5 · Mahir</span><span class="step__desc">1.300 XP</span></div>
+        <span class="step__connector"></span>
+        <div class="step step--locked"><span class="step__node"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="step__ar" lang="ar" dir="rtl">عَبْقَرِيٌّ</span><span class="step__label">6 · 'Abqari</span><span class="step__desc">2.000 XP</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <div class="grid-4 grid--tight">
+    <div class="stat stat--streak"><div class="stat__head"><span class="stat__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span><span class="badge badge--premium">Rekor 21</span></div><span class="stat__label">Hari beruntun</span><span class="stat__value">12 <small>hari</small></span></div>
+    <div class="stat stat--gold"><div class="stat__head"><span class="stat__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span><span class="stat__delta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg> +340 pekan ini</span></div><span class="stat__label">Total XP</span><span class="stat__value">1.120</span></div>
+    <div class="stat stat--good"><div class="stat__head"><span class="stat__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span></div><span class="stat__label">Pelajaran selesai</span><span class="stat__value">41 <small>materi</small></span></div>
+    <div class="stat"><div class="stat__head"><span class="stat__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg></span><span class="stat__delta"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg> 2</span></div><span class="stat__label">Kuis bernilai mumtaz</span><span class="stat__value">9 <small>dari 14 kuis</small></span></div>
+  </div>
+
+  <!-- Heatmap + quests -->
+  <div class="grid-2-1">
+    <section class="panel">
+      <div class="panel__head"><div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg> Kalender istiqamah</span><span class="panel__sub">12 pekan terakhir · 24 Agustus – 15 November 2026</span></div><span class="pill pill--streak"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>12 <span class="pill__label">hari beruntun</span></span></div>
+      <div class="panel__body">
+        <div class="heat__wrap">
+          <div class="heat__days"><span>Sen</span><span></span><span>Rab</span><span></span><span>Jum</span><span></span><span>Ahad</span></div>
+          <div class="heat">
+<div class="heat__months"><span>Agu</span><span></span><span>Sep</span><span></span><span></span><span></span><span>Okt</span><span></span><span></span><span></span><span>Nov</span><span></span></div>
+<div class="heat__grid"><i class="heat__cell heat__cell--1" title="24 Agu · 20 XP"></i><i class="heat__cell heat__cell--0" title="25 Agu · tidak aktif"></i><i class="heat__cell heat__cell--2" title="26 Agu · 45 XP"></i><i class="heat__cell heat__cell--3" title="27 Agu · 80 XP"></i><i class="heat__cell heat__cell--0" title="28 Agu · tidak aktif"></i><i class="heat__cell heat__cell--0" title="29 Agu · tidak aktif"></i><i class="heat__cell heat__cell--4" title="30 Agu · 120 XP"></i><i class="heat__cell heat__cell--2" title="31 Agu · 45 XP"></i><i class="heat__cell heat__cell--0" title="1 Sep · tidak aktif"></i><i class="heat__cell heat__cell--1" title="2 Sep · 20 XP"></i><i class="heat__cell heat__cell--2" title="3 Sep · 45 XP"></i><i class="heat__cell heat__cell--3" title="4 Sep · 80 XP"></i><i class="heat__cell heat__cell--1" title="5 Sep · 20 XP"></i><i class="heat__cell heat__cell--3" title="6 Sep · 80 XP"></i><i class="heat__cell heat__cell--2" title="7 Sep · 45 XP"></i><i class="heat__cell heat__cell--1" title="8 Sep · 20 XP"></i><i class="heat__cell heat__cell--1" title="9 Sep · 20 XP"></i><i class="heat__cell heat__cell--3" title="10 Sep · 80 XP"></i><i class="heat__cell heat__cell--3" title="11 Sep · 80 XP"></i><i class="heat__cell heat__cell--1" title="12 Sep · 20 XP"></i><i class="heat__cell heat__cell--2" title="13 Sep · 45 XP"></i><i class="heat__cell heat__cell--1" title="14 Sep · 20 XP"></i><i class="heat__cell heat__cell--3" title="15 Sep · 80 XP"></i><i class="heat__cell heat__cell--3" title="16 Sep · 80 XP"></i><i class="heat__cell heat__cell--1" title="17 Sep · 20 XP"></i><i class="heat__cell heat__cell--3" title="18 Sep · 80 XP"></i><i class="heat__cell heat__cell--1" title="19 Sep · 20 XP"></i><i class="heat__cell heat__cell--2" title="20 Sep · 45 XP"></i><i class="heat__cell heat__cell--4" title="21 Sep · 120 XP"></i><i class="heat__cell heat__cell--4" title="22 Sep · 120 XP"></i><i class="heat__cell heat__cell--0" title="23 Sep · tidak aktif"></i><i class="heat__cell heat__cell--2" title="24 Sep · 45 XP"></i><i class="heat__cell heat__cell--0" title="25 Sep · tidak aktif"></i><i class="heat__cell heat__cell--2" title="26 Sep · 45 XP"></i><i class="heat__cell heat__cell--2" title="27 Sep · 45 XP"></i><i class="heat__cell heat__cell--2" title="28 Sep · 45 XP"></i><i class="heat__cell heat__cell--0" title="29 Sep · tidak aktif"></i><i class="heat__cell heat__cell--0" title="30 Sep · tidak aktif"></i><i class="heat__cell heat__cell--0" title="1 Okt · tidak aktif"></i><i class="heat__cell heat__cell--2" title="2 Okt · 45 XP"></i><i class="heat__cell heat__cell--4" title="3 Okt · 120 XP"></i><i class="heat__cell heat__cell--0" title="4 Okt · tidak aktif"></i><i class="heat__cell heat__cell--1" title="5 Okt · 20 XP"></i><i class="heat__cell heat__cell--2" title="6 Okt · 45 XP"></i><i class="heat__cell heat__cell--0" title="7 Okt · tidak aktif"></i><i class="heat__cell heat__cell--2" title="8 Okt · 45 XP"></i><i class="heat__cell heat__cell--0" title="9 Okt · tidak aktif"></i><i class="heat__cell heat__cell--2" title="10 Okt · 45 XP"></i><i class="heat__cell heat__cell--1" title="11 Okt · 20 XP"></i><i class="heat__cell heat__cell--2" title="12 Okt · 45 XP"></i><i class="heat__cell heat__cell--4" title="13 Okt · 120 XP"></i><i class="heat__cell heat__cell--3" title="14 Okt · 80 XP"></i><i class="heat__cell heat__cell--0" title="15 Okt · tidak aktif"></i><i class="heat__cell heat__cell--0" title="16 Okt · tidak aktif"></i><i class="heat__cell heat__cell--2" title="17 Okt · 45 XP"></i><i class="heat__cell heat__cell--2" title="18 Okt · 45 XP"></i><i class="heat__cell heat__cell--3" title="19 Okt · 80 XP"></i><i class="heat__cell heat__cell--0" title="20 Okt · tidak aktif"></i><i class="heat__cell heat__cell--1" title="21 Okt · 20 XP"></i><i class="heat__cell heat__cell--0" title="22 Okt · tidak aktif"></i><i class="heat__cell heat__cell--2" title="23 Okt · 45 XP"></i><i class="heat__cell heat__cell--3" title="24 Okt · 80 XP"></i><i class="heat__cell heat__cell--0" title="25 Okt · tidak aktif"></i><i class="heat__cell heat__cell--2" title="26 Okt · 45 XP"></i><i class="heat__cell heat__cell--0" title="27 Okt · tidak aktif"></i><i class="heat__cell heat__cell--2" title="28 Okt · 45 XP"></i><i class="heat__cell heat__cell--0" title="29 Okt · tidak aktif"></i><i class="heat__cell heat__cell--2" title="30 Okt · 45 XP"></i><i class="heat__cell heat__cell--3" title="31 Okt · 80 XP"></i><i class="heat__cell heat__cell--0" title="1 Nov · tidak aktif"></i><i class="heat__cell heat__cell--3" title="2 Nov · 80 XP"></i><i class="heat__cell heat__cell--3" title="3 Nov · 80 XP"></i><i class="heat__cell heat__cell--2" title="4 Nov · 45 XP"></i><i class="heat__cell heat__cell--3" title="5 Nov · 80 XP"></i><i class="heat__cell heat__cell--3" title="6 Nov · 80 XP"></i><i class="heat__cell heat__cell--3" title="7 Nov · 80 XP"></i><i class="heat__cell heat__cell--2" title="8 Nov · 45 XP"></i><i class="heat__cell heat__cell--2" title="9 Nov · 45 XP"></i><i class="heat__cell heat__cell--2" title="10 Nov · 45 XP"></i><i class="heat__cell heat__cell--2" title="11 Nov · 45 XP"></i><i class="heat__cell heat__cell--4" title="12 Nov · 120 XP"></i><i class="heat__cell heat__cell--2 heat__cell--today" title="13 Nov · 45 XP"></i><i class="heat__cell heat__cell--future" title="14 Nov"></i><i class="heat__cell heat__cell--future" title="15 Nov"></i></div>
+            <div class="heat__legend" style="margin-top:var(--space-2)">Sedikit <i class="heat__cell"></i><i class="heat__cell heat__cell--1"></i><i class="heat__cell heat__cell--2"></i><i class="heat__cell heat__cell--3"></i><i class="heat__cell heat__cell--4"></i> Banyak XP</div>
+          </div>
+          <div class="heat-side">
+            <div class="heat-fact"><b>62 <small class="text-small text-muted">dari 82 hari</small></b><span>Hari aktif dalam 12 pekan</span></div>
+            <div class="heat-fact"><b>21 hari</b><span>Rekor beruntun · 2–22 September</span></div>
+            <div class="heat-fact"><b>Kamis</b><span>Hari paling rajin · rata-rata 74 XP</span></div>
+          </div>
+        </div>
+            <div class="freeze"><span class="icon-tile icon-tile--sm"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><span><b>1 penjaga istiqamah</b> tersisa. Otomatis dipakai jika Anda absen sehari, agar hitungan beruntun tidak putus.</span></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg> Misi</span><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg> 40 / 50 XP hari ini</span></div>
+      <div class="panel__body">
+        <div class="quest-group"><span>Misi harian</span><span>berganti dalam 3 j 52 m</span></div>
+        <div class="quest quest--done"><div class="quest__main"><div class="quest__row"><span>Selesaikan 1 materi</span><span>1/1</span></div><div class="progress progress--sm progress--good"><div class="progress__bar" style="width:100%"></div></div></div><span class="quest__xp"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> 20 XP</span></div>
+        <div class="quest quest--done"><div class="quest__main"><div class="quest__row"><span>Kerjakan kuis 10 soal</span><span>10/10</span></div><div class="progress progress--sm progress--good"><div class="progress__bar" style="width:100%"></div></div></div><span class="quest__xp"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> 20 XP</span></div>
+        <div class="quest"><div class="quest__main"><div class="quest__row"><span>Murajaah 5 kosakata</span><span>2/5</span></div><div class="progress progress--sm progress--gold"><div class="progress__bar" style="width:40%"></div></div></div><span class="quest__xp">+10 XP</span></div>
+        <div class="divider"></div>
+        <div class="quest-group"><span>Misi pekanan</span><span>sampai Ahad, 23.59</span></div>
+        <div class="quest"><div class="quest__main"><div class="quest__row"><span>Hadiri 2 halaqah live</span><span>1/2</span></div><div class="progress progress--sm"><div class="progress__bar" style="width:50%"></div></div></div><span class="quest__xp">+50 XP</span></div>
+        <div class="quest"><div class="quest__main"><div class="quest__row"><span>Kirim 2 setoran bacaan</span><span>1/2</span></div><div class="progress progress--sm"><div class="progress__bar" style="width:50%"></div></div></div><span class="quest__xp">+60 XP</span></div>
+        <div class="quest"><div class="quest__main"><div class="quest__row"><span>Bantu jawab 1 diskusi</span><span>0/1</span></div><div class="progress progress--sm"><div class="progress__bar" style="width:0%"></div></div></div><span class="quest__xp">+30 XP</span></div>
+        <div class="quest"><div class="quest__main"><div class="quest__row"><span>Belajar 5 hari pekan ini</span><span>5/5</span></div><div class="progress progress--sm progress--good"><div class="progress__bar" style="width:100%"></div></div></div><a class="btn btn--gold btn--sm" href="#" data-toast="toast-claim">Klaim 40 XP</a></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Leaderboard + medals -->
+  <div class="grid-2">
+    <section class="panel" data-tabs data-tab-default="mingguan">
+      <div class="panel__head"><div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0z"/></svg> Papan peringkat</span><span class="panel__sub">Diperbarui setiap jam · reset Senin 00.00 WIB</span></div><div class="cluster cluster--sm cluster--nowrap lb-scope" data-chips>
+          <span class="chip chip--active"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> Kelas</span>
+          <span class="chip"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg> Global</span>
+        </div></div>
+      <div class="lb-toolbar">
+        <div class="tabs tabs--segmented">
+          <a class="tab tab--active" href="#tab-mingguan" data-tab="mingguan">Mingguan</a>
+          <a class="tab" href="#tab-bulanan" data-tab="bulanan">Bulanan</a>
+          <a class="tab" href="#tab-sepanjang" data-tab="sepanjang">Sepanjang Masa</a>
+        </div>
+      </div>
+      <div class="panel__body panel__body--flush">
+        <table class="table" data-panel="mingguan">
+          <thead><tr><th>#</th><th>Santri</th><th>Level</th><th class="table__num">XP</th></tr></thead>
+          <tbody>
+            <tr><td><span class="table__rank table__rank--1">1</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--gold">AH</span><span><span class="avatar-with-meta__name" style="display:block">Ahmad Hanif</span><span class="avatar-with-meta__sub">34 hari beruntun</span></span></span></td><td><span class="badge badge--level">6 · 'Abqari</span></td><td class="table__num"><b>520</b></td></tr>
+            <tr><td><span class="table__rank table__rank--2">2</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--good">RZ</span><span><span class="avatar-with-meta__name" style="display:block">Rizqi Zulfikar</span><span class="avatar-with-meta__sub">19 hari beruntun</span></span></span></td><td><span class="badge badge--level">5 · Mahir</span></td><td class="table__num"><b>410</b></td></tr>
+            <tr class="table__row--me"><td><span class="table__rank table__rank--3">3</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--ring">MF</span><span><span class="avatar-with-meta__name" style="display:block">Muhammad Fauzan (Anda)</span><span class="avatar-with-meta__sub"><span class="trend"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg> naik 2</span> · 12 hari beruntun</span></span></span></td><td><span class="badge badge--level">4 · Mutqin</span></td><td class="table__num"><b>340</b></td></tr>
+            <tr><td><span class="table__rank">4</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--deep">SN</span><span><span class="avatar-with-meta__name" style="display:block">Siti Nurhaliza</span><span class="avatar-with-meta__sub">8 hari beruntun</span></span></span></td><td><span class="badge badge--level">3 · Mujtahid</span></td><td class="table__num"><b>295</b></td></tr>
+            <tr><td><span class="table__rank">5</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--good">FZ</span><span><span class="avatar-with-meta__name" style="display:block">Fatimah Az-Zahra</span><span class="avatar-with-meta__sub">15 hari beruntun</span></span></span></td><td><span class="badge badge--level">4 · Mutqin</span></td><td class="table__num"><b>260</b></td></tr>
+            <tr><td><span class="table__rank">6</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--gold">NA</span><span><span class="avatar-with-meta__name" style="display:block">Nur Aini</span><span class="avatar-with-meta__sub">3 hari beruntun</span></span></span></td><td><span class="badge badge--level">2 · Thalib</span></td><td class="table__num"><b>210</b></td></tr>
+          </tbody>
+        </table>
+        <table class="table" data-panel="bulanan" hidden>
+          <thead><tr><th>#</th><th>Santri</th><th>Level</th><th class="table__num">XP</th></tr></thead>
+          <tbody>
+            <tr><td><span class="table__rank table__rank--1">1</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--gold">AH</span><span class="avatar-with-meta__name">Ahmad Hanif</span></span></td><td><span class="badge badge--level">6 · 'Abqari</span></td><td class="table__num"><b>1.920</b></td></tr>
+            <tr><td><span class="table__rank table__rank--2">2</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--good">RZ</span><span class="avatar-with-meta__name">Rizqi Zulfikar</span></span></td><td><span class="badge badge--level">5 · Mahir</span></td><td class="table__num"><b>1.410</b></td></tr>
+            <tr><td><span class="table__rank table__rank--3">3</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--good">FZ</span><span class="avatar-with-meta__name">Fatimah Az-Zahra</span></span></td><td><span class="badge badge--level">4 · Mutqin</span></td><td class="table__num"><b>1.050</b></td></tr>
+            <tr><td><span class="table__rank">4</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--deep">SN</span><span class="avatar-with-meta__name">Siti Nurhaliza</span></span></td><td><span class="badge badge--level">3 · Mujtahid</span></td><td class="table__num"><b>880</b></td></tr>
+            <tr class="table__row--me"><td><span class="table__rank">5</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--ring">MF</span><span class="avatar-with-meta__name">Muhammad Fauzan (Anda)</span></span></td><td><span class="badge badge--level">4 · Mutqin</span></td><td class="table__num"><b>610</b></td></tr>
+          </tbody>
+        </table>
+        <table class="table" data-panel="sepanjang" hidden>
+          <thead><tr><th>#</th><th>Santri</th><th>Level</th><th class="table__num">XP</th></tr></thead>
+          <tbody>
+            <tr><td><span class="table__rank table__rank--1">1</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--gold">AH</span><span class="avatar-with-meta__name">Ahmad Hanif</span></span></td><td><span class="badge badge--level">6 · 'Abqari</span></td><td class="table__num"><b>6.240</b></td></tr>
+            <tr><td><span class="table__rank table__rank--2">2</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--good">RZ</span><span class="avatar-with-meta__name">Rizqi Zulfikar</span></span></td><td><span class="badge badge--level">5 · Mahir</span></td><td class="table__num"><b>1.980</b></td></tr>
+            <tr><td><span class="table__rank table__rank--3">3</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--good">FZ</span><span class="avatar-with-meta__name">Fatimah Az-Zahra</span></span></td><td><span class="badge badge--level">4 · Mutqin</span></td><td class="table__num"><b>1.240</b></td></tr>
+            <tr class="table__gap"><td colspan="4">• • •</td></tr>
+            <tr class="table__row--me"><td><span class="table__rank">7</span></td><td><span class="avatar-with-meta"><span class="avatar avatar--sm avatar--ring">MF</span><span class="avatar-with-meta__name">Muhammad Fauzan (Anda)</span></span></td><td><span class="badge badge--level">4 · Mutqin</span></td><td class="table__num"><b>1.120</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel__foot text-caption text-muted">Kohort November · 42 santri di kelas Anda. Nama dan contoh angka hanya ilustrasi (contoh).</div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__head"><div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg> Lencana</span><span class="panel__sub">6 dari 24 lencana terbuka</span></div><a class="panel__link" href="#">Semua lencana <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></div>
+      <div class="panel__body">
+        <div class="medals">
+          <div class="medal"><div class="medal__art"><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M40.0 2.0 L51.1 13.1 L66.9 13.1 L66.9 28.9 L78.0 40.0 L66.9 51.1 L66.9 66.9 L51.1 66.9 L40.0 78.0 L28.9 66.9 L13.1 66.9 L13.1 51.1 L2.0 40.0 L13.1 28.9 L13.1 13.1 L28.9 13.1Z" style="fill:var(--gold-soft);stroke:var(--gold);stroke-width:2"/><circle cx="40" cy="40" r="22" style="fill:var(--blue-deep);stroke:var(--gold);stroke-width:1.5"/><svg x="28" y="28" width="24" height="24" viewBox="0 0 24 24" style="fill:none;stroke:var(--gold-bright);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M7 4.5v15l12-7.5z"/></svg></svg></div><span class="medal__name">Langkah Pertama</span><span class="medal__desc">Menyelesaikan materi pertama</span></div>
+          <div class="medal"><div class="medal__art"><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M40.0 2.0 L51.1 13.1 L66.9 13.1 L66.9 28.9 L78.0 40.0 L66.9 51.1 L66.9 66.9 L51.1 66.9 L40.0 78.0 L28.9 66.9 L13.1 66.9 L13.1 51.1 L2.0 40.0 L13.1 28.9 L13.1 13.1 L28.9 13.1Z" style="fill:var(--gold-soft);stroke:var(--gold);stroke-width:2"/><circle cx="40" cy="40" r="22" style="fill:var(--blue-deep);stroke:var(--gold);stroke-width:1.5"/><svg x="28" y="28" width="24" height="24" viewBox="0 0 24 24" style="fill:none;stroke:var(--gold-bright);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></svg></div><span class="medal__name">Istiqamah 7 Hari</span><span class="medal__desc">Belajar 7 hari tanpa jeda</span></div>
+          <div class="medal"><div class="medal__art"><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M40.0 2.0 L51.1 13.1 L66.9 13.1 L66.9 28.9 L78.0 40.0 L66.9 51.1 L66.9 66.9 L51.1 66.9 L40.0 78.0 L28.9 66.9 L13.1 66.9 L13.1 51.1 L2.0 40.0 L13.1 28.9 L13.1 13.1 L28.9 13.1Z" style="fill:var(--gold-soft);stroke:var(--gold);stroke-width:2"/><circle cx="40" cy="40" r="22" style="fill:var(--blue-deep);stroke:var(--gold);stroke-width:1.5"/><svg x="28" y="28" width="24" height="24" viewBox="0 0 24 24" style="fill:none;stroke:var(--gold-bright);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg></svg></div><span class="medal__name">Mumtaz Pertama</span><span class="medal__desc">Nilai mumtaz di kuis pertama</span></div>
+          <div class="medal"><div class="medal__art"><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M40.0 2.0 L51.1 13.1 L66.9 13.1 L66.9 28.9 L78.0 40.0 L66.9 51.1 L66.9 66.9 L51.1 66.9 L40.0 78.0 L28.9 66.9 L13.1 66.9 L13.1 51.1 L2.0 40.0 L13.1 28.9 L13.1 13.1 L28.9 13.1Z" style="fill:var(--gold-soft);stroke:var(--gold);stroke-width:2"/><circle cx="40" cy="40" r="22" style="fill:var(--blue-deep);stroke:var(--gold);stroke-width:1.5"/><svg x="28" y="28" width="24" height="24" viewBox="0 0 24 24" style="fill:none;stroke:var(--gold-bright);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg></svg></div><span class="medal__name">Penjelajah I'rab</span><span class="medal__desc">Meng-i'rab 50 kata di Mushaf Nahwi</span></div>
+          <div class="medal"><div class="medal__art"><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M40.0 2.0 L51.1 13.1 L66.9 13.1 L66.9 28.9 L78.0 40.0 L66.9 51.1 L66.9 66.9 L51.1 66.9 L40.0 78.0 L28.9 66.9 L13.1 66.9 L13.1 51.1 L2.0 40.0 L13.1 28.9 L13.1 13.1 L28.9 13.1Z" style="fill:var(--gold-soft);stroke:var(--gold);stroke-width:2"/><circle cx="40" cy="40" r="22" style="fill:var(--blue-deep);stroke:var(--gold);stroke-width:1.5"/><svg x="28" y="28" width="24" height="24" viewBox="0 0 24 24" style="fill:none;stroke:var(--gold-bright);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></svg></div><span class="medal__name">Penjelajah Isim</span><span class="medal__desc">Tuntas Bab Isim</span></div>
+          <div class="medal"><div class="medal__art"><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M40.0 2.0 L51.1 13.1 L66.9 13.1 L66.9 28.9 L78.0 40.0 L66.9 51.1 L66.9 66.9 L51.1 66.9 L40.0 78.0 L28.9 66.9 L13.1 66.9 L13.1 51.1 L2.0 40.0 L13.1 28.9 L13.1 13.1 L28.9 13.1Z" style="fill:var(--gold-soft);stroke:var(--gold);stroke-width:2"/><circle cx="40" cy="40" r="22" style="fill:var(--blue-deep);stroke:var(--gold);stroke-width:1.5"/><svg x="28" y="28" width="24" height="24" viewBox="0 0 24 24" style="fill:none;stroke:var(--gold-bright);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg></svg></div><span class="medal__name">Hadir di Halaqah</span><span class="medal__desc">Hadir 10 sesi live</span></div>
+          <div class="medal medal--locked"><div class="medal__art"><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M40.0 2.0 L51.1 13.1 L66.9 13.1 L66.9 28.9 L78.0 40.0 L66.9 51.1 L66.9 66.9 L51.1 66.9 L40.0 78.0 L28.9 66.9 L13.1 66.9 L13.1 51.1 L2.0 40.0 L13.1 28.9 L13.1 13.1 L28.9 13.1Z" style="fill:var(--disabled-bg);stroke:var(--line-strong);stroke-width:2"/><circle cx="40" cy="40" r="22" style="fill:var(--surface);stroke:var(--line-strong);stroke-width:1.5"/><svg x="28" y="28" width="24" height="24" viewBox="0 0 24 24" style="fill:none;stroke:var(--subtle);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></svg></div><span class="medal__name">Istiqamah 30 Hari</span><span class="medal__desc">Belajar 30 hari tanpa jeda</span></div>
+          <div class="medal medal--locked"><div class="medal__art"><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M40.0 2.0 L51.1 13.1 L66.9 13.1 L66.9 28.9 L78.0 40.0 L66.9 51.1 L66.9 66.9 L51.1 66.9 L40.0 78.0 L28.9 66.9 L13.1 66.9 L13.1 51.1 L2.0 40.0 L13.1 28.9 L13.1 13.1 L28.9 13.1Z" style="fill:var(--disabled-bg);stroke:var(--line-strong);stroke-width:2"/><circle cx="40" cy="40" r="22" style="fill:var(--surface);stroke:var(--line-strong);stroke-width:1.5"/><svg x="28" y="28" width="24" height="24" viewBox="0 0 24 24" style="fill:none;stroke:var(--subtle);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></svg></div><span class="medal__name">Hafizh Tashrif</span><span class="medal__desc">Hafal 6 bab tsulatsi</span></div>
+          <div class="medal medal--locked"><div class="medal__art"><svg viewBox="0 0 80 80" aria-hidden="true"><path d="M40.0 2.0 L51.1 13.1 L66.9 13.1 L66.9 28.9 L78.0 40.0 L66.9 51.1 L66.9 66.9 L51.1 66.9 L40.0 78.0 L28.9 66.9 L13.1 66.9 L13.1 51.1 L2.0 40.0 L13.1 28.9 L13.1 13.1 L28.9 13.1Z" style="fill:var(--disabled-bg);stroke:var(--line-strong);stroke-width:2"/><circle cx="40" cy="40" r="22" style="fill:var(--surface);stroke:var(--line-strong);stroke-width:1.5"/><svg x="28" y="28" width="24" height="24" viewBox="0 0 24 24" style="fill:none;stroke:var(--subtle);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></svg></div><span class="medal__name">Khatam Yasin</span><span class="medal__desc">Tuntas 83 ayat Mushaf Nahwi</span></div>
+        </div>
+      </div>
+      <div class="panel__foot"><div class="cluster cluster--between"><span class="text-caption text-muted">Terdekat: <b style="color:var(--ink)">Istiqamah 30 Hari</b> · 12 / 30 hari</span><div class="progress progress--sm progress--gold" style="width:160px"><div class="progress__bar" style="width:40%"></div></div></div></div>
+    </section>
+  </div>
+
+</main>
+</div>
+
+<!-- Toasts -->
+<div class="toast-stack">
+  <div class="toast toast--achievement" id="toast-medal" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Lencana baru: Penjelajah I'rab</p><p class="toast__text">Anda sudah meng-i'rab 50 kata di Mushaf Nahwi. +25 XP</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--success" id="toast-claim" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
+    <div class="toast__main"><p class="toast__title">+40 XP ditambahkan</p><p class="toast__text">Misi pekanan "Belajar 5 hari" selesai. Total XP Anda kini 1.160.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+</div>
+
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

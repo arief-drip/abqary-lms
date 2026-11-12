@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Notifikasi &amp; Pesan · Al-Abqary LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Notifikasi-only styles */
+.notif-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: var(--space-6); align-items: start; }
+.tabs-bar { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-4); border-bottom: 1px solid var(--line); }
+.tabs-bar .tabs { border-bottom: 0; }
+.tabs-bar__actions { display: flex; gap: var(--space-2); padding-bottom: var(--space-2); }
+.n-group { padding: var(--space-3) var(--space-6); background: var(--blue-tint); border-bottom: 1px solid var(--line); font-size: var(--fs-caption); line-height: var(--lh-caption); font-weight: var(--fw-semibold); letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--muted); }
+.n-group:first-child { border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
+.n-item { position: relative; display: flex; align-items: flex-start; gap: var(--space-4); padding: var(--space-4) var(--space-6) var(--space-4) var(--space-8); border-bottom: 1px solid var(--line); }
+.n-item:last-child { border-bottom: 0; }
+.n-item:hover { background: var(--bg); }
+.n-item--unread { background: var(--blue-tint); }
+.n-item--unread::before { content: ""; position: absolute; left: 13px; top: 30px; width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--blue); }
+.n-item__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.n-item__title { font-size: var(--fs-small); line-height: 21px; color: var(--ink); }
+.n-item--unread .n-item__title { font-weight: var(--fw-semibold); }
+.n-item__text { font-size: var(--fs-caption); line-height: 18px; color: var(--muted); }
+.n-item__meta { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-1); font-size: 11px; line-height: 14px; color: var(--subtle); }
+.n-item__side { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-2); }
+.n-item__time { font-size: var(--fs-caption); color: var(--muted); white-space: nowrap; }
+.icon-tile--warn { background: var(--warn-soft); color: var(--warn); }
+.type-list { display: flex; flex-direction: column; gap: 2px; }
+.type-list .cat { display: flex; align-items: center; gap: var(--space-3); height: 40px; padding: 0 var(--space-3); border-radius: var(--radius-md); font-size: var(--fs-small); font-weight: var(--fw-medium); cursor: pointer; }
+.type-list .cat:hover { background: var(--bg-subtle); }
+.type-list .cat.is-active { background: var(--blue-soft); color: var(--blue); font-weight: var(--fw-semibold); }
+.type-list .cat .icon-tile { width: 28px; height: 28px; border-radius: var(--radius-sm); }
+.type-list .cat .icon-tile .icon { width: 15px; height: 15px; }
+.type-list .cat small { margin-left: auto; font-size: var(--fs-caption); color: var(--muted); font-weight: var(--fw-regular); }
+
+/* Inbox */
+.inbox { display: grid; grid-template-columns: 320px minmax(0, 1fr); min-height: 760px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); }
+.convs { border-right: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
+.convs__head { padding: var(--space-4); border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: var(--space-3); }
+.convs__head .input { height: 40px; font-size: var(--fs-small); }
+.convs__list { overflow-y: auto; flex: 1; }
+.conv { display: flex; gap: var(--space-3); padding: var(--space-4); border-bottom: 1px solid var(--line); cursor: pointer; }
+.conv:hover { background: var(--bg); }
+.conv.is-active { background: var(--blue-soft); box-shadow: inset 3px 0 0 var(--blue); }
+.conv__main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.conv__row { display: flex; justify-content: space-between; gap: var(--space-2); }
+.conv__name { font-size: var(--fs-small); line-height: var(--lh-small); font-weight: var(--fw-semibold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.conv__time { font-size: 11px; line-height: 20px; color: var(--muted); white-space: nowrap; }
+.conv__role { font-size: 11px; line-height: 14px; color: var(--gold-ink); font-weight: var(--fw-medium); }
+.conv__last { font-size: var(--fs-caption); line-height: 18px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: var(--space-1); }
+.conv__last .icon { width: 14px; height: 14px; flex: none; }
+.conv--unread .conv__last { color: var(--ink); font-weight: var(--fw-medium); }
+.conv__badge { min-width: 20px; height: 20px; padding: 0 6px; border-radius: var(--radius-full); background: var(--blue); color: var(--on-blue); font-size: 11px; font-weight: var(--fw-semibold); display: inline-flex; align-items: center; justify-content: center; }
+.avatar-wrap { position: relative; flex: none; }
+.online { position: absolute; right: 0; bottom: 0; width: 12px; height: 12px; border-radius: var(--radius-full); background: var(--good); border: 2px solid var(--surface); }
+
+.chat { display: flex; flex-direction: column; min-height: 0; }
+.chat__head { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--line); }
+.chat__body { flex: 1; padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); background: var(--bg); }
+.day-sep { align-self: center; font-size: 11px; line-height: 14px; font-weight: var(--fw-semibold); color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-full); padding: var(--space-1) var(--space-3); margin: var(--space-2) 0; }
+.msg { display: flex; gap: var(--space-2); align-items: flex-end; max-width: 78%; }
+.msg--me { align-self: flex-end; flex-direction: row-reverse; }
+.bubble { padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm); background: var(--surface); border: 1px solid var(--line); font-size: var(--fs-small); line-height: 22px; color: var(--ink); display: block; }
+.msg--me .bubble { background: var(--blue); border-color: var(--blue); color: var(--on-blue); border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-lg); }
+.bubble__time { font-size: 11px; line-height: 14px; color: var(--subtle); display: flex; justify-content: flex-end; align-items: center; gap: 2px; margin-top: var(--space-1); }
+.bubble__time .icon { width: 14px; height: 14px; }
+.msg--me .bubble__time { color: var(--blue-on-deep); }
+.bubble__ar { margin: var(--space-2) 0; font-family: var(--font-ar); font-size: 24px; line-height: 1.7; direction: rtl; text-align: right; padding: var(--space-2) var(--space-3); background: var(--gold-soft); border-radius: var(--radius-md); color: var(--blue-deep); }
+.audio { display: flex; align-items: center; gap: var(--space-3); min-width: 300px; }
+.audio__play { width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--blue); color: var(--on-blue); display: flex; align-items: center; justify-content: center; flex: none; cursor: pointer; }
+.audio__play .icon { width: 18px; height: 18px; fill: currentColor; }
+.audio__wave { flex: 1; display: flex; align-items: center; gap: 2px; height: 32px; }
+.audio__wave i { flex: 1; min-width: 2px; border-radius: 2px; background: var(--line-strong); }
+.audio__wave i.is-played { background: var(--blue); }
+.audio__meta { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 11px; line-height: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.audio__speed { padding: 1px 6px; border-radius: var(--radius-full); background: var(--bg-subtle); color: var(--ink); font-weight: var(--fw-semibold); }
+.file-chip { margin-bottom: var(--space-2); display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); background: rgba(255, 255, 255, 0.14); }
+.file-chip .icon { width: 18px; height: 18px; }
+.file-chip small { display: block; font-size: 11px; opacity: 0.8; }
+.typing { display: inline-flex; gap: 4px; padding: var(--space-3) var(--space-4); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); align-self: flex-start; }
+.typing i { width: 6px; height: 6px; border-radius: var(--radius-full); background: var(--subtle); animation: typing 1.2s infinite; }
+.typing i:nth-child(2) { animation-delay: .2s; }
+.typing i:nth-child(3) { animation-delay: .4s; }
+@keyframes typing { 0%, 60%, 100% { opacity: .3; } 30% { opacity: 1; } }
+.quick { display: flex; gap: var(--space-2); padding: var(--space-3) var(--space-6) 0; }
+.quick .chip { height: 30px; font-size: var(--fs-caption); }
+.composer { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-6) var(--space-4); }
+.composer .input { height: 44px; flex: 1; }
+.tool--ar { font-family: var(--font-ar); font-size: 17px; height: 36px; padding: 0 var(--space-3); border-radius: var(--radius-sm); border: 1px solid var(--line-strong); display: inline-flex; align-items: center; cursor: pointer; color: var(--muted); }
+.tool--ar.is-on { background: var(--blue); border-color: var(--blue); color: var(--on-blue); }
+</style>
+</head>
+<body class="app">
+
+<!-- APP TOPNAV START (santri) — copy as-is to every santri page -->
+<header class="topnav app__topnav">
+  <div class="topnav__inner">
+    <a class="brand" href="10-dashboard.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+    <div class="input topnav__search"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari kelas, materi, atau kata…</span><span class="kbd">/</span></div>
+    <div class="topnav__actions">
+      <a class="pill pill--streak" href="18-pencapaian.html" title="Hari beruntun"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>12 <span class="pill__label">hari</span></a>
+      <a class="pill pill--xp" href="18-pencapaian.html" title="Total XP"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>1.120 <span class="pill__label">XP</span></a>
+      <span class="topnav__divider"></span>
+      <a class="btn btn--ghost btn--icon topnav__icon-btn" href="21-notifikasi.html" aria-label="Notifikasi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="notif-dot"></span></a>
+      <a class="avatar-with-meta" href="20-profil.html"><span class="avatar avatar--ring">MF</span><span><span class="avatar-with-meta__name" style="display:block">Muhammad Fauzan</span><span class="avatar-with-meta__sub">Level 4 · Mutqin</span></span></a>
+    </div>
+  </div>
+</header>
+<!-- APP TOPNAV END -->
+
+<div class="app__body">
+
+<!-- SANTRI SIDEBAR START — copy as-is; move .sidebar__item--active to the current page's item -->
+<aside class="sidebar app__sidebar">
+  <div class="sidebar__section">
+    <span class="sidebar__title">Belajar</span>
+    <a class="sidebar__item" href="10-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9.5 9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> Beranda</a>
+    <a class="sidebar__item" href="11-kelas-saya.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Kelas Saya<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="02-katalog.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6z"/></svg> Jelajah Kelas</a>
+    <a class="sidebar__item" href="15-jadwal.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg> Jadwal Live<span class="sidebar__count">2</span></a>
+    <a class="sidebar__item" href="14-tugas.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9zM9 12h6M9 16h4"/></svg> Tugas &amp; Setoran<span class="sidebar__count">2</span></a>
+    <a class="sidebar__item" href="16-mushaf.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v14H6.5A2.5 2.5 0 0 0 4 19.5zm0 0A2.5 2.5 0 0 0 6.5 22H20v-5"/><path d="M12 6.5v6M9 9.5h6"/></svg> Mushaf &amp; Pustaka</a>
+    <a class="sidebar__item" href="17-diskusi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Diskusi</a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Prestasi</span>
+    <a class="sidebar__item" href="18-pencapaian.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0z"/></svg> Pencapaian</a>
+    <a class="sidebar__item" href="19-sertifikat.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg> Sertifikat<span class="sidebar__count">1</span></a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Akun</span>
+    <a class="sidebar__item sidebar__item--active" href="21-notifikasi.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg> Notifikasi<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="20-profil.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Profil &amp; Pengaturan</a>
+  </div>
+  <div class="sidebar__promo">
+    <span class="badge badge--on-dark" style="align-self:flex-start"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Paket Santri aktif</span>
+    <span class="sidebar__promo-title">Naik ke Halaqah Plus</span>
+    <span class="sidebar__promo-text">Halaqah kelompok kecil maksimal 10 santri, setoran tanpa batas, dan laporan perkembangan bulanan.</span>
+    <a class="btn btn--gold btn--sm btn--block" href="04-harga.html">Lihat paket</a>
+  </div>
+</aside>
+<!-- SANTRI SIDEBAR END -->
+
+<main class="app__main">
+
+  <!-- Page head -->
+  <div class="page-head">
+    <nav class="breadcrumb"><a class="breadcrumb__item" href="10-dashboard.html">Beranda</a><span class="breadcrumb__sep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></span><span class="breadcrumb__current">Notifikasi &amp; Pesan</span></nav>
+    <div class="page-head__row">
+      <div>
+        <h1 class="page-head__title">Notifikasi &amp; Pesan</h1>
+        <p class="page-head__sub">Kabar penilaian, jadwal live, diskusi, dan pesan langsung dari ustadz.</p>
+      </div>
+      <div class="page-head__actions">
+        <a class="btn btn--ghost" href="20-profil.html#tab-notifikasi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg> Atur notifikasi</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="stack stack--lg" data-tabs data-tab-default="semua">
+    <div class="tabs-bar">
+      <div class="tabs" role="tablist">
+        <a class="tab tab--active" href="#tab-semua" data-tab="semua">Semua <span class="tab__count">12</span></a>
+        <a class="tab" href="#tab-belum" data-tab="belum">Belum dibaca <span class="tab__count">3</span></a>
+        <a class="tab" href="#tab-pesan" data-tab="pesan">Pesan <span class="tab__count">2</span></a>
+      </div>
+      <div class="tabs-bar__actions" data-panel="semua"><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-read"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 7 17l-5-5M22 10l-7.5 7.5L13 16"/></svg> Tandai semua dibaca</a></div>
+      <div class="tabs-bar__actions" data-panel="belum" hidden><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-read"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 7 17l-5-5M22 10l-7.5 7.5L13 16"/></svg> Tandai semua dibaca</a></div>
+      <div class="tabs-bar__actions" data-panel="pesan" hidden><a class="btn btn--primary btn--sm" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg> Pesan baru</a></div>
+    </div>
+
+    <!-- ===================== SEMUA ===================== -->
+    <div class="notif-layout" data-panel="semua">
+      <section class="panel">
+        <div class="n-group">Hari ini · Jumat, 13 November</div>
+        <div class="n-item n-item--unread">
+          <span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg></span>
+          <div class="n-item__main"><p class="n-item__title">Halaqah live sedang berlangsung: Murajaah pekanan Fi'il mudhari'</p><p class="n-item__text">Ust. Muhammad Ridwan memulai sesi pukul 20.00. 58 santri sudah bergabung.</p><span class="n-item__meta">Jadwal live · Membaca Bangunan: Harf dan Fi'il</span></div>
+          <div class="n-item__side"><span class="n-item__time">8 menit lalu</span><a class="btn btn--primary btn--sm" href="15-jadwal.html">Gabung</a></div>
+        </div>
+        <div class="n-item n-item--unread">
+          <span class="icon-tile icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9z"/><path d="m9 14 2 2 4-4"/></svg></span>
+          <div class="n-item__main"><p class="n-item__title">Setoran isim isyarah sudah dinilai: 88 · Mumtaz</p><p class="n-item__text">"Bacaan <span class="ar-inline" lang="ar" dir="rtl">هٰذَا</span> dan <span class="ar-inline" lang="ar" dir="rtl">ذٰلِكَ</span> sudah tepat. Perhatikan panjang alif pada <span class="ar-inline" lang="ar" dir="rtl">هٰؤُلَاءِ</span>." — Ust. Ahmad Hanafi</p><span class="n-item__meta">Penilaian selesai · +30 XP</span></div>
+          <div class="n-item__side"><span class="n-item__time">16.40</span><a class="btn btn--secondary btn--sm" href="14-tugas.html">Lihat nilai</a></div>
+        </div>
+        <div class="n-item n-item--unread">
+          <span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+          <div class="n-item__main"><p class="n-item__title">Fatimah Az-Zahra membalas diskusi yang Anda ikuti</p><p class="n-item__text">Lam apa pada <span class="ar-inline" lang="ar" dir="rtl">لَمِنَ الْمُرْسَلِيْنَ</span> (Yasin: 3)? · "Tambahan dari catatan saya: lam muzahlaqah hanya masuk pada khabar inna…"</p><span class="n-item__meta">Balasan diskusi · I'rab Ayat</span></div>
+          <div class="n-item__side"><span class="n-item__time">13.45</span><a class="btn btn--secondary btn--sm" href="17-diskusi.html#tab-thread">Buka</a></div>
+        </div>
+        <div class="n-item">
+          <span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg></span>
+          <div class="n-item__main"><p class="n-item__title">Syahadah Qaidaty Jilid 1 sudah terbit</p><p class="n-item__text">Nomor ABQ-L1-2026-00481 · predikat Mumtaz. Unduh PDF atau bagikan tautan verifikasinya.</p><span class="n-item__meta">Sertifikat</span></div>
+          <div class="n-item__side"><span class="n-item__time">10.02</span><a class="btn btn--ghost btn--sm" href="19-sertifikat.html">Lihat</a></div>
+        </div>
+        <div class="n-item">
+          <span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg></span>
+          <div class="n-item__main"><p class="n-item__title">Lencana baru: Penjelajah I'rab</p><p class="n-item__text">Anda sudah meng-i'rab 50 kata di Mushaf Nahwi. +25 XP</p><span class="n-item__meta">Lencana baru</span></div>
+          <div class="n-item__side"><span class="n-item__time">09.15</span><a class="btn btn--ghost btn--sm" href="18-pencapaian.html">Lihat</a></div>
+        </div>
+
+        <div class="n-group">Kemarin · Kamis, 12 November</div>
+        <div class="n-item">
+          <span class="icon-tile icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9z"/><path d="m9 14 2 2 4-4"/></svg></span>
+          <div class="n-item__main"><p class="n-item__title">Kuis pekanan Fi'il madhi: nilai 90</p><p class="n-item__text">9 dari 10 soal benar. Pembahasan soal nomor 7 sudah bisa dibuka.</p><span class="n-item__meta">Penilaian selesai · +40 XP</span></div>
+          <div class="n-item__side"><span class="n-item__time">16.45</span><a class="btn btn--ghost btn--sm" href="13-kuis.html">Pembahasan</a></div>
+        </div>
+        <div class="n-item">
+          <span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m22 8-6 4 6 4V8z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></span>
+          <div class="n-item__main"><p class="n-item__title">Rekaman "Tanda i'rab asli" sudah tersedia</p><p class="n-item__text">Durasi 58 menit, lengkap dengan catatan PDF dari Ust. Ahmad Hanafi.</p><span class="n-item__meta">Jadwal live · Rekaman</span></div>
+          <div class="n-item__side"><span class="n-item__time">07.10</span><a class="btn btn--ghost btn--sm" href="15-jadwal.html">Tonton</a></div>
+        </div>
+        <div class="n-item">
+          <span class="icon-tile icon-tile--bad"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div class="n-item__main"><p class="n-item__title">Tenggat besok: setoran baca teks gundul Bab Fi'il</p><p class="n-item__text">Batas Sabtu, 14 November pukul 21.00.</p><span class="n-item__meta">Tugas</span></div>
+          <div class="n-item__side"><span class="n-item__time">06.00</span><a class="btn btn--ghost btn--sm" href="14-tugas.html">Kerjakan</a></div>
+        </div>
+
+        <div class="n-group">Minggu ini</div>
+        <div class="n-item">
+          <span class="icon-tile icon-tile--warn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>
+          <div class="n-item__main"><p class="n-item__title">Tagihan berikutnya: Rp99.000 pada 2 Desember 2026</p><p class="n-item__text">Paket Santri diperpanjang otomatis lewat GoPay 0812-xxxx-4471.</p><span class="n-item__meta">Tagihan</span></div>
+          <div class="n-item__side"><span class="n-item__time">Sel, 10 Nov</span><a class="btn btn--ghost btn--sm" href="20-profil.html#tab-langganan">Kelola</a></div>
+        </div>
+        <div class="n-item">
+          <span class="icon-tile icon-tile--deep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span>
+          <div class="n-item__main"><p class="n-item__title">Ujian akhir Membaca Bangunan dibuka 20 November</p><p class="n-item__text">30 soal, bisa dikerjakan sampai 30 November.</p><span class="n-item__meta">Pengumuman · Admin Al-Abqary</span></div>
+          <div class="n-item__side"><span class="n-item__time">Sen, 9 Nov</span></div>
+        </div>
+        <div class="n-item">
+          <span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
+          <div class="n-item__main"><p class="n-item__title">Lencana baru: Istiqamah 7 Hari</p><p class="n-item__text">Belajar 7 hari tanpa jeda. Pertahankan sampai 30 hari untuk lencana berikutnya.</p><span class="n-item__meta">Lencana baru</span></div>
+          <div class="n-item__side"><span class="n-item__time">Ahad, 8 Nov</span></div>
+        </div>
+        <div class="n-item">
+          <span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg></span>
+          <div class="n-item__main"><p class="n-item__title">Syahadah Nahwu Dasar sudah terbit</p><p class="n-item__text">Nomor ABQ-ND-2026-00318 · nilai 92, predikat Mumtaz.</p><span class="n-item__meta">Sertifikat</span></div>
+          <div class="n-item__side"><span class="n-item__time">Ahad, 8 Nov</span></div>
+        </div>
+        <div class="panel__foot text-center"><a class="panel__link" href="#">Tampilkan notifikasi lebih lama</a></div>
+      </section>
+
+      <aside class="stack">
+        <section class="panel">
+          <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 3H2l8 9.46V19l4 2v-8.54z"/></svg> Jenis</span></div>
+          <div class="panel__body" style="padding:var(--space-3)">
+            <div class="type-list" data-chips data-active-class="is-active">
+              <span class="cat is-active" data-chip><span class="icon-tile icon-tile--sm"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span>Semua<small>12</small></span>
+              <span class="cat" data-chip><span class="icon-tile icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9z"/><path d="m9 14 2 2 4-4"/></svg></span>Penilaian<small>2</small></span>
+              <span class="cat" data-chip><span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg></span>Jadwal live<small>2</small></span>
+              <span class="cat" data-chip><span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Diskusi<small>1</small></span>
+              <span class="cat" data-chip><span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg></span>Lencana &amp; sertifikat<small>4</small></span>
+              <span class="cat" data-chip><span class="icon-tile icon-tile--bad"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Tugas<small>1</small></span>
+              <span class="cat" data-chip><span class="icon-tile icon-tile--warn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 3 2V2l-3 2-3-2-3 2-3-2-3 2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>Tagihan<small>1</small></span>
+              <span class="cat" data-chip><span class="icon-tile icon-tile--deep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span>Pengumuman<small>1</small></span>
+            </div>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="panel__body">
+            <div class="cluster cluster--nowrap cluster--top"><span class="icon-tile icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span><span class="media__body"><span class="media__title">WhatsApp terhubung</span><span class="media__sub">Pengingat halaqah dan tenggat juga dikirim ke 0812-xxxx-4471.</span></span></div>
+            <a class="btn btn--secondary btn--sm btn--block" href="20-profil.html#tab-notifikasi">Atur saluran notifikasi</a>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <!-- ===================== BELUM DIBACA ===================== -->
+    <section class="panel" data-panel="belum" hidden>
+      <div class="n-item n-item--unread">
+        <span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg></span>
+        <div class="n-item__main"><p class="n-item__title">Halaqah live sedang berlangsung: Murajaah pekanan Fi'il mudhari'</p><p class="n-item__text">Ust. Muhammad Ridwan memulai sesi pukul 20.00. 58 santri sudah bergabung.</p></div>
+        <div class="n-item__side"><span class="n-item__time">8 menit lalu</span><a class="btn btn--primary btn--sm" href="15-jadwal.html">Gabung</a></div>
+      </div>
+      <div class="n-item n-item--unread">
+        <span class="icon-tile icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 2h6v4H9z"/><path d="m9 14 2 2 4-4"/></svg></span>
+        <div class="n-item__main"><p class="n-item__title">Setoran isim isyarah sudah dinilai: 88 · Mumtaz</p><p class="n-item__text">Catatan dari Ust. Ahmad Hanafi tersedia di halaman tugas.</p></div>
+        <div class="n-item__side"><span class="n-item__time">16.40</span><a class="btn btn--secondary btn--sm" href="14-tugas.html">Lihat nilai</a></div>
+      </div>
+      <div class="n-item n-item--unread">
+        <span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+        <div class="n-item__main"><p class="n-item__title">Fatimah Az-Zahra membalas diskusi yang Anda ikuti</p><p class="n-item__text">Lam apa pada <span class="ar-inline" lang="ar" dir="rtl">لَمِنَ الْمُرْسَلِيْنَ</span> (Yasin: 3)?</p></div>
+        <div class="n-item__side"><span class="n-item__time">13.45</span><a class="btn btn--secondary btn--sm" href="17-diskusi.html#tab-thread">Buka</a></div>
+      </div>
+      <div class="panel__foot text-caption text-muted text-center">Itu saja. Notifikasi yang sudah dibaca ada di tab Semua.</div>
+    </section>
+
+    <!-- ===================== PESAN ===================== -->
+    <div class="inbox" data-panel="pesan" hidden>
+      <aside class="convs">
+        <div class="convs__head">
+          <div class="input"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari percakapan…</span></div>
+          <div class="cluster cluster--sm" data-chips><span class="chip chip--active" style="height:30px">Semua</span><span class="chip" style="height:30px">Ustadz</span><span class="chip" style="height:30px">Bantuan</span></div>
+        </div>
+        <div class="convs__list" data-chips data-active-class="is-active">
+          <div class="conv conv--unread is-active" data-chip>
+            <span class="avatar-wrap"><span class="avatar">MR</span><span class="online"></span></span>
+            <div class="conv__main"><div class="conv__row"><span class="conv__name">Ust. Muhammad Ridwan</span><span class="conv__time">20.02</span></div><span class="conv__role">Pengampu Harf dan Fi'il</span><div class="conv__row"><span class="conv__last"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg> Pesan suara · 0:48</span><span class="conv__badge">2</span></div></div>
+          </div>
+          <div class="conv" data-chip>
+            <span class="avatar-wrap"><span class="avatar avatar--deep">AH</span></span>
+            <div class="conv__main"><div class="conv__row"><span class="conv__name">Ust. Abdurrahman Hakim</span><span class="conv__time">Kemarin</span></div><span class="conv__role">Pengampu Mushaf Nahwi</span><span class="conv__last">Anda: Jazakallahu khairan, ustadz.</span></div>
+          </div>
+          <div class="conv" data-chip>
+            <span class="avatar-wrap"><span class="avatar avatar--gold">AH</span><span class="online"></span></span>
+            <div class="conv__main"><div class="conv__row"><span class="conv__name">Ust. Ahmad Hanafi</span><span class="conv__time">Sel</span></div><span class="conv__role">Pengampu Isim Mu'rab</span><span class="conv__last">Silakan ulangi bagian tanda i'rab far'i.</span></div>
+          </div>
+          <div class="conv" data-chip>
+            <span class="avatar-wrap"><span class="avatar avatar--deep">AA</span></span>
+            <div class="conv__main"><div class="conv__row"><span class="conv__name">Bantuan Al-Abqary</span><span class="conv__time">2 Nov</span></div><span class="conv__role">Admin · biasanya membalas &lt; 1 jam</span><span class="conv__last"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 7 17l-5-5M22 10l-7.5 7.5L13 16"/></svg> Pembayaran November sudah kami terima.</span></div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="chat">
+        <div class="chat__head">
+          <span class="avatar-wrap"><span class="avatar">MR</span><span class="online"></span></span>
+          <div class="media__body"><span class="media__title">Ust. Muhammad Ridwan</span><span class="media__sub">Pengampu Membaca Bangunan: Harf dan Fi'il · sedang online</span></div>
+          <a class="btn btn--ghost btn--sm" href="15-jadwal.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.48M7.76 16.24a6 6 0 0 1 0-8.48M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14"/></svg> Sedang live</a>
+          <a class="btn btn--ghost btn--sm btn--icon" href="#" aria-label="Info"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></a>
+        </div>
+        <div class="chat__body">
+          <span class="day-sep">Kemarin</span>
+          <div class="msg">
+            <span class="avatar avatar--sm">MR</span>
+            <div class="bubble">Assalamu'alaikum, Fauzan. Setoran isim isyarah sudah saya nilai 88. Bacaan <span class="ar-inline" lang="ar" dir="rtl">هٰذَا</span> dan <span class="ar-inline" lang="ar" dir="rtl">ذٰلِكَ</span> sudah tepat. Perhatikan panjang alif pada <span class="ar-inline" lang="ar" dir="rtl">هٰؤُلَاءِ</span>.<span class="bubble__time">16.41</span></div>
+          </div>
+          <div class="msg msg--me">
+            <div class="bubble">Wa'alaikumussalam, ustadz. Jazakallahu khairan. Untuk setoran teks gundul Bab Fi'il, boleh dikirim dalam dua rekaman?<span class="bubble__time">17.05 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 7 17l-5-5M22 10l-7.5 7.5L13 16"/></svg></span></div>
+          </div>
+          <span class="day-sep">Hari ini</span>
+          <div class="msg">
+            <span class="avatar avatar--sm">MR</span>
+            <div class="bubble">Boleh, asal masing-masing tidak lebih dari 3 menit. Ini contoh bacaan paragraf pertama.<span class="bubble__time">20.01</span></div>
+          </div>
+          <div class="msg">
+            <span class="avatar avatar--sm">MR</span>
+            <div class="bubble">
+              <div class="audio">
+                <span class="audio__play" data-toggle="is-playing" aria-label="Putar pesan suara"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></span>
+                <div class="audio__wave" aria-hidden="true"><i class="is-played" style="height:18%"></i><i class="is-played" style="height:37%"></i><i class="is-played" style="height:70%"></i><i class="is-played" style="height:61%"></i><i class="is-played" style="height:72%"></i><i class="is-played" style="height:32%"></i><i class="is-played" style="height:27%"></i><i class="is-played" style="height:42%"></i><i class="is-played" style="height:83%"></i><i class="is-played" style="height:81%"></i><i class="is-played" style="height:43%"></i><i class="is-played" style="height:31%"></i><i class="is-played" style="height:30%"></i><i class="is-played" style="height:57%"></i><i class="is-played" style="height:81%"></i><i style="height:52%"></i><i style="height:41%"></i><i style="height:20%"></i><i style="height:33%"></i><i style="height:61%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:44%"></i><i style="height:21%"></i><i style="height:44%"></i><i style="height:59%"></i><i style="height:81%"></i><i style="height:49%"></i><i style="height:35%"></i><i style="height:34%"></i><i style="height:56%"></i><i style="height:59%"></i><i style="height:52%"></i><i style="height:54%"></i><i style="height:23%"></i><i style="height:36%"></i><i style="height:69%"></i><i style="height:79%"></i><i style="height:55%"></i><i style="height:41%"></i><i style="height:18%"></i><i style="height:40%"></i></div>
+                <div class="audio__meta"><span>0:17 / 0:48</span><span class="audio__speed">1x</span></div>
+              </div>
+              <span class="bubble__time">20.02</span>
+            </div>
+          </div>
+          <div class="msg">
+            <span class="avatar avatar--sm">MR</span>
+            <div class="bubble">Perhatikan kalimat pertama:<p class="bubble__ar" lang="ar" dir="rtl">ذَهَبَ الطَّالِبُ إِلَى الْمَسْجِدِ</p><span><span class="ar-inline" lang="ar" dir="rtl">ذَهَبَ</span> fi'il madhi, akhirnya fathah. <span class="ar-inline" lang="ar" dir="rtl">الطَّالِبُ</span> fa'il, marfu' dengan dhammah.</span><span class="bubble__time">20.02</span></div>
+          </div>
+          <div class="msg msg--me">
+            <div class="bubble"><div class="file-chip"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg><span>setoran-bab-fiil-1.m4a<small>2:46 · 2,1 MB</small></span></div>Bagian pertama saya kirim di sini dulu, ustadz.<span class="bubble__time">20.06 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></div>
+          </div>
+          <span class="typing" aria-label="Ustadz sedang mengetik"><i></i><i></i><i></i></span>
+        </div>
+        <div class="quick" data-chips><span class="chip">Jazakallahu khairan</span><span class="chip">Baik, ustadz</span><span class="chip">Mohon diulang bagian ini</span></div>
+        <div class="composer">
+          <a class="btn btn--ghost btn--icon" href="#" aria-label="Lampirkan file"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></a>
+          <span class="tool--ar" data-toggle="is-on" lang="ar" title="Papan ketik Arab">عربي</span>
+          <div class="input"><span class="input__placeholder">Tulis pesan untuk Ust. Muhammad Ridwan…</span></div>
+          <a class="btn btn--secondary btn--icon" href="#" aria-label="Rekam pesan suara"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></a>
+          <a class="btn btn--primary btn--icon" href="#" aria-label="Kirim"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg></a>
+        </div>
+      </section>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- Toasts -->
+<div class="toast-stack">
+  <div class="toast toast--success" id="toast-read" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 7 17l-5-5M22 10l-7.5 7.5L13 16"/></svg></span>
+    <div class="toast__main"><p class="toast__title">3 notifikasi ditandai dibaca</p><p class="toast__text">Tidak ada notifikasi baru saat ini.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+</div>
+
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Peta Mockup · Al-Abqary LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Hub-only styles */
+.journey { display: flex; align-items: stretch; gap: 0; }
+.journey__node { flex: 1; display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+.journey__node:hover { border-color: var(--blue); box-shadow: var(--shadow); }
+.journey__node--goal { background: var(--gold-soft); border-color: var(--gold-line); }
+.journey__node--goal .icon-tile { background: var(--gold); color: var(--blue-deep); }
+.journey__step { font-size: var(--fs-caption); line-height: var(--lh-caption); font-weight: var(--fw-semibold); letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--gold-ink); }
+.journey__name { font-size: var(--fs-h4); line-height: var(--lh-h4); font-weight: var(--fw-semibold); }
+.journey__pages { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.journey__arrow { width: 48px; flex: none; display: flex; align-items: center; justify-content: center; color: var(--blue-line); }
+.journey__arrow .icon { width: 28px; height: 28px; }
+.flow-mini { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.flow-mini .icon { width: 16px; height: 16px; color: var(--subtle); }
+.flow-mini a { font-size: var(--fs-small); line-height: var(--lh-small); padding: var(--space-1) var(--space-3); border-radius: var(--radius-full); background: var(--blue-tint); border: 1px solid var(--blue-line); color: var(--blue); font-weight: var(--fw-medium); }
+.flow-mini a:hover { background: var(--blue-soft); }
+.hub-group { display: flex; flex-direction: column; gap: var(--space-5); }
+.hub-group__head { display: flex; align-items: center; gap: var(--space-4); padding-bottom: var(--space-4); border-bottom: 1px solid var(--line-strong); }
+.hub-group__head p { color: var(--muted); font-size: var(--fs-small); }
+.hub-card { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-5); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); min-height: 148px; transition: box-shadow .15s, border-color .15s; }
+.hub-card:hover { border-color: var(--blue); box-shadow: var(--shadow); }
+.hub-card__num { font-size: var(--fs-h2); line-height: var(--lh-h2); font-weight: var(--fw-bold); color: var(--gold); }
+.hub-card__title { font-size: var(--fs-body); line-height: var(--lh-body); font-weight: var(--fw-semibold); color: var(--ink); }
+.hub-card__desc { font-size: var(--fs-small); line-height: var(--lh-small); color: var(--muted); flex: 1; }
+.hub-card__file { display: flex; align-items: center; justify-content: space-between; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; color: var(--blue); }
+.hub-card__file .icon { width: 16px; height: 16px; }
+.hub-card--ref { background: var(--blue-deep); border-color: var(--blue-deep); }
+.hub-card--ref .hub-card__title { color: var(--on-blue); }
+.hub-card--ref .hub-card__desc { color: var(--blue-on-deep); }
+.hub-card--ref .hub-card__file { color: var(--gold-bright); }
+</style>
+</head>
+<body>
+
+<header class="topnav site-header">
+  <div class="topnav__inner">
+    <a class="brand" href="index.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+    <nav class="topnav__links">
+      <a class="topnav__link topnav__link--active" href="index.html"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+      <a class="topnav__link" href="00-design-system.html"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg> Design System</a>
+      <a class="topnav__link" href="01-landing.html"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9.5 9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> Landing</a>
+      <a class="topnav__link" href="10-dashboard.html"><svg class="icon icon--sm" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg> Beranda Santri</a>
+    </nav>
+    <div class="topnav__actions"><span class="badge badge--info">Mockup v1 · Desktop 1440</span></div>
+  </div>
+</header>
+
+<section class="hero hero--compact">
+  <svg class="hero__pattern" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.2"><path d="M1180.0 -60.0 L1256.2 16.2 L1363.8 16.2 L1363.8 123.8 L1440.0 200.0 L1363.8 276.2 L1363.8 383.8 L1256.2 383.8 L1180.0 460.0 L1103.8 383.8 L996.2 383.8 L996.2 276.2 L920.0 200.0 L996.2 123.8 L996.2 16.2 L1103.8 16.2Z"/><path d="M1260.4 6.0 L1293.7 86.3 L1374.0 119.6 L1340.7 200.0 L1374.0 280.4 L1293.7 313.7 L1260.4 394.0 L1180.0 360.7 L1099.6 394.0 L1066.3 313.7 L986.0 280.4 L1019.3 200.0 L986.0 119.6 L1066.3 86.3 L1099.6 6.0 L1180.0 39.3Z"/><path d="M1180.0 35.0 L1228.3 83.3 L1296.7 83.3 L1296.7 151.7 L1345.0 200.0 L1296.7 248.3 L1296.7 316.7 L1228.3 316.7 L1180.0 365.0 L1131.7 316.7 L1063.3 316.7 L1063.3 248.3 L1015.0 200.0 L1063.3 151.7 L1063.3 83.3 L1131.7 83.3Z"/><path d="M1226.7 87.3 L1246.0 134.0 L1292.7 153.3 L1273.4 200.0 L1292.7 246.7 L1246.0 266.0 L1226.7 312.7 L1180.0 293.4 L1133.3 312.7 L1114.0 266.0 L1067.3 246.7 L1086.6 200.0 L1067.3 153.3 L1114.0 134.0 L1133.3 87.3 L1180.0 106.6Z"/><path d="M1180.0 118.0 L1204.0 142.0 L1238.0 142.0 L1238.0 176.0 L1262.0 200.0 L1238.0 224.0 L1238.0 258.0 L1204.0 258.0 L1180.0 282.0 L1156.0 258.0 L1122.0 258.0 L1122.0 224.0 L1098.0 200.0 L1122.0 176.0 L1122.0 142.0 L1156.0 142.0Z"/><circle cx="1180" cy="200" r="45.1"/></svg>
+  <div class="hero__inner">
+    <div class="hero__text">
+      <span class="text-overline hero__eyebrow">Prototype klik · high-fidelity wireframe</span>
+      <h1 class="text-display hero__title">Peta Mockup <em>Al-Abqary LMS</em></h1>
+      <p class="text-body-lg hero__lead">Semua halaman prototype platform belajar kitab gundul Ma'had Al-Abqary, dikelompokkan per alur. Klik kartu untuk membuka halaman. Tombol "Peta Mockup" di pojok kanan bawah setiap halaman membawa Anda kembali ke sini.</p>
+      <div class="hero__meta"><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg> 26 halaman</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> 3 peran: santri, ustadz, admin</span><span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg> Desktop 1440 px</span></div>
+    </div>
+    <div class="hero__visual">
+      <p class="quran" lang="ar" dir="rtl" style="color:var(--on-blue);font-size:40px">وَقُلْ رَبِّ زِدْنِيْ عِلْمًا</p>
+      <p class="text-caption" style="color:var(--blue-on-deep);text-align:right">Thaha: 114</p>
+    </div>
+  </div>
+</section>
+
+<main class="container stack stack--xl" style="padding:var(--space-12) 0 var(--space-20)">
+
+  <!-- User journey -->
+  <section class="stack stack--lg">
+    <div class="section__head section__head--left" style="margin-bottom:0">
+      <span class="text-overline">Alur utama</span>
+      <h2 class="section__title">Perjalanan santri</h2>
+      <p class="section__lead">Dari pengunjung pertama sampai menerima sertifikat. Setiap kotak membuka halaman awal tahap tersebut.</p>
+    </div>
+    <div class="journey">
+      <a class="journey__node" href="01-landing.html">
+        <span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6z"/></svg></span>
+        <span class="journey__step">Tahap 1</span>
+        <span class="journey__name">Pengunjung</span>
+        <span class="journey__pages">01 Landing · 02 Katalog · 03 Detail kelas · 04 Harga</span>
+      </a>
+      <span class="journey__arrow"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      <a class="journey__node" href="06-auth.html">
+        <span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+        <span class="journey__step">Tahap 2</span>
+        <span class="journey__name">Daftar</span>
+        <span class="journey__pages">06 Masuk / Daftar · 05 Checkout (paket berbayar)</span>
+      </a>
+      <span class="journey__arrow"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      <a class="journey__node" href="07-onboarding.html">
+        <span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span>
+        <span class="journey__step">Tahap 3</span>
+        <span class="journey__name">Onboarding</span>
+        <span class="journey__pages">07 Tujuan, tes penempatan, target harian</span>
+      </a>
+      <span class="journey__arrow"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      <a class="journey__node" href="10-dashboard.html">
+        <span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg></span>
+        <span class="journey__step">Tahap 4</span>
+        <span class="journey__name">Belajar</span>
+        <span class="journey__pages">10 Beranda · 12 Ruang belajar · 13 Kuis · 14 Setoran · 15 Live</span>
+      </a>
+      <span class="journey__arrow"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      <a class="journey__node journey__node--goal" href="19-sertifikat.html">
+        <span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89 17 22l-5-3-5 3 1.52-9.11"/></svg></span>
+        <span class="journey__step">Tahap 5</span>
+        <span class="journey__name">Sertifikat</span>
+        <span class="journey__pages">18 Pencapaian · 19 Sertifikat &amp; verifikasi</span>
+      </a>
+    </div>
+    <div class="grid-2">
+      <div class="card card--flat stack stack--sm">
+        <span class="text-small text-muted">Alur pembelian paket</span>
+        <div class="flow-mini"><a href="02-katalog.html">02 Katalog</a><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><a href="03-detail-kelas.html">03 Detail kelas</a><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><a href="04-harga.html">04 Harga</a><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><a href="05-checkout.html">05 Checkout</a><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><a href="11-kelas-saya.html">11 Kelas saya</a></div>
+      </div>
+      <div class="card card--flat stack stack--sm">
+        <span class="text-small text-muted">Alur ustadz</span>
+        <div class="flow-mini"><a href="30-ustadz-dashboard.html">30 Ruang Ustadz</a><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><a href="31-course-builder.html">31 Kurikulum</a><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><a href="32-penilaian.html">32 Penilaian</a><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg><a href="17-diskusi.html">17 Diskusi</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Publik -->
+  <section class="hub-group">
+    <div class="hub-group__head"><span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6z"/></svg></span><div><h2 class="text-h2">Publik</h2><p>Halaman untuk pengunjung yang belum masuk.</p></div></div>
+    <div class="grid-4 grid--tight">
+      <a class="hub-card hub-card--ref" href="00-design-system.html"><span class="hub-card__num">00</span><span class="hub-card__title">Design System</span><span class="hub-card__desc">Token warna, tipografi Latin–Arab, ikon, dan komponen dasar.</span><span class="hub-card__file">00-design-system.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="01-landing.html"><span class="hub-card__num">01</span><span class="hub-card__title">Landing Page</span><span class="hub-card__desc">Halaman utama: metode, jenjang, kelas unggulan, harga, FAQ.</span><span class="hub-card__file">01-landing.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="02-katalog.html"><span class="hub-card__num">02</span><span class="hub-card__title">Katalog Kelas</span><span class="hub-card__desc">Daftar kelas dengan filter bidang, level, dan harga.</span><span class="hub-card__file">02-katalog.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="03-detail-kelas.html"><span class="hub-card__num">03</span><span class="hub-card__title">Detail Kelas</span><span class="hub-card__desc">Silabus, ustadz pengampu, ulasan, dan tombol daftar kelas.</span><span class="hub-card__file">03-detail-kelas.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="04-harga.html"><span class="hub-card__num">04</span><span class="hub-card__title">Paket &amp; Harga</span><span class="hub-card__desc">Perbandingan paket Gratis, Santri, dan Halaqah Plus.</span><span class="hub-card__file">04-harga.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="05-checkout.html"><span class="hub-card__num">05</span><span class="hub-card__title">Checkout</span><span class="hub-card__desc">Ringkasan pesanan, metode pembayaran, dan halaman sukses.</span><span class="hub-card__file">05-checkout.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="06-auth.html"><span class="hub-card__num">06</span><span class="hub-card__title">Masuk / Daftar</span><span class="hub-card__desc">Masuk, daftar akun baru, dan lupa kata sandi.</span><span class="hub-card__file">06-auth.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="07-onboarding.html"><span class="hub-card__num">07</span><span class="hub-card__title">Onboarding</span><span class="hub-card__desc">Tujuan belajar, tes penempatan, dan target harian.</span><span class="hub-card__file">07-onboarding.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+    </div>
+  </section>
+
+  <!-- Santri -->
+  <section class="hub-group">
+    <div class="hub-group__head"><span class="icon-tile icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg></span><div><h2 class="text-h2">Santri</h2><p>Area belajar setelah masuk (app shell dengan sidebar santri).</p></div></div>
+    <div class="grid-4 grid--tight">
+      <a class="hub-card" href="10-dashboard.html"><span class="hub-card__num">10</span><span class="hub-card__title">Beranda Santri</span><span class="hub-card__desc">Lanjutkan belajar, target harian, jadwal live, tugas, peringkat.</span><span class="hub-card__file">10-dashboard.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="11-kelas-saya.html"><span class="hub-card__num">11</span><span class="hub-card__title">Kelas Saya</span><span class="hub-card__desc">Kelas aktif dengan progres, dan kelas yang sudah selesai.</span><span class="hub-card__file">11-kelas-saya.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="12-ruang-belajar.html"><span class="hub-card__num">12</span><span class="hub-card__title">Ruang Belajar</span><span class="hub-card__desc">Pemutar materi: video, teks, Enam Tangga, catatan (mode fokus).</span><span class="hub-card__file">12-ruang-belajar.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="13-kuis.html"><span class="hub-card__num">13</span><span class="hub-card__title">Kuis I'rab</span><span class="hub-card__desc">Soal i'rab interaktif dan halaman hasil kuis.</span><span class="hub-card__file">13-kuis.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="14-tugas.html"><span class="hub-card__num">14</span><span class="hub-card__title">Tugas &amp; Setoran</span><span class="hub-card__desc">Daftar tugas, rekam setoran audio, dan feedback ustadz.</span><span class="hub-card__file">14-tugas.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="15-jadwal.html"><span class="hub-card__num">15</span><span class="hub-card__title">Jadwal Live</span><span class="hub-card__desc">Kalender halaqah live dan rekaman sesi sebelumnya.</span><span class="hub-card__file">15-jadwal.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="16-mushaf.html"><span class="hub-card__num">16</span><span class="hub-card__title">Mushaf &amp; Pustaka</span><span class="hub-card__desc">Mushaf Nahwi dan Sharfi berwarna, serta pustaka kitab.</span><span class="hub-card__file">16-mushaf.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="17-diskusi.html"><span class="hub-card__num">17</span><span class="hub-card__title">Diskusi</span><span class="hub-card__desc">Forum tanya-jawab per kelas dan per materi.</span><span class="hub-card__file">17-diskusi.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="18-pencapaian.html"><span class="hub-card__num">18</span><span class="hub-card__title">Pencapaian</span><span class="hub-card__desc">Papan peringkat, lencana, streak, dan level santri.</span><span class="hub-card__file">18-pencapaian.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="19-sertifikat.html"><span class="hub-card__num">19</span><span class="hub-card__title">Sertifikat</span><span class="hub-card__desc">Syahadah yang sudah diraih dan halaman verifikasi.</span><span class="hub-card__file">19-sertifikat.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="20-profil.html"><span class="hub-card__num">20</span><span class="hub-card__title">Profil &amp; Pengaturan</span><span class="hub-card__desc">Profil, preferensi belajar, langganan, dan tagihan.</span><span class="hub-card__file">20-profil.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="21-notifikasi.html"><span class="hub-card__num">21</span><span class="hub-card__title">Notifikasi</span><span class="hub-card__desc">Notifikasi sistem dan pesan dari ustadz.</span><span class="hub-card__file">21-notifikasi.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+    </div>
+  </section>
+
+  <!-- Ustadz & Admin -->
+  <section class="hub-group">
+    <div class="hub-group__head"><span class="icon-tile icon-tile--deep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5"/></svg></span><div><h2 class="text-h2">Ustadz &amp; Admin</h2><p>Ruang kerja asatidz dan pengelola platform (app shell varian staff).</p></div></div>
+    <div class="grid-4 grid--tight">
+      <a class="hub-card" href="30-ustadz-dashboard.html"><span class="hub-card__num">30</span><span class="hub-card__title">Ruang Ustadz</span><span class="hub-card__desc">Ringkasan kelas, antrean penilaian, dan jadwal mengajar.</span><span class="hub-card__file">30-ustadz-dashboard.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="31-course-builder.html"><span class="hub-card__num">31</span><span class="hub-card__title">Penyusun Kurikulum</span><span class="hub-card__desc">Susun bab, materi, Enam Tangga, dan bank soal kuis.</span><span class="hub-card__file">31-course-builder.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="32-penilaian.html"><span class="hub-card__num">32</span><span class="hub-card__title">Penilaian</span><span class="hub-card__desc">Menilai setoran audio dan tugas santri, beri feedback.</span><span class="hub-card__file">32-penilaian.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="33-admin-dashboard.html"><span class="hub-card__num">33</span><span class="hub-card__title">Dasbor Admin</span><span class="hub-card__desc">Analitik pendaftaran, pendapatan, keaktifan, dan retensi.</span><span class="hub-card__file">33-admin-dashboard.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+      <a class="hub-card" href="34-admin-pengguna.html"><span class="hub-card__num">34</span><span class="hub-card__title">Pengguna &amp; Peran</span><span class="hub-card__desc">Kelola pengguna, kohort, kupon, dan hak akses.</span><span class="hub-card__file">34-admin-pengguna.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+    </div>
+  </section>
+
+  <!-- Sistem -->
+  <section class="hub-group">
+    <div class="hub-group__head"><span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></span><div><h2 class="text-h2">Sistem</h2><p>Kondisi khusus dan template pesan.</p></div></div>
+    <div class="grid-4 grid--tight">
+      <a class="hub-card" href="40-states.html"><span class="hub-card__num">40</span><span class="hub-card__title">States &amp; Template</span><span class="hub-card__desc">404, empty state, skeleton loading, maintenance, template email/WA.</span><span class="hub-card__file">40-states.html <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></a>
+    </div>
+  </section>
+
+  <p class="text-caption text-muted">Catatan: nama, angka, harga, dan testimoni di seluruh mockup adalah data contoh, bukan data asli.</p>
+</main>
+
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

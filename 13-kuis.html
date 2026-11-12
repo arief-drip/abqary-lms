@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Uji Pemahaman: Fa'il · Kuis · Al-Abqary LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Quiz page styles */
+.mock-states { width: 760px; margin: var(--space-6) auto 0; padding: var(--space-3) var(--space-4); border: 1.5px dashed var(--line-strong); border-radius: var(--radius-lg); display: flex; align-items: center; gap: var(--space-3); }
+.mock-states__label { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); display: inline-flex; align-items: center; gap: var(--space-1); white-space: nowrap; }
+.mock-states__label .icon { width: 16px; height: 16px; }
+.focus__main--narrow { padding-top: var(--space-6); min-height: calc(100vh - 64px - 76px - 94px); }
+.hearts { display: inline-flex; align-items: center; gap: 2px; color: var(--bad); }
+.hearts .icon { width: 22px; height: 22px; fill: currentColor; }
+.hearts .is-lost { color: var(--line-strong); fill: none; }
+.hearts .is-lost .icon { fill: none; }
+.timer { display: inline-flex; align-items: center; gap: var(--space-2); height: 36px; padding: 0 var(--space-3); border-radius: var(--radius-full); background: var(--bg-subtle); font-size: var(--fs-small); font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }
+.timer .icon { width: 18px; height: 18px; color: var(--muted); }
+.qdots { display: flex; gap: 4px; flex: 1; }
+.qdots i { flex: 1; height: 8px; border-radius: var(--radius-full); background: var(--bg-subtle); }
+.qdots .is-ok { background: var(--good); }
+.qdots .is-bad { background: var(--bad); }
+.qdots .is-now { background: var(--blue); box-shadow: 0 0 0 2px var(--blue-soft); }
+
+.qcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); padding: var(--space-8); display: flex; flex-direction: column; gap: var(--space-5); }
+.qmeta { display: flex; align-items: center; gap: var(--space-2); }
+.qprompt { font-size: var(--fs-h3); line-height: var(--lh-h3); font-weight: var(--fw-semibold); }
+.qsentence { text-align: center; padding: var(--space-6); border-radius: var(--radius-lg); background: var(--blue-tint); border: 1px solid var(--blue-line); font-family: var(--font-ar); font-size: 40px; line-height: 1.8; }
+.qsentence mark { background: var(--gold-soft); color: var(--blue-deep); padding: 0 var(--space-2); border-radius: var(--radius-sm); box-shadow: inset 0 -3px 0 var(--gold); }
+.qsentence small { display: block; font-family: var(--font-ui); font-size: var(--fs-small); line-height: var(--lh-small); color: var(--muted); }
+.qopts { display: flex; flex-direction: column; gap: var(--space-3); }
+.quiz-option { cursor: pointer; }
+.quiz-option .quiz-option__icon { visibility: hidden; }
+.quiz-option--correct .quiz-option__icon, .quiz-option--wrong .quiz-option__icon { visibility: visible; }
+.quiz-feedback .icon { flex: none; }
+
+.paint-sentence { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-3); padding: var(--space-6); border-radius: var(--radius-lg); background: var(--bg); }
+.paint-sentence .word { cursor: pointer; min-width: 110px; }
+.paint-sentence .word__ar { font-size: 32px; }
+.word--blank { --word-color: var(--line-strong); border-style: dashed; border-bottom-style: solid; }
+.word--blank .word__ar { color: var(--ink); }
+.palette { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.palette .legend-chip { height: 36px; padding: 0 var(--space-4) 0 var(--space-3); font-size: var(--fs-small); cursor: pointer; }
+.palette .legend-chip.is-active { border-color: var(--word-color); box-shadow: 0 0 0 2px var(--word-color); font-weight: var(--fw-semibold); }
+
+.slots { display: flex; justify-content: center; gap: var(--space-3); padding: var(--space-5); min-height: 108px; border-radius: var(--radius-lg); background: var(--bg); border: 1.5px dashed var(--line-strong); }
+.slot-empty { width: 120px; height: 64px; border-radius: var(--radius-md); border: 1.5px dashed var(--blue-line); background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: var(--fs-caption); color: var(--subtle); }
+.tile { display: inline-flex; align-items: center; gap: var(--space-2); height: 64px; padding: 0 var(--space-4); border-radius: var(--radius-md); background: var(--surface); border: 1.5px solid var(--line-strong); border-bottom-width: 4px; font-family: var(--font-ar); font-size: 30px; line-height: 1; cursor: grab; }
+.tile .icon { width: 16px; height: 16px; color: var(--subtle); }
+.tile--placed { border-color: var(--blue); background: var(--blue-tint); }
+.tile--used { opacity: .35; cursor: default; border-style: dashed; }
+.tile--drag { transform: rotate(-3deg) translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--gold); }
+.bank { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--space-3); }
+
+.harakat-keys { display: flex; justify-content: center; gap: var(--space-2); }
+.hkey { width: 68px; height: 80px; gap: 0; border-radius: var(--radius-md); border: 1px solid var(--line-strong); border-bottom-width: 3px; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
+.hkey span { font-family: var(--font-ar); font-size: 26px; line-height: 1.5; padding-bottom: 8px; }
+.hkey small { font-size: 10px; line-height: 12px; color: var(--muted); }
+.hkey.is-active { border-color: var(--blue); background: var(--blue-soft); color: var(--blue); }
+.input--ar.input--big { height: 76px; font-size: 40px; text-align: center; justify-content: center; }
+input.input { outline: none; }
+input.input:focus { border-color: var(--blue); box-shadow: var(--shadow-focus); }
+
+/* Result */
+.result-hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-3); padding: var(--space-10) var(--space-8) var(--space-8); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl); box-shadow: var(--shadow); }
+.ring-xl { width: 168px; height: 168px; }
+.ring-xl .progress-ring__track, .ring-xl .progress-ring__value { stroke-width: 12; }
+.ring-xl .progress-ring__value { stroke: var(--good); }
+.ring-xl .progress-ring__num { font-size: var(--fs-h1); line-height: var(--lh-h1); }
+.result-title { font-size: var(--fs-display); line-height: var(--lh-display); font-weight: var(--fw-bold); color: var(--good); letter-spacing: var(--ls-tight); }
+.result-ar { font-family: var(--font-ar); font-size: 30px; line-height: 1.4; color: var(--gold-ink); }
+.result-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-3); width: 100%; margin-top: var(--space-4); }
+.result-stats div { padding: var(--space-4); border-radius: var(--radius-lg); background: var(--bg); display: flex; flex-direction: column; gap: 2px; }
+.result-stats b { font-size: var(--fs-h3); line-height: var(--lh-h3); }
+.result-stats span { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.result-stats .is-xp { background: var(--gold-soft); }
+.result-stats .is-xp b { color: var(--gold-ink); }
+.review-row { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-5); }
+.review-row__no { width: 28px; font-size: var(--fs-small); font-weight: var(--fw-semibold); color: var(--muted); }
+.review-row__main { flex: 1; min-width: 0; display: block; font-size: var(--fs-small); line-height: 24px; }
+.review-row__main small { display: block; font-size: var(--fs-caption); line-height: 22px; color: var(--muted); }
+.review-row--bad { background: var(--bad-soft); }
+.review-ok { color: var(--good); display: flex; }
+.review-bad { color: var(--bad); display: flex; }
+.mock-nav { bottom: calc(76px + var(--space-4)); }
+/* Keep Latin word labels LTR inside RTL word rows */
+.word__label { direction: ltr; unicode-bidi: isolate; }
+</style>
+</head>
+<body class="focus">
+
+<header class="focus__bar">
+  <div class="focus__bar-inner">
+    <a class="btn btn--ghost btn--sm focus__back" href="12-ruang-belajar.html" title="Keluar dari kuis"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg> Keluar</a>
+    <span class="topnav__divider"></span>
+    <div class="focus__title"><b>Uji Pemahaman: Fa'il</b><span>Membaca Akhir · Bab 2 · 10 soal</span></div>
+    <div class="focus__progress">
+      <span id="q-counter">Soal 3 dari 10</span>
+      <div class="qdots" id="q-dots" aria-hidden="true"><i class="is-ok"></i><i class="is-ok"></i><i class="is-now"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+    <div class="focus__actions">
+      <span class="timer" title="Sisa waktu"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></svg> <span id="q-timer">07:42</span></span>
+      <span class="hearts" title="Kesempatan salah: 2 dari 3 tersisa" aria-label="2 dari 3 kesempatan tersisa"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/></svg><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/></svg><span class="is-lost"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"/></svg></span></span>
+      <span class="pill pill--xp"><span class="pill__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>+10 <span class="pill__label">XP</span></span>
+    </div>
+  </div>
+</header>
+
+<div data-tabs>
+
+  <div class="mock-states">
+    <span class="mock-states__label"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg> Contoh tampilan:</span>
+    <div class="tabs tabs--segmented">
+      <a class="tab tab--active" data-tab="pg" data-q="Soal 3 dari 10" data-dot="2" href="#">Pilihan ganda</a>
+      <a class="tab" data-tab="warnai" data-q="Soal 5 dari 10" data-dot="4" href="#">Warnai kata</a>
+      <a class="tab" data-tab="susun" data-q="Soal 7 dari 10" data-dot="6" href="#">Susun kata</a>
+      <a class="tab" data-tab="harakat" data-q="Soal 8 dari 10" data-dot="7" href="#">Isian harakat</a>
+      <a class="tab" data-tab="hasil" data-q="Selesai · 9 dari 10 benar" data-dot="10" href="#">Hasil</a>
+    </div>
+  </div>
+
+  <!-- STATE: multiple choice -->
+  <div data-panel="pg">
+    <main class="focus__main focus__main--narrow">
+      <section class="qcard" data-quiz="pg">
+        <div class="qmeta"><span class="badge badge--info">Soal 3</span><span class="badge badge--locked">Pilihan ganda</span><span class="text-caption text-muted">+5 XP bila benar</span></div>
+        <h1 class="qprompt">Apa i'rab kata yang disorot?</h1>
+        <p class="qsentence" lang="ar" dir="rtl">قَرَأَ <mark>الْمُسْلِمُوْنَ</mark> الْقُرْآنَ<small dir="ltr" lang="id">Kaum muslimin membaca Al-Qur'an.</small></p>
+        <div class="qopts" id="pg-opts">
+          <div class="quiz-option" data-opt><span class="quiz-option__key">A</span><span class="quiz-option__text">Mubtada'</span><span class="quiz-option__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg></span></div>
+          <div class="quiz-option quiz-option--correct" data-opt data-correct><span class="quiz-option__key">B</span><span class="quiz-option__text">Fa'il</span><span class="quiz-option__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span></div>
+          <div class="quiz-option quiz-option--wrong" data-opt><span class="quiz-option__key">C</span><span class="quiz-option__text">Maf'ul bih</span><span class="quiz-option__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg></span></div>
+          <div class="quiz-option" data-opt><span class="quiz-option__key">D</span><span class="quiz-option__text">Khabar</span><span class="quiz-option__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg></span></div>
+        </div>
+        <div class="quiz-feedback quiz-feedback--bad" id="pg-bad"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg><div><b>Belum tepat · kesempatan berkurang 1</b><p><span class="ar-inline" lang="ar" dir="rtl">الْمُسْلِمُوْنَ</span> terletak setelah fi'il ma'lum <span class="ar-inline" lang="ar" dir="rtl">قَرَأَ</span> dan menunjukkan pelaku, jadi ia <strong>fa'il</strong>. Tanda rafa'nya wawu karena jamak mudzakkar salim. Yang menjadi maf'ul bih adalah <span class="ar-inline" lang="ar" dir="rtl">الْقُرْآنَ</span>.</p></div></div>
+        <div class="quiz-feedback quiz-feedback--good" id="pg-good" hidden><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg><div><b>Benar · +5 XP</b><p>Isim setelah fi'il ma'lum yang berakhiran <span class="ar-inline" lang="ar" dir="rtl">ـُوْنَ</span> pasti fa'il-nya.</p></div></div>
+      </section>
+    </main>
+    <footer class="focus__footer"><div class="focus__footer-inner" style="width:760px">
+      <a class="btn btn--ghost" href="12-ruang-belajar.html#tab-materi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Lihat materi</a>
+      <div class="cluster">
+        <a class="btn btn--secondary" href="#" id="pg-check" hidden>Periksa jawaban</a>
+        <a class="btn btn--primary btn--lg" href="#" data-goto="warnai" id="pg-next">Soal berikutnya <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </div></footer>
+  </div>
+
+  <!-- STATE: color the words -->
+  <div data-panel="warnai" hidden>
+    <main class="focus__main focus__main--narrow">
+      <section class="qcard">
+        <div class="qmeta"><span class="badge badge--info">Soal 5</span><span class="badge badge--locked"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2a10 10 0 0 0 0 20c.93 0 1.5-.75 1.5-1.5 0-.4-.15-.74-.4-1-.25-.27-.4-.6-.4-1 0-.83.67-1.5 1.5-1.5H16a6 6 0 0 0 6-6c0-5-4.5-9-10-9z"/></svg> Warnai kata</span><span class="text-caption text-muted">+10 XP bila semua benar</span></div>
+        <h1 class="qprompt">Warnai setiap kata sesuai i'rab-nya</h1>
+        <p class="text-small text-muted">Pilih warna di palet, lalu ketuk kata. Ketuk lagi untuk mengganti warnanya.</p>
+        <div class="paint-sentence" dir="rtl" id="paint">
+          <span class="word irab--fiil-fail" data-answer="fiil-fail"><span class="word__ar" lang="ar" dir="rtl">قَرَأَ</span><span class="word__label"><i class="word__dot"></i>Fi'il</span></span>
+          <span class="word irab--fail" data-answer="fail"><span class="word__ar" lang="ar" dir="rtl">الطَّالِبُ</span><span class="word__label"><i class="word__dot"></i>Fa'il</span></span>
+          <span class="word word--blank is-selected" data-answer="maful-bih"><span class="word__ar" lang="ar" dir="rtl">الْكِتَابَ</span><span class="word__label"><i class="word__dot"></i>Belum diwarnai</span></span>
+          <span class="word word--blank" data-answer="jar-majrur"><span class="word__ar" lang="ar" dir="rtl">فِي الْمَسْجِدِ</span><span class="word__label"><i class="word__dot"></i>Belum diwarnai</span></span>
+        </div>
+        <div class="stack stack--sm">
+          <span class="text-caption text-muted">Palet warna i'rab</span>
+          <div class="palette" id="palette">
+            <span class="legend-chip irab--fiil-fail" data-role="fiil-fail" data-label="Fi'il"><i></i>Fi'il</span>
+            <span class="legend-chip irab--fail" data-role="fail" data-label="Fa'il"><i></i>Fa'il</span>
+            <span class="legend-chip irab--maful-bih is-active" data-role="maful-bih" data-label="Maf'ul bih"><i></i>Maf'ul bih</span>
+            <span class="legend-chip irab--mubtada" data-role="mubtada" data-label="Mubtada'"><i></i>Mubtada'</span>
+            <span class="legend-chip irab--khabar" data-role="khabar" data-label="Khabar"><i></i>Khabar</span>
+            <span class="legend-chip irab--jar-majrur" data-role="jar-majrur" data-label="Jar-majrur"><i></i>Jar-majrur</span>
+            <span class="legend-chip irab--mudhaf-ilaih" data-role="mudhaf-ilaih" data-label="Mudhaf ilaih"><i></i>Mudhaf ilaih</span>
+          </div>
+        </div>
+        <div class="quiz-feedback quiz-feedback--good" id="paint-good" hidden><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg><div><b>Benar semua · +10 XP</b><p>Fi'il, lalu fa'il yang rafa', maf'ul bih yang nashab, dan jar-majrur sebagai keterangan tempat.</p></div></div>
+        <div class="quiz-feedback quiz-feedback--bad" id="paint-bad" hidden><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg><div><b>Masih ada yang belum tepat</b><p>Periksa lagi kata yang bergaris putus-putus atau warnanya belum sesuai.</p></div></div>
+      </section>
+    </main>
+    <footer class="focus__footer"><div class="focus__footer-inner" style="width:760px">
+      <a class="btn btn--ghost" href="#" id="paint-reset"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg> Hapus warna</a>
+      <a class="btn btn--primary btn--lg" href="#" id="paint-check">Periksa jawaban</a>
+    </div></footer>
+  </div>
+
+  <!-- STATE: order the words -->
+  <div data-panel="susun" hidden>
+    <main class="focus__main focus__main--narrow">
+      <section class="qcard">
+        <div class="qmeta"><span class="badge badge--info">Soal 7</span><span class="badge badge--locked"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg> Susun kata</span><span class="text-caption text-muted">+10 XP bila benar</span></div>
+        <h1 class="qprompt">Susun menjadi kalimat: "Para pelajar membaca kitab."</h1>
+        <p class="text-small text-muted">Ketuk atau seret kata ke kotak jawaban. Kalimat Arab dibaca dari kanan. Ada satu kata pengecoh.</p>
+        <div class="slots" dir="rtl" id="slots">
+          <span class="tile tile--placed" data-w="قَرَأَ"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg>قَرَأَ</span>
+          <span class="slot-empty">Letakkan di sini</span>
+          <span class="slot-empty">&nbsp;</span>
+        </div>
+        <div class="bank" dir="rtl" id="bank">
+          <span class="tile tile--used" data-w="قَرَأَ">قَرَأَ</span>
+          <span class="tile tile--drag" data-w="الطُّلَّابُ"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg>الطُّلَّابُ</span>
+          <span class="tile" data-w="الْكِتَابَ"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg>الْكِتَابَ</span>
+          <span class="tile" data-w="قَرَأُوْا"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20"/></svg>قَرَأُوْا</span>
+        </div>
+        <div class="quiz-feedback quiz-feedback--good" id="order-good" hidden><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg><div><b>Benar · +10 XP</b><p><span class="ar-inline" lang="ar" dir="rtl">قَرَأَ الطُّلَّابُ الْكِتَابَ</span>. Fi'il tetap mufrad walaupun fa'il-nya jamak.</p></div></div>
+        <div class="quiz-feedback quiz-feedback--bad" id="order-bad" hidden><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg><div><b>Belum tepat</b><p>Ingat rumus: fi'il tetap mufrad walaupun fa'il-nya jamak. Urutannya fi'il, fa'il, lalu maf'ul bih.</p></div></div>
+      </section>
+    </main>
+    <footer class="focus__footer"><div class="focus__footer-inner" style="width:760px">
+      <a class="btn btn--ghost" href="#" id="order-reset"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg> Ulang susunan</a>
+      <a class="btn btn--primary btn--lg" href="#" id="order-check">Periksa jawaban</a>
+    </div></footer>
+  </div>
+
+  <!-- STATE: fill in the harakat -->
+  <div data-panel="harakat" hidden>
+    <main class="focus__main focus__main--narrow">
+      <section class="qcard">
+        <div class="qmeta"><span class="badge badge--info">Soal 8</span><span class="badge badge--locked"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg> Isian harakat</span><span class="text-caption text-muted">+5 XP bila benar</span></div>
+        <h1 class="qprompt">Beri harakat akhir yang benar pada fa'il</h1>
+        <p class="qsentence" lang="ar" dir="rtl">حَضَرَ <mark>الْأُسْتَاذ…</mark><small dir="ltr" lang="id">Ustadz itu telah hadir.</small></p>
+        <div class="field">
+          <label class="field__label" for="harakat-input">Tulis ulang kata yang disorot lengkap dengan harakat akhirnya</label>
+          <input class="input input--ar input--big" id="harakat-input" lang="ar" dir="rtl" value="الْأُسْتَاذُ" autocomplete="off">
+          <span class="field__hint">Gunakan papan harakat di bawah bila keyboard Anda belum mendukung tulisan Arab.</span>
+        </div>
+        <div class="harakat-keys" id="hkeys">
+          <span class="hkey" data-h="&#x064E;"><span lang="ar">ذَ</span><small>fathah</small></span>
+          <span class="hkey" data-h="&#x0650;"><span lang="ar">ذِ</span><small>kasrah</small></span>
+          <span class="hkey is-active" data-h="&#x064F;"><span lang="ar">ذُ</span><small>dhammah</small></span>
+          <span class="hkey" data-h="&#x0652;"><span lang="ar">ذْ</span><small>sukun</small></span>
+          <span class="hkey" data-h="&#x064B;"><span lang="ar">ذً</span><small>-an</small></span>
+          <span class="hkey" data-h="&#x064D;"><span lang="ar">ذٍ</span><small>-in</small></span>
+          <span class="hkey" data-h="&#x064C;"><span lang="ar">ذٌ</span><small>-un</small></span>
+        </div>
+        <div class="quiz-feedback quiz-feedback--good" id="h-good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg><div><b>Benar · +5 XP</b><p><span class="ar-inline" lang="ar" dir="rtl">الْأُسْتَاذُ</span> adalah fa'il dari fi'il madhi <span class="ar-inline" lang="ar" dir="rtl">حَضَرَ</span>, marfu', tanda rafa'nya dhammah zhahirah. Karena ada <span class="ar-inline" lang="ar" dir="rtl">الْ</span>, akhirnya dhammah tanpa tanwin.</p></div></div>
+        <div class="quiz-feedback quiz-feedback--bad" id="h-bad" hidden><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg><div><b>Belum tepat</b><p>Fa'il selalu rafa'. Isim mufrad yang diawali <span class="ar-inline" lang="ar" dir="rtl">الْ</span> dibaca dhammah tanpa tanwin.</p></div></div>
+      </section>
+    </main>
+    <footer class="focus__footer"><div class="focus__footer-inner" style="width:760px">
+      <a class="btn btn--ghost" href="#" id="h-check">Periksa lagi</a>
+      <a class="btn btn--primary btn--lg" href="#" data-goto="hasil">Selesaikan kuis <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div></footer>
+  </div>
+
+  <!-- STATE: result -->
+  <div data-panel="hasil" hidden>
+    <main class="focus__main focus__main--narrow stack stack--lg">
+      <section class="result-hero">
+        <div class="progress-ring ring-xl"><svg class="progress-ring__svg" viewBox="0 0 168 168"><circle class="progress-ring__track" cx="84" cy="84" r="72"/><circle class="progress-ring__value" cx="84" cy="84" r="72" stroke-dasharray="407.2 452.4"/></svg><div class="progress-ring__label"><span class="progress-ring__num">90</span><span class="progress-ring__sub">9 dari 10 benar</span></div></div>
+        <span class="result-ar" lang="ar" dir="rtl">مُمْتَازٌ</span>
+        <h1 class="result-title">Mumtaz!</h1>
+        <p class="text-body-lg text-muted" style="max-width:520px">Anda lulus Uji Pemahaman: Fa'il. Materi 2.2 Fa'il isim dhamir sekarang terbuka.</p>
+        <div class="result-stats">
+          <div class="is-xp"><b>+50 XP</b><span>45 dari jawaban + 5 bonus waktu</span></div>
+          <div><b>06:18</b><span>Waktu pengerjaan dari 15:00</span></div>
+          <div><b>90%</b><span>Akurasi · syarat lulus 70%</span></div>
+          <div><b>13 hari</b><span>Hari beruntun berlanjut</span></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head"><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> Tinjau jawaban</span><span class="panel__sub">1 jawaban perlu dipelajari lagi</span></div>
+        <div class="panel__body panel__body--flush list-divided">
+          <div class="review-row"><span class="review-row__no">1</span><span class="review-row__main">Fa'il selalu dibaca …<small>Jawaban Anda: Rafa'</small></span><span class="review-ok"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span></div>
+          <div class="review-row"><span class="review-row__no">2</span><span class="review-row__main">Fa'il dalam <span class="ar-inline" lang="ar" dir="rtl">قَامَ زَيْدٌ</span><small>Jawaban Anda: <span class="ar-inline" lang="ar" dir="rtl">زَيْدٌ</span></small></span><span class="review-ok"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span></div>
+          <div class="review-row review-row--bad"><span class="review-row__no">3</span><span class="review-row__main">I'rab <span class="ar-inline" lang="ar" dir="rtl">الْمُسْلِمُوْنَ</span> dalam <span class="ar-inline" lang="ar" dir="rtl">قَرَأَ الْمُسْلِمُوْنَ الْقُرْآنَ</span><small>Jawaban Anda: Maf'ul bih · Jawaban benar: <b style="color:var(--good)">Fa'il</b></small></span><a class="btn btn--secondary btn--sm" href="12-ruang-belajar.html#tab-materi">Pelajari lagi</a><span class="review-bad"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/></svg></span></div>
+          <div class="review-row"><span class="review-row__no">4</span><span class="review-row__main">Tanda rafa' fa'il mutsanna<small>Jawaban Anda: Alif</small></span><span class="review-ok"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span></div>
+          <div class="review-row"><span class="review-row__no">5</span><span class="review-row__main">Warnai: <span class="ar-inline" lang="ar" dir="rtl">قَرَأَ الطَّالِبُ الْكِتَابَ فِي الْمَسْجِدِ</span><small>4 dari 4 kata tepat</small></span><span class="review-ok"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span></div>
+          <div class="review-row"><span class="review-row__no">6</span><span class="review-row__main">Fi'il yang fa'il-nya bisa isim zhahir: nomor …<small>Jawaban Anda: no. 1 dan 4</small></span><span class="review-ok"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span></div>
+          <div class="review-row"><span class="review-row__no">7</span><span class="review-row__main">Susun: "Para pelajar membaca kitab."<small>Jawaban Anda: <span class="ar-inline" lang="ar" dir="rtl">قَرَأَ الطُّلَّابُ الْكِتَابَ</span></small></span><span class="review-ok"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span></div>
+          <div class="review-row"><span class="review-row__no">8</span><span class="review-row__main">Harakat akhir fa'il <span class="ar-inline" lang="ar" dir="rtl">حَضَرَ الْأُسْتَاذُ</span><small>Jawaban Anda: dhammah</small></span><span class="review-ok"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span></div>
+          <div class="review-row"><span class="review-row__no">9</span><span class="review-row__main">Fa'il dalam <span class="ar-inline" lang="ar" dir="rtl">قَدْ أَفْلَحَ الْمُؤْمِنُوْنَ</span><small>Jawaban Anda: <span class="ar-inline" lang="ar" dir="rtl">الْمُؤْمِنُوْنَ</span></small></span><span class="review-ok"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span></div>
+          <div class="review-row"><span class="review-row__no">10</span><span class="review-row__main">Tanda rafa' <span class="ar-inline" lang="ar" dir="rtl">أَبُوْكَ</span> dalam <span class="ar-inline" lang="ar" dir="rtl">قَامَ أَبُوْكَ</span><small>Jawaban Anda: Wawu (isim lima)</small></span><span class="review-ok"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span></div>
+        </div>
+      </section>
+    </main>
+    <footer class="focus__footer"><div class="focus__footer-inner" style="width:760px">
+      <a class="btn btn--ghost" href="10-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9.5 9-7 9 7V20a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg> Kembali ke Beranda</a>
+      <div class="cluster">
+        <a class="btn btn--secondary" href="13-kuis.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg> Ulangi kuis</a>
+        <a class="btn btn--primary btn--lg" href="12-ruang-belajar.html">Lanjut pelajaran <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </div></footer>
+  </div>
+
+</div>
+
+<script>
+  // Prototype-only quiz interactions (vanilla). Shared tabs/toasts come from assets/mockup.js.
+  (function () {
+    function $(id) { return document.getElementById(id); }
+
+    // Header counter + progress dots follow the selected example state.
+    function syncHeader(tab) {
+      if (!tab || !tab.hasAttribute("data-q")) return;
+      $("q-counter").textContent = tab.getAttribute("data-q");
+      var now = +tab.getAttribute("data-dot");
+      Array.prototype.forEach.call($("q-dots").children, function (d, i) {
+        d.className = i < now ? (i === 2 ? "is-bad" : "is-ok") : (i === now ? "is-now" : "");
+      });
+    }
+
+    // Sync once mockup.js has applied the initial (or #tab-…) state.
+    window.addEventListener("load", function () { syncHeader(document.querySelector(".mock-states .tab--active")); });
+
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-tab]");
+      if (t) syncHeader(t);
+      var go = e.target.closest("[data-goto]");
+      if (go) {
+        e.preventDefault();
+        var tab = document.querySelector('[data-tab="' + go.getAttribute("data-goto") + '"]');
+        if (tab) { tab.click(); window.scrollTo(0, 0); }
+      }
+    });
+
+    // 1) Multiple choice: pick an option, then check.
+    var opts = document.querySelectorAll("#pg-opts [data-opt]");
+    Array.prototype.forEach.call(opts, function (o) {
+      o.addEventListener("click", function () {
+        Array.prototype.forEach.call(opts, function (x) { x.classList.remove("quiz-option--selected", "quiz-option--correct", "quiz-option--wrong"); });
+        o.classList.add("quiz-option--selected");
+        $("pg-bad").hidden = true; $("pg-good").hidden = true;
+        $("pg-check").hidden = false; $("pg-next").hidden = true;
+      });
+    });
+    $("pg-check").addEventListener("click", function (e) {
+      e.preventDefault();
+      var sel = document.querySelector("#pg-opts .quiz-option--selected");
+      if (!sel) return;
+      sel.classList.remove("quiz-option--selected");
+      var ok = sel.hasAttribute("data-correct");
+      sel.classList.add(ok ? "quiz-option--correct" : "quiz-option--wrong");
+      document.querySelector("#pg-opts [data-correct]").classList.add("quiz-option--correct");
+      $("pg-good").hidden = !ok; $("pg-bad").hidden = ok;
+      $("pg-check").hidden = true; $("pg-next").hidden = false;
+    });
+
+    // 2) Color the words with the active palette role.
+    var role = "maful-bih", roleLabel = "Maf'ul bih";
+    $("palette").addEventListener("click", function (e) {
+      var c = e.target.closest("[data-role]");
+      if (!c) return;
+      Array.prototype.forEach.call(this.children, function (x) { x.classList.remove("is-active"); });
+      c.classList.add("is-active");
+      role = c.getAttribute("data-role"); roleLabel = c.getAttribute("data-label");
+    });
+    function paintWord(w, r, label) {
+      w.className = w.className.replace(/\birab--\S+/g, "").replace(/\bword--blank\b/, "").trim();
+      w.classList.add("irab--" + r);
+      w.setAttribute("data-painted", r);
+      w.querySelector(".word__label").lastChild.textContent = label;
+    }
+    $("paint").addEventListener("click", function (e) {
+      var w = e.target.closest(".word");
+      if (!w) return;
+      Array.prototype.forEach.call(this.children, function (x) { x.classList.remove("is-selected"); });
+      w.classList.add("is-selected");
+      paintWord(w, role, roleLabel);
+      $("paint-good").hidden = true; $("paint-bad").hidden = true;
+    });
+    $("paint-check").addEventListener("click", function (e) {
+      e.preventDefault();
+      var ok = Array.prototype.every.call(document.querySelectorAll("#paint .word"), function (w) {
+        return w.classList.contains("irab--" + w.getAttribute("data-answer"));
+      });
+      $("paint-good").hidden = !ok; $("paint-bad").hidden = ok;
+    });
+    $("paint-reset").addEventListener("click", function (e) {
+      e.preventDefault();
+      Array.prototype.forEach.call(document.querySelectorAll("#paint .word"), function (w) {
+        w.className = "word word--blank";
+        w.querySelector(".word__label").lastChild.textContent = "Belum diwarnai";
+      });
+    });
+
+    // 3) Order the words: tap a bank tile to place it, tap a placed tile to return it.
+    var answer = ["قَرَأَ", "الطُّلَّابُ", "الْكِتَابَ"];
+    function placed() { return Array.prototype.map.call(document.querySelectorAll("#slots .tile"), function (t) { return t.getAttribute("data-w"); }); }
+    function renderSlots() {
+      var slots = $("slots"), words = placed();
+      slots.querySelectorAll(".slot-empty").forEach(function (s) { s.remove(); });
+      for (var i = words.length; i < 3; i++) {
+        var s = document.createElement("span");
+        s.className = "slot-empty"; s.textContent = i === words.length ? "Letakkan di sini" : " ";
+        slots.appendChild(s);
+      }
+      $("order-good").hidden = true; $("order-bad").hidden = true;
+    }
+    $("bank").addEventListener("click", function (e) {
+      var t = e.target.closest(".tile");
+      if (!t || t.classList.contains("tile--used") || placed().length >= 3) return;
+      t.classList.add("tile--used"); t.classList.remove("tile--drag");
+      var p = document.createElement("span");
+      p.className = "tile tile--placed"; p.setAttribute("data-w", t.getAttribute("data-w"));
+      p.innerHTML = t.innerHTML;
+      $("slots").insertBefore(p, $("slots").querySelector(".slot-empty"));
+      renderSlots();
+    });
+    $("slots").addEventListener("click", function (e) {
+      var t = e.target.closest(".tile");
+      if (!t) return;
+      var w = t.getAttribute("data-w");
+      t.remove();
+      document.querySelectorAll("#bank .tile").forEach(function (b) { if (b.getAttribute("data-w") === w) b.classList.remove("tile--used"); });
+      renderSlots();
+    });
+    $("order-check").addEventListener("click", function (e) {
+      e.preventDefault();
+      var ok = placed().join(" ") === answer.join(" ");
+      $("order-good").hidden = !ok; $("order-bad").hidden = ok;
+    });
+    $("order-reset").addEventListener("click", function (e) {
+      e.preventDefault();
+      document.querySelectorAll("#slots .tile").forEach(function (t) { t.remove(); });
+      document.querySelectorAll("#bank .tile").forEach(function (b) { b.classList.remove("tile--used", "tile--drag"); });
+      renderSlots();
+    });
+
+    // 4) Harakat keypad replaces the final short vowel of the typed word.
+    var input = $("harakat-input");
+    var marks = /[ً-ْ]+$/;
+    $("hkeys").addEventListener("click", function (e) {
+      var k = e.target.closest(".hkey");
+      if (!k) return;
+      Array.prototype.forEach.call(this.children, function (x) { x.classList.remove("is-active"); });
+      k.classList.add("is-active");
+      input.value = input.value.replace(marks, "") + k.getAttribute("data-h");
+      checkHarakat();
+    });
+    function checkHarakat() {
+      var ok = input.value.trim() === "الْأُسْتَاذُ";
+      $("h-good").hidden = !ok; $("h-bad").hidden = ok;
+    }
+    input.addEventListener("input", checkHarakat);
+    $("h-check").addEventListener("click", function (e) { e.preventDefault(); checkHarakat(); });
+  })();
+</script>
+
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>

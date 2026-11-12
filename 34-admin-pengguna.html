@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1440">
+<title>Pengguna &amp; Akses · Al-Abqary LMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Amiri+Quran&amp;family=Poppins:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/components.css">
+<link rel="stylesheet" href="assets/layout.css">
+<script src="assets/mockup.js" defer></script>
+<style>
+/* Staff chrome (shared by 30-34): role switcher in the topnav */
+.app--staff .topnav__inner { gap: var(--space-6); }
+.app--staff .brand { flex: none; }
+.app--staff .topnav__search { width: 260px; flex: none; }
+.app--staff .avatar-with-meta__name, .app--staff .avatar-with-meta__sub { white-space: nowrap; }
+.role-switch { flex: none; }
+.role-switch .tab .icon { width: 16px; height: 16px; }
+
+/* Admin users page styles */
+.badge--warn { background: var(--warn-soft); color: var(--warn); border-color: var(--warn-soft); }
+.toolbar { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.toolbar .input { height: 40px; font-size: var(--fs-small); width: auto; }
+.toolbar .select .input__text { color: var(--muted); }
+.toolbar .select b { color: var(--ink); font-weight: var(--fw-semibold); }
+.bulk { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-5); border-radius: var(--radius-lg); background: var(--blue-deep); color: var(--on-blue); font-size: var(--fs-small); }
+.bulk .btn--on-dark { height: 32px; font-size: var(--fs-caption); padding: 0 var(--space-3); }
+.bulk .btn--on-dark .icon { width: 15px; height: 15px; }
+.table--users th, .table--users td { padding-left: var(--space-4); padding-right: var(--space-4); white-space: nowrap; }
+.table--users td:first-child, .table--users th:first-child { width: 44px; padding-right: 0; }
+.table--users .checkbox { cursor: pointer; }
+.table--users tr.is-checked td { background: var(--blue-tint); }
+.user-cell { display: flex; align-items: center; gap: var(--space-3); }
+.user-cell span span { display: block; }
+.user-cell__name { font-weight: var(--fw-semibold); }
+.user-cell__mail { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.checkbox__box--mixed { background: var(--blue); border-color: var(--blue); }
+.last-active { display: inline-flex; align-items: center; gap: var(--space-2); }
+.mini-progress { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-caption); color: var(--muted); }
+.mini-progress .progress { width: 72px; }
+.pagination { display: flex; align-items: center; justify-content: space-between; padding: var(--space-3) var(--space-5); border-top: 1px solid var(--line); font-size: var(--fs-small); color: var(--muted); }
+.pagination__pages { display: flex; gap: var(--space-1); }
+.pagination__pages a { min-width: 32px; height: 32px; border-radius: var(--radius-sm); display: inline-flex; align-items: center; justify-content: center; color: var(--ink); }
+.pagination__pages a.is-current { background: var(--blue); color: var(--on-blue); font-weight: var(--fw-semibold); }
+
+/* User detail drawer (right side overlay) */
+.overlay.modal-scrim.drawer-scrim { justify-content: flex-end; align-items: stretch; padding: 0; }
+.drawer { width: 500px; height: 100vh; background: var(--surface); box-shadow: var(--shadow-lg); display: flex; flex-direction: column; }
+.drawer__head { padding: var(--space-6); border-bottom: 1px solid var(--line); display: flex; gap: var(--space-4); align-items: flex-start; }
+.drawer__body { flex: 1; overflow-y: auto; padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-6); }
+.drawer__foot { padding: var(--space-4) var(--space-6) var(--space-20); border-top: 1px solid var(--line); background: var(--blue-tint); display: flex; gap: var(--space-3); flex-wrap: wrap; }
+.kv { display: grid; grid-template-columns: 140px 1fr; gap: var(--space-2) var(--space-4); font-size: var(--fs-small); line-height: var(--lh-small); }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; color: var(--ink); font-weight: var(--fw-medium); }
+.timeline { display: flex; flex-direction: column; gap: var(--space-3); font-size: var(--fs-small); line-height: var(--lh-small); }
+.timeline li { display: flex; gap: var(--space-3); }
+.timeline .dot { margin-top: 6px; }
+.timeline small { display: block; font-size: var(--fs-caption); color: var(--muted); }
+
+/* Cohorts */
+.cohort { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-5); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
+.cohort__title { font-size: var(--fs-h4); line-height: var(--lh-h4); font-weight: var(--fw-semibold); }
+.cohort__meta { display: flex; flex-direction: column; gap: var(--space-2); font-size: var(--fs-small); line-height: var(--lh-small); color: var(--muted); }
+.cohort__meta span { display: flex; align-items: center; gap: var(--space-2); }
+.cohort__meta .icon { width: 16px; height: 16px; color: var(--blue); }
+.cohort__foot { display: flex; align-items: center; justify-content: space-between; padding-top: var(--space-4); border-top: 1px solid var(--line); margin-top: auto; }
+.progress--warn .progress__bar { background: var(--warn); }
+
+/* Coupons */
+.code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; padding: 3px var(--space-2); border-radius: var(--radius-sm); background: var(--gold-soft); color: var(--gold-ink); border: 1px dashed var(--gold-line); }
+.table--kupon th, .table--kupon td { padding-left: var(--space-4); padding-right: var(--space-4); }
+.table--kupon td:last-child { white-space: nowrap; }
+.code { display: inline-flex; align-items: center; gap: var(--space-1); white-space: nowrap; }
+.code .icon { opacity: 0.7; }
+.quota { display: flex; flex-direction: column; gap: var(--space-1); min-width: 120px; white-space: nowrap; font-size: var(--fs-caption); color: var(--muted); }
+.modal--wide { width: 600px; }
+.modal__body .field__label { color: var(--ink); }
+.coupon-preview { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4); border-radius: var(--radius-lg); background: var(--gold-soft); border: 1px solid var(--gold-line); color: var(--ink); }
+.coupon-preview s { color: var(--subtle); }
+.coupon-preview b { font-size: var(--fs-h4); }
+
+/* Permissions matrix */
+.role-card { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-5); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.role-card b { display: block; font-size: var(--fs-h4); line-height: var(--lh-h4); }
+.matrix th:not(:first-child), .matrix td:not(:first-child) { text-align: center; width: 120px; }
+.matrix td { padding-top: var(--space-3); padding-bottom: var(--space-3); }
+.matrix .checkbox { cursor: pointer; }
+.matrix .checkbox--locked { cursor: not-allowed; opacity: 0.6; }
+.matrix__group td { background: var(--bg-subtle); font-size: var(--fs-caption); font-weight: var(--fw-semibold); letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--muted); padding-top: var(--space-2); padding-bottom: var(--space-2); }
+.matrix__perm { display: flex; flex-direction: column; }
+.matrix__perm span { font-size: var(--fs-caption); line-height: var(--lh-caption); color: var(--muted); }
+.matrix__scope { display: block; font-size: 11px; line-height: 14px; color: var(--muted); margin-top: 2px; }
+.matrix th .icon { width: 14px; height: 14px; vertical-align: -2px; }
+</style>
+</head>
+<body class="app app--staff">
+
+<!-- STAFF TOPNAV START (admin) — copy as-is to every admin page; role switcher links 10 / 30 / 33 -->
+<header class="topnav app__topnav">
+  <div class="topnav__inner">
+    <a class="brand" href="33-admin-dashboard.html"><svg class="brand__mark" viewBox="0 0 40 40" aria-hidden="true"><path d="M20.0 1.0 L25.6 6.6 L33.4 6.6 L33.4 14.4 L39.0 20.0 L33.4 25.6 L33.4 33.4 L25.6 33.4 L20.0 39.0 L14.4 33.4 L6.6 33.4 L6.6 25.6 L1.0 20.0 L6.6 14.4 L6.6 6.6 L14.4 6.6Z" style="fill:var(--blue-deep)"/><path d="M24.4 9.4 L26.2 13.8 L30.6 15.6 L28.8 20.0 L30.6 24.4 L26.2 26.2 L24.4 30.6 L20.0 28.8 L15.6 30.6 L13.8 26.2 L9.4 24.4 L11.2 20.0 L9.4 15.6 L13.8 13.8 L15.6 9.4 L20.0 11.2Z" style="fill:none;stroke:var(--gold);stroke-width:1.4"/><circle cx="20" cy="20" r="3.2" style="fill:var(--gold)"/></svg><span class="brand__text"><span class="brand__name">Al-Abqary</span><span class="brand__sub">Ma'had Al-Abqary · LMS</span></span><span class="brand__ar" lang="ar" dir="rtl">العبقري</span></a>
+    <div class="input topnav__search"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari pengguna, invoice, atau kupon…</span><span class="kbd">/</span></div>
+    <nav class="tabs tabs--segmented role-switch" aria-label="Masuk sebagai: ganti peran">
+      <a class="tab" href="10-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Santri</a>
+      <a class="tab" href="30-ustadz-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5"/></svg> Ustadz</a>
+      <a class="tab tab--active" href="33-admin-dashboard.html" aria-current="page"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Admin</a>
+    </nav>
+    <div class="topnav__actions">
+      <a class="btn btn--ghost btn--icon topnav__icon-btn" href="21-notifikasi.html" aria-label="Notifikasi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span class="notif-dot"></span></a>
+      <a class="avatar-with-meta" href="20-profil.html"><span class="avatar avatar--gold avatar--ring">AA</span><span><span class="avatar-with-meta__name" style="display:block">Admin Al-Abqary</span><span class="avatar-with-meta__sub">Pengelola platform</span></span></a>
+    </div>
+  </div>
+</header>
+<!-- STAFF TOPNAV END -->
+
+<div class="app__body">
+
+<!-- ADMIN SIDEBAR START — copy as-is to every admin page; move .sidebar__item--active to the current page's item -->
+<aside class="sidebar app__sidebar">
+  <div class="sidebar__role sidebar__role--admin"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span><b>Panel Admin</b><small>Admin Al-Abqary</small></span></div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Ikhtisar</span>
+    <a class="sidebar__item" href="33-admin-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg> Dashboard</a>
+    <a class="sidebar__item" href="33-admin-dashboard.html#tab-transaksi"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg> Transaksi<span class="sidebar__count">3</span></a>
+    <a class="sidebar__item" href="33-admin-dashboard.html#tab-laporan"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 18v-2M12 18v-5M16 18v-3"/></svg> Laporan</a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Kelola</span>
+    <a class="sidebar__item sidebar__item--active" href="34-admin-pengguna.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> Pengguna<span class="sidebar__count">3.480</span></a>
+    <a class="sidebar__item" href="31-course-builder.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Kelas &amp; Kurikulum<span class="sidebar__count">12</span></a>
+    <a class="sidebar__item" href="34-admin-pengguna.html#tab-kupon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><path d="M7 7h.01"/></svg> Kupon</a>
+    <a class="sidebar__item" href="34-admin-pengguna.html#tab-peran"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> Pengaturan</a>
+  </div>
+  <div class="sidebar__section">
+    <span class="sidebar__title">Beralih</span>
+    <a class="sidebar__item" href="30-ustadz-dashboard.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5"/></svg> Ruang Ustadz</a>
+  </div>
+</aside>
+<!-- ADMIN SIDEBAR END -->
+
+<main class="app__main">
+
+  <div class="page-head">
+    <div class="page-head__row">
+      <div>
+        <h1 class="page-head__title">Pengguna &amp; Akses</h1>
+        <p class="page-head__sub">3.480 akun · 1.912 aktif dalam 30 hari · semua data adalah contoh</p>
+      </div>
+      <div class="page-head__actions">
+        <a class="btn btn--secondary" href="#" data-toast="toast-import"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg> Impor CSV</a>
+        <a class="btn btn--primary" href="#" data-open="modal-undang"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg> Undang pengguna</a>
+      </div>
+    </div>
+  </div>
+
+  <div data-tabs class="stack stack--lg">
+    <div class="tabs">
+      <a class="tab tab--active" href="#" data-tab="pengguna"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg> Pengguna <span class="tab__count">3.480</span></a>
+      <a class="tab" href="#" data-tab="kohort"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg> Kohort &amp; Kelas <span class="tab__count">11</span></a>
+      <a class="tab" href="#" data-tab="kupon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><path d="M7 7h.01"/></svg> Kupon <span class="tab__count">4 aktif</span></a>
+      <a class="tab" href="#" data-tab="peran"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Peran &amp; Akses</a>
+    </div>
+
+    <!-- ================= PENGGUNA ================= -->
+    <div data-panel="pengguna" class="stack">
+      <div class="toolbar">
+        <div class="input" style="width:260px"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder" style="white-space:nowrap">Cari nama, email, nomor WA…</span></div>
+        <div class="input select"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span class="input__text">Peran: <b>Semua</b></span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div>
+        <div class="input select"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg><span class="input__text">Paket: <b>Semua</b></span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div>
+        <div class="input select"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span class="input__text">Status: <b>Semua</b></span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div>
+        <a class="btn btn--ghost btn--sm ml-auto" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Ekspor</a>
+      </div>
+
+      <div class="bulk" data-dismissable>
+        <span class="checkbox is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span>
+        <b>2 pengguna dipilih</b>
+        <span class="ml-auto"></span>
+        <a class="btn btn--on-dark" href="#" data-toast="toast-wa"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg> Kirim WhatsApp</a>
+        <a class="btn btn--on-dark" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Ubah paket</a>
+        <a class="btn btn--on-dark" href="#" data-tab="kohort"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg> Tambah ke kohort</a>
+        <a class="btn btn--on-dark" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Nonaktifkan</a>
+        <a class="btn btn--on-dark btn--icon" href="#" data-dismiss aria-label="Batalkan pilihan" style="width:32px"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table table--users">
+          <thead><tr><th><span class="checkbox"><span class="checkbox__box checkbox__box--mixed"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg></span></span></th><th>Pengguna</th><th>Peran</th><th>Paket</th><th>Terakhir aktif</th><th>Progres</th><th class="text-right">Aksi</th></tr></thead>
+          <tbody>
+            <tr class="is-checked"><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><a class="user-cell" href="#" data-open="drawer-user"><span class="avatar avatar--sm">MF</span><span><span class="user-cell__name">Muhammad Fauzan</span><span class="user-cell__mail">fauzan@contoh.id</span></span></a></td><td><span class="badge badge--info">Santri</span></td><td>Santri</td><td><span class="last-active"><span class="dot dot--good"></span>Hari ini, 07.12</span></td><td><span class="mini-progress"><span class="progress progress--sm"><span class="progress__bar" style="width:64%"></span></span>64%</span></td><td class="text-right"><a class="btn btn--secondary btn--sm" href="#" data-open="drawer-user">Lihat</a> <a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+            <tr><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="user-cell"><span class="avatar avatar--sm avatar--deep">SN</span><span><span class="user-cell__name">Siti Nurhaliza</span><span class="user-cell__mail">siti.n@contoh.id</span></span></span></td><td><span class="badge badge--info">Santri</span></td><td><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Halaqah Plus</span></td><td><span class="last-active"><span class="dot dot--good"></span>2 hari lalu</span></td><td><span class="mini-progress"><span class="progress progress--sm progress--good"><span class="progress__bar" style="width:100%"></span></span>Tuntas</span></td><td class="text-right"><a class="btn btn--secondary btn--sm" href="#" data-open="drawer-user">Lihat</a> <a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+            <tr class="is-checked"><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="user-cell"><span class="avatar avatar--sm avatar--gold">RZ</span><span><span class="user-cell__name">Rizqi Zulfikar</span><span class="user-cell__mail">rizqi.z@contoh.id</span></span></span></td><td><span class="badge badge--info">Santri</span></td><td>Santri</td><td><span class="last-active"><span class="dot dot--good"></span>Kemarin</span></td><td><span class="mini-progress"><span class="progress progress--sm"><span class="progress__bar" style="width:71%"></span></span>71%</span></td><td class="text-right"><a class="btn btn--secondary btn--sm" href="#" data-open="drawer-user">Lihat</a> <a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+            <tr><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="user-cell"><span class="avatar avatar--sm avatar--deep">AH</span><span><span class="user-cell__name">Ustadz Ahmad Hanafi</span><span class="user-cell__mail">ahmad.hanafi@contoh.id</span></span></span></td><td><span class="badge badge--level">Ustadz</span></td><td class="text-muted">Staf</td><td><span class="last-active"><span class="dot dot--good"></span>Hari ini, 10.42</span></td><td class="text-muted text-caption">14 setoran menunggu</td><td class="text-right"><a class="btn btn--secondary btn--sm" href="30-ustadz-dashboard.html">Lihat</a> <a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+            <tr><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="user-cell"><span class="avatar avatar--sm avatar--good">KH</span><span><span class="user-cell__name">Khadijah Hasanah</span><span class="user-cell__mail">Wali dari Umar Khattab</span></span></span></td><td><span class="badge badge--free">Wali</span></td><td class="text-muted">Gratis</td><td><span class="last-active"><span class="dot dot--good"></span>Kemarin</span></td><td class="text-muted text-caption">Memantau 1 santri</td><td class="text-right"><a class="btn btn--secondary btn--sm" href="#" data-open="drawer-user">Lihat</a> <a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+            <tr><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="user-cell"><span class="avatar avatar--sm avatar--gold">UK</span><span><span class="user-cell__name">Umar Khattab</span><span class="user-cell__mail">umar.k@contoh.id</span></span></span></td><td><span class="badge badge--info">Santri</span></td><td>Santri</td><td><span class="last-active"><span class="dot dot--bad"></span>9 hari lalu</span></td><td><span class="mini-progress"><span class="progress progress--sm"><span class="progress__bar" style="width:31%"></span></span>31%</span></td><td class="text-right"><a class="btn btn--secondary btn--sm" href="#" data-open="drawer-user">Lihat</a> <a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+            <tr><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="user-cell"><span class="avatar avatar--sm avatar--good">AZ</span><span><span class="user-cell__name">Aisyah Zahra</span><span class="user-cell__mail">aisyah.z@contoh.id</span></span></span></td><td><span class="badge badge--info">Santri</span></td><td><span class="badge badge--warn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Menunggu bayar</span></td><td><span class="last-active"><span class="dot dot--good"></span>Hari ini, 06.15</span></td><td><span class="mini-progress"><span class="progress progress--sm"><span class="progress__bar" style="width:50%"></span></span>50%</span></td><td class="text-right"><a class="btn btn--secondary btn--sm" href="#" data-open="drawer-user">Lihat</a> <a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+            <tr><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="user-cell"><span class="avatar avatar--sm avatar--gold">HB</span><span><span class="user-cell__name">Hamzah Baihaqi</span><span class="user-cell__mail">hamzah.b@contoh.id</span></span></span></td><td><span class="badge badge--info">Santri</span></td><td class="text-muted">Gratis</td><td><span class="last-active"><span class="dot dot--gold"></span>3 hari lalu</span></td><td><span class="mini-progress"><span class="progress progress--sm"><span class="progress__bar" style="width:22%"></span></span>22%</span></td><td class="text-right"><a class="btn btn--secondary btn--sm" href="#" data-open="drawer-user">Lihat</a> <a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+            <tr><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="user-cell"><span class="avatar avatar--sm avatar--gold">AA</span><span><span class="user-cell__name">Admin Al-Abqary</span><span class="user-cell__mail">admin@contoh.id</span></span></span></td><td><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Admin</span></td><td class="text-muted">Staf</td><td><span class="last-active"><span class="dot dot--good"></span>Sedang aktif</span></td><td class="text-muted">—</td><td class="text-right"><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+            <tr><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="user-cell"><span class="avatar avatar--sm">NF</span><span><span class="user-cell__name">Nur Fadhilah</span><span class="user-cell__mail">nur.f@contoh.id</span></span></span></td><td><span class="badge badge--info">Santri</span></td><td><span class="badge badge--locked">Nonaktif · refund</span></td><td><span class="last-active"><span class="dot dot--bad"></span>2 pekan lalu</span></td><td><span class="mini-progress"><span class="progress progress--sm"><span class="progress__bar" style="width:18%"></span></span>18%</span></td><td class="text-right"><a class="btn btn--secondary btn--sm" href="#" data-open="drawer-user">Lihat</a> <a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span>Menampilkan 1–10 dari 3.480 pengguna</span>
+          <div class="pagination__pages"><a href="#" aria-label="Sebelumnya"><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></a><a class="is-current" href="#">1</a><a href="#">2</a><a href="#">3</a><a href="#">…</a><a href="#">348</a><a href="#" aria-label="Berikutnya"><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= KOHORT & KELAS ================= -->
+    <div data-panel="kohort" hidden class="stack stack--lg">
+      <div class="toolbar">
+        <div class="cluster cluster--sm" data-chips>
+          <span class="chip chip--active">Semua <span class="chip__count">11</span></span>
+          <span class="chip">Pendaftaran dibuka</span>
+          <span class="chip">Berjalan</span>
+          <span class="chip">Penuh</span>
+          <span class="chip">Selesai</span>
+        </div>
+        <a class="btn btn--primary btn--sm ml-auto" href="#" data-toast="toast-kohort"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Buat kohort</a>
+      </div>
+
+      <div class="grid-3">
+        <article class="cohort">
+          <div class="cluster cluster--between"><span class="badge badge--free">Berjalan · pekan 2</span><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></div>
+          <div class="stack stack--xs"><span class="cohort__title">Angkatan November 2026</span><span class="text-small text-muted">Nahwu Dasar: Membaca Akhir Kata</span></div>
+          <div class="cohort__meta">
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5"/></svg> Ustadz Ahmad Hanafi</span>
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Senin &amp; Kamis · 20.00 WIB</span>
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> 2 Nov 2026 – 25 Jan 2027 · 12 pekan</span>
+          </div>
+          <div class="stack stack--xs"><div class="progress-label" style="margin:0"><span>Kapasitas</span><b>38 / 40</b></div><div class="progress"><div class="progress__bar" style="width:95%"></div></div></div>
+          <div class="cohort__foot"><span class="avatar-group"><span class="avatar avatar--sm">MF</span><span class="avatar avatar--sm avatar--gold">RZ</span><span class="avatar avatar--sm avatar--good">AZ</span><span class="avatar avatar--sm avatar--deep">+35</span></span><a class="link text-small" href="31-course-builder.html#tab-santri">Lihat santri</a></div>
+        </article>
+
+        <article class="cohort">
+          <div class="cluster cluster--between"><span class="badge badge--info">Pendaftaran dibuka</span><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></div>
+          <div class="stack stack--xs"><span class="cohort__title">Angkatan Desember 2026</span><span class="text-small text-muted">Nahwu Dasar: Membaca Akhir Kata</span></div>
+          <div class="cohort__meta">
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5"/></svg> Ustadz Ahmad Hanafi</span>
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Senin &amp; Kamis · 20.00 WIB</span>
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Mulai 7 Des 2026 · 12 pekan</span>
+          </div>
+          <div class="stack stack--xs"><div class="progress-label" style="margin:0"><span>Kapasitas</span><b>12 / 40</b></div><div class="progress"><div class="progress__bar" style="width:30%"></div></div></div>
+          <div class="cohort__foot"><span class="text-caption text-muted">Tutup pendaftaran 5 Des</span><a class="link text-small" href="#" data-toast="toast-wa">Promosikan</a></div>
+        </article>
+
+        <article class="cohort">
+          <div class="cluster cluster--between"><span class="badge badge--free">Berjalan · pekan 6</span><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></div>
+          <div class="stack stack--xs"><span class="cohort__title">Angkatan Oktober 2026</span><span class="text-small text-muted">Membaca Bangunan: Harf dan Fi'il</span></div>
+          <div class="cohort__meta">
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5"/></svg> Ustadz Muhammad Ridwan</span>
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Selasa &amp; Jumat · 05.30 WIB</span>
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> 5 Okt 2026 – 28 Des 2026</span>
+          </div>
+          <div class="stack stack--xs"><div class="progress-label" style="margin:0"><span>Kapasitas</span><b>36 / 40</b></div><div class="progress"><div class="progress__bar" style="width:90%"></div></div></div>
+          <div class="cohort__foot"><span class="avatar-group"><span class="avatar avatar--sm avatar--deep">SN</span><span class="avatar avatar--sm">IM</span><span class="avatar avatar--sm avatar--gold">+34</span></span><a class="link text-small" href="#">Lihat santri</a></div>
+        </article>
+
+        <article class="cohort">
+          <div class="cluster cluster--between"><span class="badge badge--premium"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Halaqah Plus</span><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></div>
+          <div class="stack stack--xs"><span class="cohort__title">Halaqah Plus · Kelompok A</span><span class="text-small text-muted">Qiraatul Kutub: Al-Ajurrumiyyah</span></div>
+          <div class="cohort__meta">
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5"/></svg> Ustadz Ahmad Hanafi</span>
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Senin · 19.30 WIB</span>
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Berjalan sejak 19 Okt 2026</span>
+          </div>
+          <div class="stack stack--xs"><div class="progress-label" style="margin:0"><span>Kapasitas kelompok kecil</span><b>8 / 10</b></div><div class="progress progress--gold"><div class="progress__bar" style="width:80%"></div></div></div>
+          <div class="cohort__foot"><span class="text-caption text-muted">2 kursi tersisa</span><a class="link text-small" href="#">Lihat santri</a></div>
+        </article>
+
+        <article class="cohort">
+          <div class="cluster cluster--between"><span class="badge badge--warn"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3zM12 9v4M12 17h.01"/></svg> Penuh · 4 antre</span><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></div>
+          <div class="stack stack--xs"><span class="cohort__title">Halaqah Plus · Kelompok B</span><span class="text-small text-muted">Qiraatul Kutub: Al-Ajurrumiyyah</span></div>
+          <div class="cohort__meta">
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5"/></svg> Ustadz Ahmad Hanafi</span>
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Rabu · 19.30 WIB</span>
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Berjalan sejak 21 Okt 2026</span>
+          </div>
+          <div class="stack stack--xs"><div class="progress-label" style="margin:0"><span>Kapasitas kelompok kecil</span><b>10 / 10</b></div><div class="progress progress--warn"><div class="progress__bar" style="width:100%"></div></div></div>
+          <div class="cohort__foot"><span class="text-caption text-muted">Daftar tunggu: 4 santri</span><a class="btn btn--secondary btn--sm" href="#" data-toast="toast-kohort">Buka Kelompok C</a></div>
+        </article>
+
+        <article class="cohort">
+          <div class="cluster cluster--between"><span class="badge badge--free">Berjalan · pekan 2</span><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></div>
+          <div class="stack stack--xs"><span class="cohort__title">Kelas Akhwat · November 2026</span><span class="text-small text-muted">Mushaf Nahwi: Surah Yasin</span></div>
+          <div class="cohort__meta">
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5"/></svg> Ustadzah Maryam Salsabila</span>
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Sabtu · 09.00 WIB</span>
+            <span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> 7 Nov 2026 – 30 Jan 2027</span>
+          </div>
+          <div class="stack stack--xs"><div class="progress-label" style="margin:0"><span>Kapasitas</span><b>27 / 30</b></div><div class="progress"><div class="progress__bar" style="width:90%"></div></div></div>
+          <div class="cohort__foot"><span class="avatar-group"><span class="avatar avatar--sm avatar--good">AZ</span><span class="avatar avatar--sm avatar--deep">FR</span><span class="avatar avatar--sm">+25</span></span><a class="link text-small" href="#">Lihat santri</a></div>
+        </article>
+      </div>
+
+      <section class="panel">
+        <div class="panel__head"><div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg> Kelas &amp; pengampu</span><span class="panel__sub">12 kelas terbit · 4 ditampilkan · kartu di atas menampilkan 6 dari 11 kohort</span></div><a class="panel__link" href="31-course-builder.html">Buka penyusun kurikulum <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></a></div>
+        <div class="panel__body panel__body--flush">
+          <table class="table">
+            <thead><tr><th>Kelas</th><th>Pengampu</th><th class="table__num">Kohort</th><th class="table__num">Santri aktif</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><a class="link" href="31-course-builder.html">Nahwu Dasar: Membaca Akhir Kata</a></td><td>Ustadz Ahmad Hanafi</td><td class="table__num">2</td><td class="table__num">142</td><td><span class="badge badge--free">Terbit</span> <span class="badge badge--warn">4 perubahan draf</span></td></tr>
+              <tr><td>Membaca Bangunan: Harf dan Fi'il</td><td>Ustadz Muhammad Ridwan</td><td class="table__num">3</td><td class="table__num">96</td><td><span class="badge badge--free">Terbit</span></td></tr>
+              <tr><td>Qiraatul Kutub: Al-Ajurrumiyyah</td><td>Ust. Ahmad Hanafi</td><td class="table__num">5</td><td class="table__num">42</td><td><span class="badge badge--premium">Halaqah Plus</span></td></tr>
+              <tr><td>Mushaf Nahwi: Surah Yasin</td><td>Ust. Abdurrahman Hakim, Ustadzah Maryam Salsabila</td><td class="table__num">4</td><td class="table__num">118</td><td><span class="badge badge--free">Terbit</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- ================= KUPON ================= -->
+    <div data-panel="kupon" hidden class="stack">
+      <div class="toolbar">
+        <div class="input" style="width:240px"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="input__placeholder">Cari kode kupon…</span></div>
+        <div class="cluster cluster--sm" data-chips>
+          <span class="chip chip--active">Semua</span>
+          <span class="chip">Aktif <span class="chip__count">4</span></span>
+          <span class="chip">Terjadwal</span>
+          <span class="chip">Kedaluwarsa</span>
+        </div>
+        <a class="btn btn--primary btn--sm ml-auto" href="#" data-open="modal-kupon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Buat Kupon</a>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table table--kupon">
+          <thead><tr><th>Kode</th><th>Diskon</th><th>Berlaku untuk</th><th>Kuota terpakai</th><th>Berlaku sampai</th><th>Status</th><th class="text-right">Aksi</th></tr></thead>
+          <tbody>
+            <tr><td><a class="code" href="#" data-toast="toast-copy" title="Salin kode">ABQARY50 <svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></a></td><td><b>50%</b><br><span class="text-caption text-muted">bulan pertama</span></td><td>Santri</td><td><span class="quota"><span class="progress progress--sm"><span class="progress__bar" style="width:42%"></span></span>212 / 500</span></td><td>31 Des 2026</td><td><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Aktif</span></td><td class="text-right"><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Ubah"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></a><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+            <tr><td><a class="code" href="#" data-toast="toast-copy" title="Salin kode">SANTRIBARU <svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></a></td><td><b>Rp30.000</b><br><span class="text-caption text-muted">sekali</span></td><td>Santri, Halaqah Plus</td><td><span class="quota"><span class="progress progress--sm"><span class="progress__bar" style="width:44%"></span></span>88 / 200</span></td><td>30 Nov 2026</td><td><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Aktif</span></td><td class="text-right"><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Ubah"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></a><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+            <tr><td><a class="code" href="#" data-toast="toast-copy" title="Salin kode">HALAQAH25 <svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></a></td><td><b>25%</b><br><span class="text-caption text-muted">3 bulan</span></td><td>Halaqah Plus</td><td><span class="quota"><span class="progress progress--sm progress--warn"><span class="progress__bar" style="width:82%"></span></span>41 / 50 · hampir habis</span></td><td>15 Des 2026</td><td><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Aktif</span></td><td class="text-right"><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Ubah"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></a><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+            <tr><td><a class="code" href="#" data-toast="toast-copy" title="Salin kode">WALISANTRI <svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></a></td><td><b>20%</b><br><span class="text-caption text-muted">selamanya</span></td><td>Akun yang terhubung wali</td><td><span class="quota"><span class="progress progress--sm"><span class="progress__bar" style="width:19%"></span></span>19 / 100</span></td><td>31 Mar 2027</td><td><span class="badge badge--free"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Aktif</span></td><td class="text-right"><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Ubah"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></a><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+            <tr><td><a class="code" href="#" data-toast="toast-copy" title="Salin kode">AKHIRTAHUN26 <svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></a></td><td><b>35%</b><br><span class="text-caption text-muted">bulan pertama</span></td><td>Santri, Halaqah Plus</td><td><span class="quota"><span class="progress progress--sm"><span class="progress__bar" style="width:0%"></span></span>0 / 300</span></td><td>31 Des 2026</td><td><span class="badge badge--info"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Mulai 20 Des</span></td><td class="text-right"><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Ubah"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></a><a class="btn btn--ghost btn--icon btn--sm" href="#" aria-label="Aksi lain"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg></a></td></tr>
+            <tr><td><a class="code" href="#" data-toast="toast-copy" title="Salin kode">RAMADHAN1447 <svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></a></td><td><b>40%</b><br><span class="text-caption text-muted">bulan pertama</span></td><td>Semua paket</td><td><span class="quota"><span class="progress progress--sm progress--good"><span class="progress__bar" style="width:100%"></span></span>500 / 500 · habis</span></td><td>20 Mar 2026</td><td><span class="badge badge--locked">Kedaluwarsa</span></td><td class="text-right"><a class="btn btn--ghost btn--sm" href="#" data-open="modal-kupon">Duplikat</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-caption text-muted">Kupon dipakai saat checkout. Contoh: ABQARY50 membuat paket Santri bulan pertama Rp49.500.</p>
+    </div>
+
+    <!-- ================= PERAN & AKSES ================= -->
+    <div data-panel="peran" hidden class="stack stack--lg">
+      <div class="grid-4 grid--tight">
+        <div class="role-card"><span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><div><b>3.414</b><span class="text-small text-muted">Santri</span></div></div>
+        <div class="role-card"><span class="icon-tile icon-tile--good"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><div><b>58</b><span class="text-small text-muted">Wali santri</span></div></div>
+        <div class="role-card"><span class="icon-tile icon-tile--deep"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5"/></svg></span><div><b>6</b><span class="text-small text-muted">Ustadz</span></div></div>
+        <div class="role-card"><span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><div><b>2</b><span class="text-small text-muted">Admin</span></div></div>
+      </div>
+
+      <section class="panel">
+        <div class="panel__head">
+          <div><span class="panel__title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> Matriks izin</span><span class="panel__sub">Klik kotak untuk mengubah. Admin selalu memiliki semua izin.</span></div>
+          <a class="btn btn--ghost btn--sm" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg> Kembalikan bawaan</a>
+        </div>
+        <div class="panel__body panel__body--flush">
+          <table class="table matrix">
+            <thead><tr><th>Izin</th><th>Santri</th><th>Wali</th><th>Ustadz</th><th>Admin <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></th></tr></thead>
+            <tbody>
+              <tr class="matrix__group"><td colspan="5">Belajar</td></tr>
+              <tr><td><span class="matrix__perm"><b>Mengakses materi sesuai paket</b><span>Video, bacaan, dan kuis</span></span></td><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked checkbox--locked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td></tr>
+              <tr><td><span class="matrix__perm"><b>Mengirim setoran &amp; tugas</b><span>Audio dan jawaban tertulis</span></span></td><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked checkbox--locked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td></tr>
+              <tr><td><span class="matrix__perm"><b>Bertanya di forum diskusi</b><span>Termasuk membalas jawaban</span></span></td><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked checkbox--locked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td></tr>
+              <tr class="matrix__group"><td colspan="5">Pemantauan</td></tr>
+              <tr><td><span class="matrix__perm"><b>Melihat progres &amp; nilai</b><span>Cakupan berbeda per peran</span></span></td><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span><span class="matrix__scope">milik sendiri</span></td><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span><span class="matrix__scope">anak sendiri</span></td><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span><span class="matrix__scope">santri di kelasnya</span></td><td><span class="checkbox is-checked checkbox--locked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span><span class="matrix__scope">semua</span></td></tr>
+              <tr><td><span class="matrix__perm"><b>Menerima laporan bulanan WhatsApp</b><span>Ringkasan kehadiran dan nilai</span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked checkbox--locked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td></tr>
+              <tr class="matrix__group"><td colspan="5">Mengajar</td></tr>
+              <tr><td><span class="matrix__perm"><b>Menyusun &amp; mengubah kurikulum</b><span>Bab, materi, kuis, dan rubrik</span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked checkbox--locked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td></tr>
+              <tr><td><span class="matrix__perm"><b>Menilai setoran &amp; tugas</b><span>Memberi nilai, umpan balik, dan revisi</span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked checkbox--locked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td></tr>
+              <tr><td><span class="matrix__perm"><b>Memulai sesi live &amp; mengirim pengingat</b><span>Termasuk pesan WhatsApp ke santri</span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked checkbox--locked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td></tr>
+              <tr class="matrix__group"><td colspan="5">Pengelolaan</td></tr>
+              <tr><td><span class="matrix__perm"><b>Mengelola pengguna &amp; kohort</b><span>Undang, nonaktifkan, pindah kohort</span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked checkbox--locked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td></tr>
+              <tr><td><span class="matrix__perm"><b>Mengatur harga, paket &amp; kupon</b><span>Termasuk refund</span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked checkbox--locked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td></tr>
+              <tr><td><span class="matrix__perm"><b>Melihat laporan keuangan</b><span>Pendapatan, MRR, transaksi</span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td><td><span class="checkbox is-checked checkbox--locked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span></span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel__foot cluster cluster--between">
+          <span class="text-caption text-muted">Perubahan berlaku saat pengguna masuk berikutnya dan dicatat di log audit.</span>
+          <a class="btn btn--primary btn--sm" href="#" data-toast="toast-perm">Simpan perubahan</a>
+        </div>
+      </section>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- User detail drawer -->
+<div class="modal-scrim overlay drawer-scrim" id="drawer-user">
+  <aside class="drawer" role="dialog" aria-labelledby="drawer-title">
+    <div class="drawer__head">
+      <span class="avatar avatar--lg avatar--ring">MF</span>
+      <div class="flex-1 stack stack--xs">
+        <h2 class="text-h3" id="drawer-title">Muhammad Fauzan</h2>
+        <div class="cluster cluster--sm"><span class="badge badge--info">Santri</span><span class="badge badge--level">Level 4 · Mutqin</span><span class="badge badge--free">Aktif</span></div>
+      </div>
+      <a class="modal__close" href="#" data-close aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+    </div>
+    <div class="drawer__body">
+      <dl class="kv">
+        <dt>Email</dt><dd>fauzan@contoh.id</dd>
+        <dt>WhatsApp</dt><dd>+62 812-xxxx-4471</dd>
+        <dt>Bergabung</dt><dd>14 Juli 2026 · Kohort November</dd>
+        <dt>Wali</dt><dd>Bapak Hakim (ayah) · menunggu persetujuan</dd>
+      </dl>
+      <section class="stack stack--sm">
+        <span class="text-overline">Langganan</span>
+        <div class="card card--flat" style="padding:var(--space-4)">
+          <div class="cluster cluster--between"><b>Paket Santri</b><span>Rp99.000/bulan</span></div>
+          <p class="text-caption text-muted">Diperpanjang otomatis 2 Desember 2026 · GoPay · berlangganan sejak 2 Agustus 2026</p>
+        </div>
+      </section>
+      <section class="stack stack--sm">
+        <span class="text-overline">Kelas</span>
+        <div class="stack stack--xs"><div class="progress-label" style="margin:0"><span>Membaca Bangunan: Harf dan Fi'il</span><b>56%</b></div><div class="progress progress--sm"><div class="progress__bar" style="width:56%"></div></div></div>
+        <div class="stack stack--xs"><div class="progress-label" style="margin:0"><span>Membaca Akhir: Isim Mu'rab</span><b>14%</b></div><div class="progress progress--sm"><div class="progress__bar" style="width:14%"></div></div></div>
+        <div class="stack stack--xs"><div class="progress-label" style="margin:0"><span>Mushaf Nahwi: Surah Yasin</span><b>24%</b></div><div class="progress progress--sm progress--gold"><div class="progress__bar" style="width:24%"></div></div></div>
+      </section>
+      <section class="stack stack--sm">
+        <span class="text-overline">Aktivitas terakhir</span>
+        <ul class="timeline">
+          <li><span class="dot dot--good"></span><span>Menyelesaikan kuis Fi'il mudhari' · 9/10<small>Hari ini, 07.12</small></span></li>
+          <li><span class="dot"></span><span>Mengirim setoran Bab Fi'il (1:12)<small>Kamis, 21.40</small></span></li>
+          <li><span class="dot dot--gold"></span><span>Meraih lencana 12 hari beruntun<small>Kamis, 05.02</small></span></li>
+        </ul>
+      </section>
+    </div>
+    <div class="drawer__foot">
+      <a class="btn btn--primary btn--sm" href="#" data-toast="toast-wa"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg> WhatsApp</a>
+      <a class="btn btn--secondary btn--sm" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l4 10h10l4-10-5 4-4-7-4 7z"/><path d="M6 21h12"/></svg> Ubah paket</a>
+      <a class="btn btn--secondary btn--sm" href="#" data-toast="toast-reset"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg> Reset sandi</a>
+      <a class="btn btn--ghost btn--sm" href="#" style="color:var(--bad)">Nonaktifkan</a>
+    </div>
+  </aside>
+</div>
+
+<!-- Create coupon modal -->
+<div class="modal-scrim overlay" id="modal-kupon">
+  <div class="modal modal--wide" role="dialog" aria-labelledby="kupon-title">
+    <div class="modal__header">
+      <span class="modal__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><path d="M7 7h.01"/></svg></span>
+      <div><h2 class="modal__title" id="kupon-title">Buat Kupon</h2><p class="modal__subtitle">Kupon berlaku saat checkout paket atau kelas satuan.</p></div>
+      <a class="modal__close" href="#" data-close aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+    </div>
+    <div class="modal__body">
+      <div class="field">
+        <span class="field__label">Kode kupon</span>
+        <div class="cluster cluster--nowrap"><div class="input flex-1"><span class="input__text code" style="border:0;background:none;padding:0">MAULID30</span></div><a class="btn btn--secondary" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg> Acak</a></div>
+        <span class="field__hint">Huruf kapital dan angka, 4–16 karakter.</span>
+      </div>
+      <div class="grid-2 grid--tight">
+        <div class="field"><span class="field__label">Jenis diskon</span><div class="tabs tabs--segmented" data-chips data-active-class="tab--active"><span class="tab tab--active" data-chip><svg class="icon icon--xs" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg> Persen</span><span class="tab" data-chip>Rp Nominal</span></div></div>
+        <div class="field"><span class="field__label">Nilai diskon</span><div class="input"><span class="input__text">30</span><span class="text-muted">%</span></div></div>
+      </div>
+      <div class="field">
+        <span class="field__label">Berlaku untuk</span>
+        <div class="cluster cluster--lg">
+          <span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="text-small">Santri</span></span>
+          <span class="checkbox is-checked" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="text-small">Halaqah Plus</span></span>
+          <span class="checkbox" data-toggle="is-checked"><span class="checkbox__box"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span class="text-small">Kelas satuan</span></span>
+        </div>
+      </div>
+      <div class="grid-2 grid--tight">
+        <div class="field"><span class="field__label">Kuota</span><div class="input"><span class="input__text">100</span><span class="text-muted text-small">pemakaian</span></div></div>
+        <div class="field"><span class="field__label">Durasi diskon</span><div class="input select"><span class="input__text">Bulan pertama saja</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div></div>
+      </div>
+      <div class="grid-2 grid--tight">
+        <div class="field"><span class="field__label">Mulai</span><div class="input"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="input__text">14 Nov 2026</span></div></div>
+        <div class="field"><span class="field__label">Berakhir</span><div class="input"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span class="input__text">30 Nov 2026</span></div></div>
+      </div>
+      <span class="switch is-on" data-toggle="is-on" style="cursor:pointer"><span class="switch__track"><span class="switch__thumb"></span></span><span class="text-small" style="color:var(--ink)">Hanya untuk pengguna baru · satu kali per akun</span></span>
+      <div class="coupon-preview">
+        <span class="icon-tile icon-tile--gold"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><path d="M7 7h.01"/></svg></span>
+        <div class="flex-1"><span class="text-caption text-muted">Pratinjau di checkout · paket Santri</span><div><s>Rp99.000</s> <b>Rp69.300</b> <span class="text-small text-muted">bulan pertama</span></div></div>
+      </div>
+    </div>
+    <div class="modal__footer">
+      <a class="btn btn--ghost" href="#" data-close>Batal</a>
+      <a class="btn btn--primary" href="#" data-close data-submit-toast="toast-kupon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Simpan kupon</a>
+    </div>
+  </div>
+</div>
+
+<!-- Invite modal -->
+<div class="modal-scrim overlay" id="modal-undang">
+  <div class="modal" role="dialog" aria-labelledby="undang-title">
+    <div class="modal__header">
+      <span class="modal__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></span>
+      <div><h2 class="modal__title" id="undang-title">Undang pengguna</h2><p class="modal__subtitle">Undangan dikirim lewat email dan WhatsApp.</p></div>
+      <a class="modal__close" href="#" data-close aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+    </div>
+    <div class="modal__body">
+      <div class="field"><span class="field__label">Email atau nomor WhatsApp</span><div class="input"><span class="input__placeholder">nama@contoh.id, +62 8…</span></div></div>
+      <div class="field"><span class="field__label">Peran</span><div class="cluster cluster--sm" data-chips><span class="chip">Santri</span><span class="chip">Wali</span><span class="chip chip--active">Ustadz</span><span class="chip">Admin</span></div></div>
+      <div class="field"><span class="field__label">Kelas yang diampu</span><div class="input select"><span class="input__text">Nahwu Dasar: Membaca Akhir Kata</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></div></div>
+    </div>
+    <div class="modal__footer">
+      <a class="btn btn--ghost" href="#" data-close>Batal</a>
+      <a class="btn btn--primary" href="#" data-close data-submit-toast="toast-undang"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg> Kirim undangan</a>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div class="toast-stack">
+  <div class="toast toast--success" id="toast-kupon" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><path d="M7 7h.01"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Kupon MAULID30 dibuat</p><p class="toast__text">Aktif mulai 14 Nov 2026 untuk 100 pemakaian pertama.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--success" id="toast-undang" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Undangan terkirim</p><p class="toast__text">Tautan undangan berlaku 7 hari.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--success" id="toast-wa" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Pesan WhatsApp dikirim</p><p class="toast__text">Pesan dikirim memakai templat "Info akun".</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--info" id="toast-reset" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Tautan reset kata sandi dikirim</p><p class="toast__text">Ke fauzan@contoh.id, berlaku 1 jam.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--success" id="toast-perm" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Izin diperbarui</p><p class="toast__text">Perubahan dicatat di log audit oleh Admin Al-Abqary.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--info" id="toast-copy" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Kode disalin</p><p class="toast__text">Tempel di pesan promosi atau unggahan media sosial.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--success" id="toast-kohort" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Kohort baru disiapkan</p><p class="toast__text">Lengkapi ustadz pengampu dan jadwal sebelum pendaftaran dibuka.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+  <div class="toast toast--info" id="toast-import" hidden>
+    <span class="toast__icon"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg></span>
+    <div class="toast__main"><p class="toast__title">Impor CSV</p><p class="toast__text">Unggah file dengan kolom nama, email, WhatsApp, dan peran.</p></div>
+    <a class="toast__close" href="#" data-dismiss aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></a>
+  </div>
+</div>
+
+<script>
+// <a data-close data-submit-toast="toast-id">: mockup.js closes the modal; this shows the toast.
+document.addEventListener("click", function (e) {
+  var el = e.target.closest("[data-submit-toast]");
+  if (!el) return;
+  var t = document.getElementById(el.getAttribute("data-submit-toast"));
+  if (!t) return;
+  t.hidden = false;
+  clearTimeout(t._submitTimer);
+  t._submitTimer = setTimeout(function () { t.hidden = true; }, 4000);
+});
+</script>
+<script>
+// Same-page links like #tab-transaksi only change the hash; switch the matching tab too.
+window.addEventListener("hashchange", function () {
+  var key = location.hash.replace(/^#tab-/, "");
+  var tab = document.querySelector('[data-tabs] [data-tab="' + key + '"]');
+  if (tab) tab.click();
+});
+</script>
+<script>
+// Highlight a user row when its checkbox is toggled (mockup.js toggles .is-checked on the checkbox).
+document.addEventListener("click", function (e) {
+  var box = e.target.closest(".table--users .checkbox[data-toggle]");
+  if (!box) return;
+  setTimeout(function () { box.closest("tr").classList.toggle("is-checked", box.classList.contains("is-checked")); }, 0);
+});
+</script>
+<a class="mock-nav" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg> Peta Mockup</a>
+</body>
+</html>
